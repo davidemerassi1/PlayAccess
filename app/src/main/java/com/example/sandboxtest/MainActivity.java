@@ -1,5 +1,7 @@
 package com.example.sandboxtest;
 
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.example.sandboxtest.databinding.ActivityMainBinding;
@@ -7,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 
 import androidx.navigation.NavController;
@@ -16,6 +19,9 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +40,13 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        PackageManager packageManager = getPackageManager();
+        List<ApplicationInfo> installedApplications = packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
+        for (ApplicationInfo app : installedApplications) {
+            if ((app.flags & ApplicationInfo.FLAG_SYSTEM) == 0 && app.packageName != getPackageName())
+                Log.d("appname", ""+app.packageName + " " + app.FLAG_SYSTEM + " " + app.loadLabel(packageManager));
+        }
+
 
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAnchorView(R.id.fab)
                     .setAction("Action", null).show();
+
             }
         });
     }
