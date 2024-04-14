@@ -27,6 +27,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".installedApps.InstalledAppsActivity" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
