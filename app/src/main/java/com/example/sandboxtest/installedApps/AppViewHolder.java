@@ -34,7 +34,7 @@ public class AppViewHolder extends RecyclerView.ViewHolder implements View.OnCli
     @Override
     public void onClick(View v) {
         if (listener != null) {
-            listener.onItemClick(appName.getText().toString(), packageName);
+            listener.onItemClick(appName.getText().toString(), packageName, getAdapterPosition());
         }
     }
 }

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sandboxtest.R;
 
-public class AppViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class AppViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
     private TextView appName;
     private ImageView appIcon;
     private PackageManager packageManager;
@@ -24,6 +24,7 @@ public class AppViewHolder extends RecyclerView.ViewHolder implements View.OnCli
         this.packageManager = packageManager;
         this.listener = listener;
         itemView.setOnClickListener(this);
+        itemView.setOnLongClickListener(this);
     }
 
     public void set(ApplicationInfo app) {
@@ -37,5 +38,14 @@ public class AppViewHolder extends RecyclerView.ViewHolder implements View.OnCli
         if (listener != null) {
             listener.onItemClick(packageName);
         }
+    }
+
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (listener != null) {
+            listener.onItemLongClick(appName.getText().toString(), packageName, getAdapterPosition());
+        }
+        return true;
     }
 }
