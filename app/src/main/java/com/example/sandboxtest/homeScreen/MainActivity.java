@@ -1,6 +1,7 @@
 package com.example.sandboxtest.homeScreen;
 
 import android.annotation.SuppressLint;
+import android.app.Instrumentation;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -177,13 +178,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    Instrumentation mInstrumentation = new Instrumentation();
     private void simulateTouch() {
-        int targetX = 100; // Coordinata X della posizione di destinazione
-        int targetY = 300; // Coordinata Y della posizione di destinazione
+        int targetX = 200; // Coordinata X della posizione di destinazione
+        int targetY = 400; // Coordinata Y della posizione di destinazione
         long now = SystemClock.uptimeMillis();
 
         // Crea un evento di tocco simulato
         MotionEvent touchEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, targetX, targetY, 0);
-        dispatchTouchEvent(touchEvent);
+        MotionEvent touchEvent2 = MotionEvent.obtain(now, now, MotionEvent.ACTION_UP, targetX, targetY, 0);
+
+        new Thread(() -> {
+            try {
+                mInstrumentation.sendPointerSync(touchEvent);
+                mInstrumentation.sendPointerSync(touchEvent2);
+            } catch (SecurityException e) {
+                Toast.makeText(getApplicationContext(), "Errore durante la simulazione del tocco: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }).start();
     }
 }
