@@ -14,6 +14,7 @@ public class MyApplication extends Application {
         FCore.get().init(this);
         FCore.get().setAllowSystemInteraction(true);
         FCore.get().setAutoPreloadApplication(true);
+        FCore.get().setEnableLauncherView(true);
         if(FCore.isClient()) {
             return;
         }
