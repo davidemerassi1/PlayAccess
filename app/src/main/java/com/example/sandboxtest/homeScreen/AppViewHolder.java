@@ -1,10 +1,11 @@
-package com.example.sandboxtest.installedApps;
+package com.example.sandboxtest.homeScreen;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sandboxtest.R;
@@ -18,8 +19,8 @@ public class AppViewHolder extends RecyclerView.ViewHolder implements View.OnCli
 
     public AppViewHolder(View itemView, PackageManager packageManager, OnItemClickListener listener) {
         super(itemView);
-        appName = itemView.findViewById(R.id.appName);
-        appIcon = itemView.findViewById(R.id.appIcon);
+        appName = itemView.findViewById(R.id.homeAppName);
+        appIcon = itemView.findViewById(R.id.homeAppIcon);
         this.packageManager = packageManager;
         this.listener = listener;
         itemView.setOnClickListener(this);
@@ -34,7 +35,7 @@ public class AppViewHolder extends RecyclerView.ViewHolder implements View.OnCli
     @Override
     public void onClick(View v) {
         if (listener != null) {
-            listener.onItemClick(appName.getText().toString(), packageName);
+            listener.onItemClick(packageName);
         }
     }
 }
