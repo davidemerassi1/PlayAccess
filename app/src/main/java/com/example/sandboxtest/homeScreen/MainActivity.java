@@ -2,41 +2,31 @@ package com.example.sandboxtest.homeScreen;
 
 import android.annotation.SuppressLint;
 import android.app.Instrumentation;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.PixelFormat;
-import android.hardware.input.InputManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.databinding.ActivityMainBinding;
 import com.example.sandboxtest.installedApps.InstalledAppsActivity;
+import com.example.sandboxtest.utils.OverlayView;
 import com.fvbox.lib.FCore;
 import com.fvbox.lib.common.pm.InstalledPackage;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.text.Html;
-import android.util.Log;
 
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.List;
@@ -46,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private AppAdapter adapter;
     private List<InstalledPackage> installedApps;
     private FCore fcore = FCore.get();
-    private View overlayButtonView;
+    private View overlay;
     private WindowManager windowManager;
     private static final int REQUEST_CODE_DRAW_OVERLAY_PERMISSION = 123;
 
@@ -115,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(String packageName) {
                 fcore.launchApk(packageName, 0);
-                showOverlayButton();
+                showOverlayView();
             }
 
             @Override
@@ -134,30 +124,25 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-    private void showOverlayButton() {
+    @SuppressLint("ClickableViewAccessibility")
+    private void showOverlayView() {
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        overlayButtonView = LayoutInflater.from(this).inflate(R.layout.overlay_button_layout, null);
+        overlay = LayoutInflater.from(this).inflate(R.layout.overlay_layout, null);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
-        params.gravity = Gravity.TOP | Gravity.START;
-        params.x = 100;
-        params.y = 200;
-        windowManager.addView(overlayButtonView, params);
-        Button overlayButton = overlayButtonView.findViewById(R.id.overlayButton);
-        overlayButton.setOnClickListener(v -> {
-            // Simula un tocco sullo schermo
-            simulateTouch();
-        });
+        windowManager.addView(overlay, params);
+        OverlayView overlayView = overlay.findViewById(R.id.overlayView);
+        overlayView.init();
     }
 
     private void removeOverlayButton() {
         // Rimuovi il bottone dal WindowManager
-        if (overlayButtonView != null && overlayButtonView.getParent() != null) {
-            windowManager.removeView(overlayButtonView);
+        if (overlay != null && overlay.getParent() != null) {
+            windowManager.removeView(overlay);
         }
     }
 
