@@ -10,7 +10,6 @@ import android.os.Bundle;
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.databinding.ActivityMainBinding;
 import com.example.sandboxtest.installedApps.InstalledAppsActivity;
-import com.example.sandboxtest.utils.OverlayView;
 import com.fvbox.lib.FCore;
 import com.fvbox.lib.common.pm.InstalledPackage;
 
@@ -127,16 +126,52 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("ClickableViewAccessibility")
     private void showOverlayView() {
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        overlay = LayoutInflater.from(this).inflate(R.layout.overlay_layout, null);
+        overlay = LayoutInflater.from(this).inflate(R.layout.overlay_button_layout, null);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
         windowManager.addView(overlay, params);
-        OverlayView overlayView = overlay.findViewById(R.id.overlayView);
-        overlayView.init();
+        View collapsedView = overlay.findViewById(R.id.layoutCollapsed);
+        View expandedView = overlay.findViewById(R.id.layoutExpanded);
+
+        expandedView.setOnClickListener(v -> {
+            collapsedView.setVisibility(View.VISIBLE);
+            expandedView.setVisibility(View.GONE);
+        });
+
+        overlay.findViewById(R.id.relativeLayoutParent).setOnTouchListener(new View.OnTouchListener() {
+            private int initialX;
+            private int initialY;
+            private float initialTouchX;
+            private float initialTouchY;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        initialX = params.x;
+                        initialY = params.y;
+                        initialTouchX = event.getRawX();
+                        initialTouchY = event.getRawY();
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        collapsedView.setVisibility(View.GONE);
+                        expandedView.setVisibility(View.VISIBLE);
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE:
+                        params.x = initialX + (int) (event.getRawX() - initialTouchX);
+                        params.y = initialY + (int) (event.getRawY() - initialTouchY);
+                        windowManager.updateViewLayout(overlay, params);
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void removeOverlayButton() {

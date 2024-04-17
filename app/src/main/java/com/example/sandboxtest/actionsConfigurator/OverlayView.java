@@ -1,4 +1,4 @@
-package com.example.sandboxtest.utils;
+package com.example.sandboxtest.actionsConfigurator;
 
 import android.content.Context;
 import android.util.AttributeSet;
