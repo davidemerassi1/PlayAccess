@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "SandBoxTest"
 include(":app")
- 
+include(":lib")
