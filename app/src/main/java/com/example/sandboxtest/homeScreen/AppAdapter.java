@@ -9,16 +9,16 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sandboxtest.R;
-import com.fvbox.lib.common.pm.InstalledPackage;
+import com.lody.virtual.remote.InstalledAppInfo;
 
 import java.util.List;
 
 public class AppAdapter extends RecyclerView.Adapter<AppViewHolder> {
-    private List<InstalledPackage> appList;
+    private List<InstalledAppInfo> appList;
     private Context context;
     private OnItemClickListener listener;
 
-    public AppAdapter(List<InstalledPackage> appList, Context context, OnItemClickListener listener) {
+    public AppAdapter(List<InstalledAppInfo> appList, Context context, OnItemClickListener listener) {
         this.appList = appList;
         this.context = context;
         this.listener = listener;
@@ -32,8 +32,8 @@ public class AppAdapter extends RecyclerView.Adapter<AppViewHolder> {
 
     @Override
     public void onBindViewHolder(AppViewHolder holder, int position) {
-        InstalledPackage app = appList.get(position);
-        holder.set(app.getApplication());
+        InstalledAppInfo app = appList.get(position);
+        holder.set(app.getApplicationInfo(0));
     }
 
     @Override

@@ -15,6 +15,7 @@ public class AppViewHolder extends RecyclerView.ViewHolder implements View.OnCli
     private PackageManager packageManager;
     private OnItemClickListener listener;
     private String packageName;
+    private String src;
 
     public AppViewHolder(View itemView, PackageManager packageManager, OnItemClickListener listener) {
         super(itemView);
@@ -29,12 +30,13 @@ public class AppViewHolder extends RecyclerView.ViewHolder implements View.OnCli
         appName.setText(app.loadLabel(packageManager));
         appIcon.setImageDrawable(app.loadIcon(packageManager));
         packageName = app.packageName;
+        src = app.sourceDir;
     }
 
     @Override
     public void onClick(View v) {
         if (listener != null) {
-            listener.onItemClick(appName.getText().toString(), packageName, getAdapterPosition());
+            listener.onItemClick(appName.getText().toString(), src, getAdapterPosition());
         }
     }
 }

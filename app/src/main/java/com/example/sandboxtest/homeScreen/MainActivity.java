@@ -3,7 +3,6 @@ package com.example.sandboxtest.homeScreen;
 import android.annotation.SuppressLint;
 import android.app.Instrumentation;
 import android.content.Intent;
-import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -11,8 +10,9 @@ import com.example.sandboxtest.R;
 import com.example.sandboxtest.actionsConfigurator.OverlayView;
 import com.example.sandboxtest.databinding.ActivityMainBinding;
 import com.example.sandboxtest.installedApps.InstalledAppsActivity;
-import com.fvbox.lib.FCore;
-import com.fvbox.lib.common.pm.InstalledPackage;
+import com.lody.virtual.client.core.VirtualCore;
+import com.lody.virtual.client.ipc.VActivityManager;
+import com.lody.virtual.remote.InstalledAppInfo;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +23,7 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.text.Html;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,8 +35,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private AppAdapter adapter;
-    private List<InstalledPackage> installedApps;
-    private FCore fcore = FCore.get();
+    private List<InstalledAppInfo> installedApps;
+    private VirtualCore vc = VirtualCore.get();
+    private VActivityManager am = VActivityManager.get();
     private static final int REQUEST_CODE_DRAW_OVERLAY_PERMISSION = 123;
 
     @Override
@@ -50,14 +52,14 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, InstalledAppsActivity.class);
             startActivity(intent);
         });
-        installedApps = fcore.getInstalledApplications(0);
+        installedApps = vc.getInstalledApps(0);
 
         RecyclerView recyclerView = findViewById(R.id.appGrid);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
         adapter = new AppAdapter(installedApps, getApplicationContext(), new OnItemClickListener() {
             @Override
             public void onItemClick(String packageName) {
-                fcore.launchApk(packageName, 0);
+
             }
 
             @Override
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Uninstall " + name + "?");
                 builder.setPositiveButton("Yes", (dialog, which) -> {
-                    fcore.uninstallPackage(packageName);
+                    vc.uninstallPackage(packageName);
                     installedApps.remove(pos);
                     adapter.notifyItemRemoved(pos);
                 });
@@ -96,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        installedApps = fcore.getInstalledApplications(0);
+        installedApps = vc.getInstalledApps(0);
         if (installedApps.isEmpty())
             findViewById(R.id.alert).setVisibility(View.VISIBLE);
         else
@@ -106,8 +108,8 @@ public class MainActivity extends AppCompatActivity {
         adapter = new AppAdapter(installedApps, getApplicationContext(), new OnItemClickListener() {
             @Override
             public void onItemClick(String packageName) {
-                fcore.launchApk(packageName, 0);
-                showOverlayView();
+                am.launchApp(0, packageName);
+                //showOverlayView();
             }
 
             @Override
@@ -115,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Uninstall " + name + "?");
                 builder.setPositiveButton("Yes", (dialog, which) -> {
-                    fcore.uninstallPackage(packageName);
+                    vc.uninstallPackage(packageName);
                     installedApps.remove(pos);
                     adapter.notifyItemRemoved(pos);
                 });
