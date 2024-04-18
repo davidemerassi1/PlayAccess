@@ -2,11 +2,15 @@ package com.example.sandboxtest.actionsConfigurator;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
+
+import androidx.annotation.RequiresApi;
 
 import com.example.sandboxtest.R;
 
@@ -23,9 +27,14 @@ public class OverlayView extends RelativeLayout {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                        WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
+        params.gravity = Gravity.TOP | Gravity.START;
+        params.x = 10;
+        params.y = 10;
         windowManager.addView(this, params);
         View collapsedView = this.findViewById(R.id.layoutCollapsed);
         View expandedView = this.findViewById(R.id.configurationView);

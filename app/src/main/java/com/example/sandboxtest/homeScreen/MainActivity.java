@@ -97,6 +97,10 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         installedApps = fcore.getInstalledApplications(0);
+        if (installedApps.isEmpty())
+            findViewById(R.id.alert).setVisibility(View.VISIBLE);
+        else
+            findViewById(R.id.alert).setVisibility(View.GONE);
         RecyclerView recyclerView = findViewById(R.id.appGrid);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
         adapter = new AppAdapter(installedApps, getApplicationContext(), new OnItemClickListener() {

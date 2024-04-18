@@ -1,12 +1,17 @@
 package com.example.sandboxtest.utils;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 
-public class DraggableButton extends androidx.appcompat.widget.AppCompatImageButton implements View.OnTouchListener {
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+public class DraggableButton extends FloatingActionButton implements View.OnTouchListener {
     private float lastTouchX;
     private float lastTouchY;
     private float posX;
@@ -29,6 +34,10 @@ public class DraggableButton extends androidx.appcompat.widget.AppCompatImageBut
 
     private void init() {
         setOnTouchListener(this);
+        //setScaleType(ScaleType.FIT_CENTER);
+        //setCustomSize(125);
+        setBackgroundTintList(ColorStateList.valueOf(0x80FFFFFF));
+        setImageTintList(ColorStateList.valueOf(0xFF000000));
     }
 
     @Override
