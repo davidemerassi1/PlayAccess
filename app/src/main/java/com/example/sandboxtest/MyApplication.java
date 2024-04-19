@@ -2,9 +2,14 @@ package com.example.sandboxtest;
 
 import android.app.Application;
 import android.content.Context;
+
+import androidx.room.Room;
+
+import com.example.sandboxtest.database.AssociationsDb;
 import com.lody.virtual.client.core.VirtualCore;
 
 public class MyApplication extends Application {
+    private AssociationsDb database;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -41,6 +46,11 @@ public class MyApplication extends Application {
                 // Other sub-process callback
             }
         });
+
+        database = Room.databaseBuilder(this, AssociationsDb.class, "associations").build();
     }
 
+    public AssociationsDb getDatabase() {
+        return database;
+    }
 }

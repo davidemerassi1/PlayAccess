@@ -9,6 +9,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.example.sandboxtest.R;
+import com.example.sandboxtest.actionsConfigurator.Action;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class DraggableButton extends FloatingActionButton implements View.OnTouchListener {
@@ -16,28 +18,33 @@ public class DraggableButton extends FloatingActionButton implements View.OnTouc
     private float lastTouchY;
     private float posX;
     private float posY;
+    private Action action;
 
-    public DraggableButton(Context context) {
+    public DraggableButton(Context context, Action action) {
         super(context);
-        init();
-    }
-
-    public DraggableButton(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public DraggableButton(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
-
-    private void init() {
+        this.action = action;
         setOnTouchListener(this);
         //setScaleType(ScaleType.FIT_CENTER);
         //setCustomSize(125);
         setBackgroundTintList(ColorStateList.valueOf(0x80FFFFFF));
         setImageTintList(ColorStateList.valueOf(0xFF000000));
+        switch (action) {
+            case TAP:
+                setImageResource(R.drawable.touch_icon);
+                break;
+        }
+    }
+
+    public DraggableButton(Context context) {
+        super(context);
+    }
+
+    public DraggableButton(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public DraggableButton(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
     }
 
     @Override
@@ -62,5 +69,9 @@ public class DraggableButton extends FloatingActionButton implements View.OnTouc
                 return false;
         }
         return true;
+    }
+
+    public Action getAction() {
+        return action;
     }
 }

@@ -76,8 +76,7 @@ public class ConfigurationView extends RelativeLayout {
 
         newTouchFab.setOnClickListener(view -> {
             closeFABMenu();
-            DraggableButton draggableButton = new DraggableButton(context);
-            draggableButton.setImageResource(R.drawable.touch_icon);
+            DraggableButton draggableButton = new DraggableButton(context, Action.TAP);
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(125, 125);
             addView(draggableButton, layoutParams);
         });

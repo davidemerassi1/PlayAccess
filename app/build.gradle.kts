@@ -43,6 +43,9 @@ dependencies {
     implementation("androidx.navigation:navigation-ui:2.7.7")
     implementation ("com.google.code.gson:gson:2.9.1")
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.5.30")
+    val roomversion = "2.6.1"
+    implementation("androidx.room:room-runtime:$roomversion")
+    annotationProcessor("androidx.room:room-compiler:$roomversion")
     testImplementation("junit:junit:4.13.2")
     implementation(project(":lib"))
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
