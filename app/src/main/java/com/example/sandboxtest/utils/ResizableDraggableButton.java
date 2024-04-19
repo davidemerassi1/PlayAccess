@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 
 import com.example.sandboxtest.R;
 
@@ -75,6 +76,8 @@ public class ResizableDraggableButton extends FrameLayout {
                             delta = 100 - initialWidth;
                         }
 
+                        setPadding(fab, newDim);
+
                         // Imposta le nuove dimensioni del FAB
                         fab.getLayoutParams().width = newDim;
                         fab.getLayoutParams().height = newDim;
@@ -85,6 +88,15 @@ public class ResizableDraggableButton extends FrameLayout {
                     default:
                         return false;
                 }
+            }
+
+            private void setPadding(ImageButton fab, int newDim) {
+                int padding = (int) newDim / 2 - 30;
+                double k = 0.2929;  //1-sin45
+                fab.setPadding(padding, padding, padding, padding);
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(resizeButton.getLayoutParams());
+                params.setMargins((int) (k * newDim / 2 - 15), (int) (k * newDim / 2 - 15), 0, 0);
+                resizeButton.setLayoutParams(params);
             }
         });
 

@@ -9,6 +9,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.utils.DraggableButton;
@@ -20,6 +21,8 @@ public class ConfigurationView extends RelativeLayout {
     private FloatingActionButton fab;
     private FloatingActionButton newTouchFab;
     private FloatingActionButton newJoystickFab;
+    private TextView newTouchTextView;
+    private TextView newJoystickTextView;
     private Context context;
 
     public ConfigurationView(Context context) {
@@ -39,6 +42,10 @@ public class ConfigurationView extends RelativeLayout {
         newTouchFab.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
         newJoystickFab.animate().translationY(-getResources().getDimension(R.dimen.standard_105));
         //fab3.animate().translationY(-getResources().getDimension(R.dimen.standard_155));
+        newTouchTextView.setVisibility(VISIBLE);
+        newJoystickTextView.setVisibility(VISIBLE);
+        newTouchTextView.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
+        newJoystickTextView.animate().translationY(-getResources().getDimension(R.dimen.standard_105));
     }
 
     private void closeFABMenu(){
@@ -47,12 +54,18 @@ public class ConfigurationView extends RelativeLayout {
         fab.startAnimation(rotateAnimation);
         newTouchFab.animate().translationY(0);
         newJoystickFab.animate().translationY(0);
+        newTouchTextView.setVisibility(GONE);
+        newJoystickTextView.setVisibility(GONE);
+        newTouchTextView.animate().translationY(0);
+        newJoystickTextView.animate().translationY(0);
     }
 
     public void setup() {
         fab = findViewById(R.id.fab);
         newTouchFab = findViewById(R.id.fab1);
         newJoystickFab = findViewById(R.id.fab2);
+        newTouchTextView = findViewById(R.id.textViewFab1);
+        newJoystickTextView = findViewById(R.id.textViewFab2);
 
         fab.setOnClickListener(view -> {
             if(!isFABOpen)
