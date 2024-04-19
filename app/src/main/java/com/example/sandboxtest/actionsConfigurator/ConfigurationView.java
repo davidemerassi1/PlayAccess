@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.utils.DraggableButton;
+import com.example.sandboxtest.utils.ResizableDraggableButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class ConfigurationView extends RelativeLayout {
@@ -66,6 +67,12 @@ public class ConfigurationView extends RelativeLayout {
             draggableButton.setImageResource(R.drawable.touch_icon);
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(125, 125);
             addView(draggableButton, layoutParams);
+        });
+
+        newJoystickFab.setOnClickListener(view -> {
+            closeFABMenu();
+            ResizableDraggableButton resizableDraggableButton = new ResizableDraggableButton(context);
+            addView(resizableDraggableButton);
         });
     }
 }

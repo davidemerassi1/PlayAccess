@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(String packageName) {
                 am.launchApp(0, packageName);
-                //showOverlayView();
+                showOverlayView();
             }
 
             @Override
