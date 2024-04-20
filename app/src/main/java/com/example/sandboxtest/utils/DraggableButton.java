@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.actionsConfigurator.Action;
+import com.example.sandboxtest.actionsConfigurator.Event;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class DraggableButton extends FloatingActionButton implements View.OnTouchListener {
@@ -19,10 +20,12 @@ public class DraggableButton extends FloatingActionButton implements View.OnTouc
     private float posX;
     private float posY;
     private Action action;
+    private Event event;
 
-    public DraggableButton(Context context, Action action) {
+    public DraggableButton(Context context, Action action, Event event) {
         super(context);
         this.action = action;
+        this.event = event;
         setOnTouchListener(this);
         //setScaleType(ScaleType.FIT_CENTER);
         //setCustomSize(125);

@@ -1,16 +1,20 @@
 package com.example.sandboxtest.utils;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowMetrics;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.example.sandboxtest.R;
+import com.example.sandboxtest.actionsConfigurator.Event;
 
 public class ResizableDraggableButton extends FrameLayout {
     private ImageButton fab;
@@ -20,6 +24,7 @@ public class ResizableDraggableButton extends FrameLayout {
     private float lastTouchY;
     private float posX;
     private float posY;
+    private Event event;
 
     public ResizableDraggableButton(Context context) {
         super(context);
@@ -39,6 +44,13 @@ public class ResizableDraggableButton extends FrameLayout {
         init();
     }
 
+    public ResizableDraggableButton(Context context, Event event) {
+        super(context);
+        this.context = context;
+        this.event = event;
+        init();
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     public void init() {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -46,6 +58,10 @@ public class ResizableDraggableButton extends FrameLayout {
 
         fab = findViewById(R.id.fab);
         resizeButton = findViewById(R.id.resize_button);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int width = displayMetrics.widthPixels;
 
         resizeButton.setOnTouchListener(new OnTouchListener() {
             private int initialWidth, initialX, initialY;
@@ -69,11 +85,16 @@ public class ResizableDraggableButton extends FrameLayout {
                     case MotionEvent.ACTION_MOVE:
                         // Calcola il cambio di dimensione del FAB
                         int delta = (int) Math.min(initialTouchX - event.getRawX(), initialTouchY - event.getRawY());
-                        int newDim = initialWidth + delta;
+                        int newDim = initialWidth + 2* delta;
 
                         if (newDim < 100) {
                             newDim = 100;
-                            delta = 100 - initialWidth;
+                            delta = (newDim - initialWidth) / 2;
+                        }
+
+                        if (newDim > width) {
+                            newDim = width;
+                            delta = (newDim - initialWidth) / 2;
                         }
 
                         setPadding(fab, newDim);

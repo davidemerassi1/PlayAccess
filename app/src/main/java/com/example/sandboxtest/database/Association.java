@@ -7,11 +7,11 @@ import androidx.room.PrimaryKey;
 import com.example.sandboxtest.actionsConfigurator.Action;
 import com.example.sandboxtest.actionsConfigurator.Event;
 
-@Entity
+@Entity(primaryKeys = {"applicationPackage", "event"})
 public class Association {
-    @PrimaryKey @NonNull
+    @NonNull
     public String applicationPackage;
-    @PrimaryKey @NonNull
+    @NonNull
     public Event event;
     @NonNull
     public Action action;
