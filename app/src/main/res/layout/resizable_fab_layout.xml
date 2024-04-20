@@ -12,8 +12,7 @@
         android:padding="15dp"
         android:background="@drawable/circle_background_white"
         android:scaleType="fitXY"
-        android:src="@drawable/joystick_icon"
-        app:fabSize="auto" />
+        android:src="@drawable/joystick_icon" />
 
     <ImageButton
         android:id="@+id/resize_button"

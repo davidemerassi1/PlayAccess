@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import com.example.sandboxtest.R;
@@ -14,7 +15,7 @@ import com.example.sandboxtest.actionsConfigurator.Action;
 import com.example.sandboxtest.actionsConfigurator.Event;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class DraggableButton extends FloatingActionButton implements View.OnTouchListener {
+public class DraggableButton extends androidx.appcompat.widget.AppCompatImageButton implements View.OnTouchListener {
     private float lastTouchX;
     private float lastTouchY;
     private float posX;
@@ -27,10 +28,10 @@ public class DraggableButton extends FloatingActionButton implements View.OnTouc
         this.action = action;
         this.event = event;
         setOnTouchListener(this);
-        //setScaleType(ScaleType.FIT_CENTER);
-        //setCustomSize(125);
-        setBackgroundTintList(ColorStateList.valueOf(0x80FFFFFF));
-        setImageTintList(ColorStateList.valueOf(0xFF000000));
+        setPadding(15, 15, 15, 15);
+        setBackgroundResource(R.drawable.circle_background_white);
+        setScaleType(ScaleType.FIT_XY);
+        setLayoutParams(new FrameLayout.LayoutParams(120, 120));
         switch (action) {
             case TAP:
                 setImageResource(R.drawable.touch_icon);
@@ -76,5 +77,9 @@ public class DraggableButton extends FloatingActionButton implements View.OnTouc
 
     public Action getAction() {
         return action;
+    }
+
+    public Event getEvent() {
+        return event;
     }
 }

@@ -47,7 +47,9 @@ public class MyApplication extends Application {
             }
         });
 
-        database = Room.databaseBuilder(this, AssociationsDb.class, "associations").build();
+        database = Room.databaseBuilder(this, AssociationsDb.class, "associations")
+                .fallbackToDestructiveMigration()
+                .build();
     }
 
     public AssociationsDb getDatabase() {

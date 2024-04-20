@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(String packageName) {
                 am.launchApp(0, packageName);
-                showOverlayView();
+                showOverlayView(packageName);
             }
 
             @Override
@@ -129,10 +129,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void showOverlayView() {
+    private void showOverlayView(String applicationPackage) {
         WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         OverlayView overlay = (OverlayView) LayoutInflater.from(this).inflate(R.layout.overlay_button_layout, null);
-        overlay.init(windowManager);
+        overlay.init(windowManager, applicationPackage);
     }
 
     /*private void removeOverlay() {

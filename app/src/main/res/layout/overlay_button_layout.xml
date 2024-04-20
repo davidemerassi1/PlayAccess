@@ -102,5 +102,10 @@
             app:borderWidth="0dp"
             app:srcCompat="@drawable/add_icon" />
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/actions" />
+
     </com.example.sandboxtest.actionsConfigurator.ConfigurationView>
 </com.example.sandboxtest.actionsConfigurator.OverlayView>

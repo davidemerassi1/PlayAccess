@@ -1,26 +1,19 @@
 package com.example.sandboxtest.actionsConfigurator;
 
-import static android.content.Context.WINDOW_SERVICE;
-import static androidx.core.content.ContextCompat.getSystemService;
-
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
-
+import com.example.sandboxtest.MyApplication;
 import com.example.sandboxtest.R;
+import com.example.sandboxtest.database.Association;
+import com.example.sandboxtest.database.AssociationDao;
 import com.example.sandboxtest.utils.DraggableButton;
 import com.example.sandboxtest.utils.ResizableDraggableButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -32,7 +25,10 @@ public class ConfigurationView extends RelativeLayout {
     private FloatingActionButton newJoystickFab;
     private TextView newTouchTextView;
     private TextView newJoystickTextView;
+    private RelativeLayout actions;
     private Context context;
+    private String applicationPackage;
+    private AssociationDao associationsDb;
 
     public ConfigurationView(Context context) {
         super(context);
@@ -69,12 +65,14 @@ public class ConfigurationView extends RelativeLayout {
         newJoystickTextView.animate().translationY(0);
     }
 
-    public void setup() {
+    public void setup(String applicationPackage) {
+        this.applicationPackage = applicationPackage;
         fab = findViewById(R.id.fab);
         newTouchFab = findViewById(R.id.fab1);
         newJoystickFab = findViewById(R.id.fab2);
         newTouchTextView = findViewById(R.id.textViewFab1);
         newJoystickTextView = findViewById(R.id.textViewFab2);
+        actions = findViewById(R.id.actions);
 
         fab.setOnClickListener(view -> {
             if (!isFABOpen)
@@ -92,6 +90,29 @@ public class ConfigurationView extends RelativeLayout {
             closeFABMenu();
             showDialog(Action.JOYSTICK, true);
         });
+
+        MyApplication application = (MyApplication) getContext().getApplicationContext();
+        associationsDb = application.getDatabase().getDao();
+
+        new Thread(() -> {
+            Association[] associations = associationsDb.getAssociations(applicationPackage);
+            Log.d("actions", ""+ associations.length);
+            for (Association association : associations) {
+                if (association.action == Action.JOYSTICK) {
+                    ResizableDraggableButton button = new ResizableDraggableButton(context, association.event);
+                    button.setX(positionStart(association.x, association.radius));
+                    button.setY(positionStart(association.y, association.radius));
+                    actions.addView(button);
+                    button.setDimensions(association.radius * 2);
+                    button.setPadding(association.radius * 2);
+                } else {
+                    DraggableButton button = new DraggableButton(context, association.action, association.event);
+                    actions.addView(button);
+                    button.setX(positionStart(association.x, button.getLayoutParams().width/2));
+                    button.setY(positionStart(association.y, button.getLayoutParams().width/2));
+                }
+            }
+        }).start();
     }
 
     private void showDialog(Action action, boolean joystick) {
@@ -110,13 +131,42 @@ public class ConfigurationView extends RelativeLayout {
                     removeView(dialogLayout);
                     if (joystick) {
                         ResizableDraggableButton resizableDraggableButton = new ResizableDraggableButton(context, selectedEvent);
-                        addView(resizableDraggableButton);
+                        actions.addView(resizableDraggableButton);
                     } else {
                         DraggableButton draggableButton = new DraggableButton(context, action, selectedEvent);
-                        addView(draggableButton);
+                        actions.addView(draggableButton);
                     }
                 },
                 view1 -> removeView(dialogLayout)
         );
+    }
+
+    public void save() {
+        new Thread(() -> {
+            associationsDb.deleteAssociations(applicationPackage);
+
+            for (int i = 0; i < actions.getChildCount(); i++) {
+                View view = actions.getChildAt(i);
+                if (view instanceof DraggableButton) {
+                    DraggableButton button = (DraggableButton) view;
+                    int xCenter = center(button.getX(), button.getWidth());
+                    int yCenter = center(button.getY(), button.getHeight());
+                    associationsDb.insert(new Association(applicationPackage, button.getEvent(), button.getAction(), xCenter, yCenter, null));
+                } else if (view instanceof ResizableDraggableButton) {
+                    ResizableDraggableButton button = (ResizableDraggableButton) view;
+                    int xCenter = center(button.getX(), button.getWidth());
+                    int yCenter = center(button.getY(), button.getHeight());
+                    associationsDb.insert(new Association(applicationPackage, button.getEvent(), Action.JOYSTICK, xCenter, yCenter, button.getWidth()/ 2));
+                }
+            }
+        }).start();
+    }
+
+    private int center(float value, int size) {
+        return (int)value + size / 2;
+    }
+
+    private float positionStart(int center, int radius) {
+        return (float) (center - radius);
     }
 }

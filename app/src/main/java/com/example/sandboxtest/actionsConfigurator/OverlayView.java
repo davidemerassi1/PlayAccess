@@ -23,7 +23,7 @@ public class OverlayView extends RelativeLayout {
         super(context, attrs);
     }
 
-    public void init(WindowManager windowManager) {
+    public void init(WindowManager windowManager, String applicationPackage) {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -39,12 +39,16 @@ public class OverlayView extends RelativeLayout {
         View collapsedView = this.findViewById(R.id.layoutCollapsed);
         View expandedView = this.findViewById(R.id.configurationView);
 
+        ConfigurationView configurationView = findViewById(R.id.configurationView);
+        configurationView.setup(applicationPackage);
+
         expandedView.findViewById(R.id.closeConfigurationBtn).setOnClickListener(v -> {
             collapsedView.setVisibility(View.VISIBLE);
             expandedView.setVisibility(View.GONE);
             params.width = WindowManager.LayoutParams.WRAP_CONTENT;
             params.height = WindowManager.LayoutParams.WRAP_CONTENT;
             windowManager.updateViewLayout(this, params);
+            configurationView.save();
         });
 
         collapsedView.setOnTouchListener(new View.OnTouchListener() {
@@ -82,8 +86,5 @@ public class OverlayView extends RelativeLayout {
                 return false;
             }
         });
-
-        ConfigurationView configurationView = findViewById(R.id.configurationView);
-        configurationView.setup();
     }
 }

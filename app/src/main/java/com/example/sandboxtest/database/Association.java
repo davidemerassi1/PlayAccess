@@ -19,5 +19,14 @@ public class Association {
     public int x;
     @NonNull
     public int y;
-    public int radius;
+    public Integer radius;
+
+    public Association(String applicationPackage, Event event, Action action, int x, int y, Integer radius) {
+        this.applicationPackage = applicationPackage;
+        this.event = event;
+        this.action = action;
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+    }
 }
