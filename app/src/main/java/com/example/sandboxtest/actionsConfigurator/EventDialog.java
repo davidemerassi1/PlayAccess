@@ -33,6 +33,8 @@ public class EventDialog extends LinearLayout {
             radioButton.setText(option.getName());
             radioGroup.addView(radioButton);
         }
+        if (radioGroup.getChildCount() == 0)
+            findViewById(R.id.noEventsTextview).setVisibility(VISIBLE);
         findViewById(R.id.okButton).setOnClickListener(okListener);
         findViewById(R.id.cancelButton).setOnClickListener(cancelListener);
     }

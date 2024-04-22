@@ -1,5 +1,6 @@
 package com.example.sandboxtest.homeScreen;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Instrumentation;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.actionsConfigurator.OverlayView;
 import com.example.sandboxtest.databinding.ActivityMainBinding;
+import com.example.sandboxtest.facedetector.CameraFaceDetector;
 import com.example.sandboxtest.installedApps.InstalledAppsActivity;
 import com.lody.virtual.client.core.VirtualCore;
 import com.lody.virtual.client.ipc.VActivityManager;
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private VirtualCore vc = VirtualCore.get();
     private VActivityManager am = VActivityManager.get();
     private static final int REQUEST_CODE_DRAW_OVERLAY_PERMISSION = 123;
+    private CameraFaceDetector cameraFaceDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,32 +55,11 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, InstalledAppsActivity.class);
             startActivity(intent);
         });
-        installedApps = vc.getInstalledApps(0);
-
-        RecyclerView recyclerView = findViewById(R.id.appGrid);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
-        adapter = new AppAdapter(installedApps, getApplicationContext(), new OnItemClickListener() {
-            @Override
-            public void onItemClick(String packageName) {
-
-            }
-
-            @Override
-            public void onItemLongClick(String name, String packageName, int pos) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Uninstall " + name + "?");
-                builder.setPositiveButton("Yes", (dialog, which) -> {
-                    vc.uninstallPackage(packageName);
-                    installedApps.remove(pos);
-                    adapter.notifyItemRemoved(pos);
-                });
-                builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
-                builder.show();
-            }
-        });
-        recyclerView.setAdapter(adapter);
 
         checkOverlayPermission();
+
+        requestPermissions(new String[]{Manifest.permission.CAMERA}, 0);
+        //cameraFaceDetector = new CameraFaceDetector(this);
     }
 
     private void checkOverlayPermission() {
@@ -156,25 +138,5 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         }
-    }
-
-    Instrumentation mInstrumentation = new Instrumentation();
-    private void simulateTouch() {
-        int targetX = 200; // Coordinata X della posizione di destinazione
-        int targetY = 400; // Coordinata Y della posizione di destinazione
-        long now = SystemClock.uptimeMillis();
-
-        // Crea un evento di tocco simulato
-        MotionEvent touchEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, targetX, targetY, 0);
-        MotionEvent touchEvent2 = MotionEvent.obtain(now, now, MotionEvent.ACTION_UP, targetX, targetY, 0);
-
-        new Thread(() -> {
-            try {
-                mInstrumentation.sendPointerSync(touchEvent);
-                mInstrumentation.sendPointerSync(touchEvent2);
-            } catch (SecurityException e) {
-                Toast.makeText(getApplicationContext(), "Errore durante la simulazione del tocco: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }).start();
     }
 }

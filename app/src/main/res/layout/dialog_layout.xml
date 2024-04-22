@@ -10,9 +10,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Seleziona un evento"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:layout_marginBottom="10dp"/>
 
-    <!-- Elenco di radio button -->
+    <TextView
+        android:id="@+id/noEventsTextview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="Nessun evento disponibile"
+        android:visibility="gone"/>
+
     <RadioGroup
         android:id="@+id/radioGroup"
         android:layout_width="match_parent"
@@ -26,7 +34,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         android:gravity="end">
 
         <Button
@@ -43,11 +51,11 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/errorMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/errorMessage"
-        android:textColor="#FF0000"
         android:text="Select an event to continue"
+        android:textColor="#FF0000"
         android:visibility="gone" />
 
 </com.example.sandboxtest.actionsConfigurator.EventDialog>

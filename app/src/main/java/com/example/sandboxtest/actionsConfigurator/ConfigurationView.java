@@ -14,6 +14,7 @@ import com.example.sandboxtest.MyApplication;
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.database.Association;
 import com.example.sandboxtest.database.AssociationDao;
+import com.example.sandboxtest.database.AssociationsDb;
 import com.example.sandboxtest.utils.DraggableButton;
 import com.example.sandboxtest.utils.ResizableDraggableButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -21,7 +22,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigurationView extends RelativeLayout {
     private boolean isFABOpen = false;
@@ -34,8 +37,6 @@ public class ConfigurationView extends RelativeLayout {
     private Context context;
     private String applicationPackage;
     private AssociationDao associationsDb;
-    //ricordarsi che deve essere aggiornato quando si aggiorna il db
-    private Collection<Association> associations;
     private OnClickListener updateListener = v -> {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         EditEventDialog dialogLayout = (EditEventDialog) inflater.inflate(R.layout.edit_dialog_layout, this, false);
@@ -93,10 +94,9 @@ public class ConfigurationView extends RelativeLayout {
         newJoystickTextView.animate().translationY(0);
     }
 
-    public void setup(String applicationPackage, AssociationDao associationsDb, Collection<Association> associations) {
+    public void setup(String applicationPackage, AssociationDao associationsDb) {
         this.applicationPackage = applicationPackage;
         this.associationsDb = associationsDb;
-        this.associations = associations;
         fab = findViewById(R.id.fab);
         newTouchFab = findViewById(R.id.fab1);
         newJoystickFab = findViewById(R.id.fab2);
@@ -121,7 +121,7 @@ public class ConfigurationView extends RelativeLayout {
             showDialog(Action.JOYSTICK, true);
         });
 
-        for (Association association : associations) {
+        for (Association association : associationsDb.getAssociations(applicationPackage)) {
             if (association.action == Action.JOYSTICK) {
                 ResizableDraggableButton button = new ResizableDraggableButton(context, association.event);
                 button.setOnClickListener(updateListener);
@@ -134,8 +134,8 @@ public class ConfigurationView extends RelativeLayout {
                 DraggableButton button = new DraggableButton(context, association.action, association.event);
                 button.setOnClickListener(updateListener);
                 actions.addView(button);
-                button.setX(positionStart(association.x, button.getLayoutParams().width/2));
-                button.setY(positionStart(association.y, button.getLayoutParams().width/2));
+                button.setX(positionStart(association.x, button.getLayoutParams().width / 2));
+                button.setY(positionStart(association.y, button.getLayoutParams().width / 2));
             }
         }
     }
@@ -169,31 +169,34 @@ public class ConfigurationView extends RelativeLayout {
         );
     }
 
-    public void save() {
+    public Map<Event, Association> save() {
+        Map<Event, Association> map = new HashMap<>();
+
+        for (int i = 0; i < actions.getChildCount(); i++) {
+            View view = actions.getChildAt(i);
+            if (view instanceof DraggableButton) {
+                DraggableButton button = (DraggableButton) view;
+                int xCenter = center(button.getX(), button.getWidth());
+                int yCenter = center(button.getY(), button.getHeight());
+                map.put(button.getEvent(), new Association(applicationPackage, button.getEvent(), button.getAction(), xCenter, yCenter, null));
+            } else if (view instanceof ResizableDraggableButton) {
+                ResizableDraggableButton button = (ResizableDraggableButton) view;
+                int xCenter = center(button.getX(), button.getWidth());
+                int yCenter = center(button.getY(), button.getHeight());
+                map.put(button.getEvent(), new Association(applicationPackage, button.getEvent(), Action.JOYSTICK, xCenter, yCenter, button.getWidth() / 2));
+            }
+        }
+
         new Thread(() -> {
             associationsDb.deleteAssociations(applicationPackage);
-            associations.clear();
-
-            for (int i = 0; i < actions.getChildCount(); i++) {
-                View view = actions.getChildAt(i);
-                if (view instanceof DraggableButton) {
-                    DraggableButton button = (DraggableButton) view;
-                    int xCenter = center(button.getX(), button.getWidth());
-                    int yCenter = center(button.getY(), button.getHeight());
-                    associations.add(new Association(applicationPackage, button.getEvent(), button.getAction(), xCenter, yCenter, null));
-                } else if (view instanceof ResizableDraggableButton) {
-                    ResizableDraggableButton button = (ResizableDraggableButton) view;
-                    int xCenter = center(button.getX(), button.getWidth());
-                    int yCenter = center(button.getY(), button.getHeight());
-                    associations.add(new Association(applicationPackage, button.getEvent(), Action.JOYSTICK, xCenter, yCenter, button.getWidth() / 2));
-                }
-            }
-            associationsDb.insert(associations.toArray(new Association[0]));
+            associationsDb.insert(map.values().toArray(new Association[0]));
         }).start();
+
+        return map;
     }
 
     private int center(float value, int size) {
-        return (int)value + size / 2;
+        return (int) value + size / 2;
     }
 
     private float positionStart(int center, int radius) {
@@ -201,7 +204,7 @@ public class ConfigurationView extends RelativeLayout {
     }
 
     private List<Event> availableEvents() {
-        ArrayList<Event> events =  new ArrayList<>(Arrays.asList(Event.values()));
+        ArrayList<Event> events = new ArrayList<>(Arrays.asList(Event.values()));
         for (int i = 0; i < actions.getChildCount(); i++) {
             EventButton button = (EventButton) actions.getChildAt(i);
             events.remove(button.getEvent());
