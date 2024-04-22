@@ -5,6 +5,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -13,15 +14,17 @@ import android.widget.ImageButton;
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.actionsConfigurator.Action;
 import com.example.sandboxtest.actionsConfigurator.Event;
+import com.example.sandboxtest.actionsConfigurator.EventButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class DraggableButton extends androidx.appcompat.widget.AppCompatImageButton implements View.OnTouchListener {
+public class DraggableButton extends androidx.appcompat.widget.AppCompatImageButton implements EventButton, View.OnTouchListener {
     private float lastTouchX;
     private float lastTouchY;
     private float posX;
     private float posY;
     private Action action;
     private Event event;
+    private OnClickListener listener;
 
     public DraggableButton(Context context, Action action, Event event) {
         super(context);
@@ -69,6 +72,10 @@ public class DraggableButton extends androidx.appcompat.widget.AppCompatImageBut
                 setX(posX + dx);
                 setY(posY + dy);
                 break;
+            case MotionEvent.ACTION_UP:
+                if (Math.abs(touchX - lastTouchX) < 10 && Math.abs(touchY - lastTouchY) < 10)
+                    listener.onClick(this);
+                break;
             default:
                 return false;
         }
@@ -81,5 +88,13 @@ public class DraggableButton extends androidx.appcompat.widget.AppCompatImageBut
 
     public Event getEvent() {
         return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public void setOnClickListener(OnClickListener listener) {
+        this.listener = listener;
     }
 }

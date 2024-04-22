@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,8 +16,9 @@ import android.widget.RelativeLayout;
 
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.actionsConfigurator.Event;
+import com.example.sandboxtest.actionsConfigurator.EventButton;
 
-public class ResizableDraggableButton extends FrameLayout {
+public class ResizableDraggableButton extends FrameLayout implements EventButton {
     private ImageButton fab;
     private ImageButton resizeButton;
     private Context context;
@@ -25,6 +27,7 @@ public class ResizableDraggableButton extends FrameLayout {
     private float posX;
     private float posY;
     private Event event;
+    private OnClickListener listener;
 
     public ResizableDraggableButton(Context context) {
         super(context);
@@ -60,7 +63,7 @@ public class ResizableDraggableButton extends FrameLayout {
         resizeButton = findViewById(R.id.resize_button);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int width = displayMetrics.widthPixels;
 
         resizeButton.setOnTouchListener(new OnTouchListener() {
@@ -85,7 +88,7 @@ public class ResizableDraggableButton extends FrameLayout {
                     case MotionEvent.ACTION_MOVE:
                         // Calcola il cambio di dimensione del FAB
                         int delta = (int) Math.min(initialTouchX - event.getRawX(), initialTouchY - event.getRawY());
-                        int newDim = initialWidth + 2* delta;
+                        int newDim = initialWidth + 2 * delta;
 
                         if (newDim < 100) {
                             newDim = 100;
@@ -127,6 +130,10 @@ public class ResizableDraggableButton extends FrameLayout {
                     setX(posX + dx);
                     setY(posY + dy);
                     break;
+                case MotionEvent.ACTION_UP:
+                    if (Math.abs(touchX - lastTouchX) < 10 && Math.abs(touchY - lastTouchY) < 10)
+                        listener.onClick(this);
+                    break;
             }
             return true;
         });
@@ -149,5 +156,13 @@ public class ResizableDraggableButton extends FrameLayout {
 
     public Event getEvent() {
         return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public void setOnClickListener(OnClickListener listener) {
+        this.listener = listener;
     }
 }

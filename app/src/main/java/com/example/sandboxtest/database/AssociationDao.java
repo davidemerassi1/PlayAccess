@@ -9,6 +9,9 @@ public interface AssociationDao {
     @Insert
     void insert(Association association);
 
+    @Insert
+    void insert(Association[] associations);
+
     @Query("SELECT * FROM Association WHERE applicationPackage = :applicationPackage")
     Association[] getAssociations(String applicationPackage);
 

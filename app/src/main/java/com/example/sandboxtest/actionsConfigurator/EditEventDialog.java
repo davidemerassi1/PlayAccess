@@ -2,39 +2,51 @@ package com.example.sandboxtest.actionsConfigurator;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import androidx.annotation.Nullable;
 
 import com.example.sandboxtest.R;
 
 import java.util.List;
 
-public class EventDialog extends LinearLayout {
-    public EventDialog(Context context) {
+public class EditEventDialog extends LinearLayout {
+    public EditEventDialog(Context context) {
         super(context);
     }
 
-    public EventDialog(Context context, AttributeSet attrs) {
+    public EditEventDialog(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public EventDialog(Context context, AttributeSet attrs, int defStyleAttr) {
+    public EditEventDialog(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public void init(boolean joystick, OnClickListener okListener, OnClickListener cancelListener, List<Event> availableEvents) {
+    public void init(Event currentEvent, OnClickListener okListener, OnClickListener deleteListener, OnClickListener cancelListener, List<Event> availableEvents) {
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
+        RadioButton currentChoice = new RadioButton(getContext());
+        currentChoice.setTag(currentEvent);
+        currentChoice.setText(currentEvent.getName());
+        radioGroup.addView(currentChoice);
+        radioGroup.check(currentChoice.getId());
+
         for (Event option : availableEvents) {
-            if (joystick != option.isJoystickEvent())
+            if (currentEvent.isJoystickEvent() != option.isJoystickEvent())
                 continue;
             RadioButton radioButton = new RadioButton(getContext());
             radioButton.setTag(option);
             radioButton.setText(option.getName());
             radioGroup.addView(radioButton);
         }
-        findViewById(R.id.okButton).setOnClickListener(okListener);
+
         findViewById(R.id.cancelButton).setOnClickListener(cancelListener);
+        findViewById(R.id.okButton).setOnClickListener(okListener);
+        findViewById(R.id.deleteButton).setOnClickListener(deleteListener);
     }
 
     public Event getSelectedEvent() {
@@ -46,9 +58,5 @@ public class EventDialog extends LinearLayout {
             RadioButton radioButton = findViewById(selectedId);
             return (Event) radioButton.getTag();
         }
-    }
-
-    public void showErrorMessage() {
-        findViewById(R.id.errorMessage).setVisibility(VISIBLE);
     }
 }

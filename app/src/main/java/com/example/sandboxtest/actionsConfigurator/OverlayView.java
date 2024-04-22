@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,9 +13,21 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.RequiresApi;
 
+import com.example.sandboxtest.MyApplication;
 import com.example.sandboxtest.R;
+import com.example.sandboxtest.database.Association;
+import com.example.sandboxtest.database.AssociationDao;
+import com.example.sandboxtest.utils.DraggableButton;
+import com.example.sandboxtest.utils.ResizableDraggableButton;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class OverlayView extends RelativeLayout {
+    private AssociationDao associationsDb;
+    private Collection<Association> associations;
     public OverlayView(Context context) {
         super(context);
     }
@@ -40,7 +53,14 @@ public class OverlayView extends RelativeLayout {
         View expandedView = this.findViewById(R.id.configurationView);
 
         ConfigurationView configurationView = findViewById(R.id.configurationView);
-        configurationView.setup(applicationPackage);
+
+        MyApplication application = (MyApplication) getContext().getApplicationContext();
+        associationsDb = application.getDatabase().getDao();
+
+        new Thread(() -> {
+            associations = new ArrayList<>(Arrays.asList(associationsDb.getAssociations(applicationPackage)));
+            configurationView.setup(applicationPackage, associationsDb, associations);
+        }).start();
 
         expandedView.findViewById(R.id.closeConfigurationBtn).setOnClickListener(v -> {
             collapsedView.setVisibility(View.VISIBLE);
