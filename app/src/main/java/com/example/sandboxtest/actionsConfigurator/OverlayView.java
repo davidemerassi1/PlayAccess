@@ -29,7 +29,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     private AssociationDao associationsDb;
     private Map<Event, Association> map = new HashMap<>();
     private Map<Event, Instrumentation> instrumentations = new HashMap<>();
-    private int statusBarHeight;
+    private ActionExecutor executor = new ActionExecutor(getContext());
 
     public OverlayView(Context context) {
         super(context);
@@ -116,7 +116,6 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             }
         });
 
-        statusBarHeight = getStatusBarHeight(getContext());
         new Thread(() -> {
             CameraFaceDetector cameraFaceDetector = new CameraFaceDetector(getContext(), this);
             cameraFaceDetector.startDetection();
@@ -124,89 +123,34 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
 
     }
 
-    private boolean smiling = false;
     private boolean sliding = false;
     @Override
     public void onFaceRecognized(Face face) {
         for (Association association: map.values()) {
             Instrumentation instrumentation = instrumentations.get(association.event);
-            if (association.action == Action.TAP) {
-                if (face.getSmilingProbability() > 0.3 && !smiling) {
-                    //map.get(Event.SMILE).execute();
-                    smiling = true;
-                    touch(instrumentation, association.x, association.y);
-                } else if (face.getSmilingProbability() <= 0.3 && smiling) {
-                    //map.get(Event.SMILE).execute();
-                    smiling = false;
-                    release(instrumentation, association.x, association.y);
+            if (!association.event.isJoystickEvent()) {
+                switch(association.event) {
+                    case SMILE:
+                        if (face.getSmilingProbability() > 0.3)
+                            association.execute(executor, instrumentation);
+                        break;
                 }
-            } else if (association.action == Action.JOYSTICK) {
+            } else {
                 if (Math.abs(face.getHeadEulerAngleX()) > 10 || Math.abs(face.getHeadEulerAngleY()) > 20) {
                     if (sliding)
-                        move(instrumentation, (-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) face.getHeadEulerAngleX() * association.radius / 30) + association.y);
+                        executor.move(instrumentation, (-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) face.getHeadEulerAngleX() * association.radius / 30) + association.y);
                     else {
                         sliding = true;
-                        touch(instrumentation, association.x, association.y);
-                        move(instrumentation, (-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) face.getHeadEulerAngleX() * association.radius / 30) + association.y);
+                        executor.touch(instrumentation, association.x, association.y);
+                        executor.move(instrumentation, (-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) face.getHeadEulerAngleX() * association.radius / 30) + association.y);
                     }
                 } else {
                     if (sliding) {
                         sliding = false;
-                        release(instrumentation, association.x, association.y);
+                        executor.release(instrumentation, association.x, association.y);
                     }
                 }
             }
         }
-    }
-
-    private void touch(Instrumentation instrumentation, int targetX, int targetY) {
-        long now = SystemClock.uptimeMillis();
-        MotionEvent touchEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, targetX, targetY + statusBarHeight, 0);
-
-        Log.d("OverlayView", "Touching at " + targetX + ", " + targetY + statusBarHeight + "...");
-        new Thread(() -> {
-            try {
-                instrumentation.sendPointerSync(touchEvent);
-            } catch (SecurityException e) {
-                //Toast.makeText(getContext(), "Errore durante la simulazione del tocco: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }).start();
-    }
-
-    private void release(Instrumentation instrumentation, int targetX, int targetY) {
-        long now = SystemClock.uptimeMillis();
-        MotionEvent touchEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_UP, targetX, targetY + statusBarHeight, 0);
-        Log.d("OverlayView", "Releasing at " + targetX + ", " + targetY + statusBarHeight + "...");
-        new Thread(() -> {
-            try {
-                instrumentation.sendPointerSync(touchEvent);
-            } catch (SecurityException e) {
-                //Toast.makeText(getContext(), "Errore durante la simulazione del tocco: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }).start();
-    }
-
-    private void move(Instrumentation instrumentation, int toX, int toY) {
-        long now = SystemClock.uptimeMillis();
-        MotionEvent touchEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_MOVE, toX, toY + statusBarHeight, 0);
-        Log.d("OverlayView", "Moving to " + toX + ", " + toY + statusBarHeight + "...");
-        new Thread(() -> {
-            try {
-                instrumentation.sendPointerSync(touchEvent);
-            } catch (SecurityException e) {
-                //Toast.makeText(getContext(), "Errore durante la simulazione del tocco: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }).start();
-    }
-
-    public static int getStatusBarHeight(Context context) {
-        int statusBarHeight = 0;
-        Resources resources = context.getResources();
-        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            statusBarHeight = resources.getDimensionPixelSize(resourceId);
-        }
-        Log.d("OverlayView", "StatusBar height: " + statusBarHeight);
-        return statusBarHeight;
     }
 }
