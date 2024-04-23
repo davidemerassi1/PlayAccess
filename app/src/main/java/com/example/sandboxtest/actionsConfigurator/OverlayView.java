@@ -13,30 +13,22 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
-
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.sandboxtest.MyApplication;
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.database.Association;
 import com.example.sandboxtest.database.AssociationDao;
 import com.example.sandboxtest.facedetector.CameraFaceDetector;
-import com.example.sandboxtest.utils.DraggableButton;
-import com.example.sandboxtest.utils.ResizableDraggableButton;
+import com.example.sandboxtest.facedetector.OnFaceRecognizedListener;
 import com.google.mlkit.vision.face.Face;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener {
     private AssociationDao associationsDb;
     private Map<Event, Association> map = new HashMap<>();
+    private Map<Event, Instrumentation> instrumentations = new HashMap<>();
     private int statusBarHeight;
 
     public OverlayView(Context context) {
@@ -69,8 +61,10 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         associationsDb = application.getDatabase().getDao();
 
         new Thread(() -> {
-            for (Association association : associationsDb.getAssociations(applicationPackage))
+            for (Association association : associationsDb.getAssociations(applicationPackage)) {
                 map.put(association.event, association);
+                instrumentations.put(association.event, new Instrumentation());
+            }
             configurationView.setup(applicationPackage, associationsDb);
         }).start();
 
@@ -81,6 +75,9 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             params.height = WindowManager.LayoutParams.WRAP_CONTENT;
             windowManager.updateViewLayout(this, params);
             map = configurationView.save();
+            instrumentations = new HashMap<>();
+            for (Event event : map.keySet())
+                instrumentations.put(event, new Instrumentation());
         });
 
         collapsedView.setOnTouchListener(new View.OnTouchListener() {
@@ -128,40 +125,74 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     }
 
     private boolean smiling = false;
+    private boolean sliding = false;
     @Override
     public void onFaceRecognized(Face face) {
-        if (face.getSmilingProbability() > 0.25 && !smiling) {
-            //map.get(Event.SMILE).execute();
-            smiling = true;
-            touch(map.get(Event.SMILE).x, map.get(Event.SMILE).y);
-        } else if (face.getSmilingProbability() <= 0.25 && smiling) {
-            //map.get(Event.SMILE).execute();
-            smiling = false;
-            release(map.get(Event.SMILE).x, map.get(Event.SMILE).y);
+        for (Association association: map.values()) {
+            Instrumentation instrumentation = instrumentations.get(association.event);
+            if (association.action == Action.TAP) {
+                if (face.getSmilingProbability() > 0.3 && !smiling) {
+                    //map.get(Event.SMILE).execute();
+                    smiling = true;
+                    touch(instrumentation, association.x, association.y);
+                } else if (face.getSmilingProbability() <= 0.3 && smiling) {
+                    //map.get(Event.SMILE).execute();
+                    smiling = false;
+                    release(instrumentation, association.x, association.y);
+                }
+            } else if (association.action == Action.JOYSTICK) {
+                if (Math.abs(face.getHeadEulerAngleX()) > 10 || Math.abs(face.getHeadEulerAngleY()) > 20) {
+                    if (sliding)
+                        move(instrumentation, (-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) face.getHeadEulerAngleX() * association.radius / 30) + association.y);
+                    else {
+                        sliding = true;
+                        touch(instrumentation, association.x, association.y);
+                        move(instrumentation, (-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) face.getHeadEulerAngleX() * association.radius / 30) + association.y);
+                    }
+                } else {
+                    if (sliding) {
+                        sliding = false;
+                        release(instrumentation, association.x, association.y);
+                    }
+                }
+            }
         }
     }
 
-    Instrumentation mInstrumentation = new Instrumentation();
-    private void touch(int targetX, int targetY) {
+    private void touch(Instrumentation instrumentation, int targetX, int targetY) {
         long now = SystemClock.uptimeMillis();
         MotionEvent touchEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, targetX, targetY + statusBarHeight, 0);
 
+        Log.d("OverlayView", "Touching at " + targetX + ", " + targetY + statusBarHeight + "...");
         new Thread(() -> {
             try {
-                mInstrumentation.sendPointerSync(touchEvent);
+                instrumentation.sendPointerSync(touchEvent);
             } catch (SecurityException e) {
                 //Toast.makeText(getContext(), "Errore durante la simulazione del tocco: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }).start();
     }
 
-    private void release(int targetX, int targetY) {
+    private void release(Instrumentation instrumentation, int targetX, int targetY) {
         long now = SystemClock.uptimeMillis();
         MotionEvent touchEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_UP, targetX, targetY + statusBarHeight, 0);
-
+        Log.d("OverlayView", "Releasing at " + targetX + ", " + targetY + statusBarHeight + "...");
         new Thread(() -> {
             try {
-                mInstrumentation.sendPointerSync(touchEvent);
+                instrumentation.sendPointerSync(touchEvent);
+            } catch (SecurityException e) {
+                //Toast.makeText(getContext(), "Errore durante la simulazione del tocco: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }).start();
+    }
+
+    private void move(Instrumentation instrumentation, int toX, int toY) {
+        long now = SystemClock.uptimeMillis();
+        MotionEvent touchEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_MOVE, toX, toY + statusBarHeight, 0);
+        Log.d("OverlayView", "Moving to " + toX + ", " + toY + statusBarHeight + "...");
+        new Thread(() -> {
+            try {
+                instrumentation.sendPointerSync(touchEvent);
             } catch (SecurityException e) {
                 //Toast.makeText(getContext(), "Errore durante la simulazione del tocco: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }

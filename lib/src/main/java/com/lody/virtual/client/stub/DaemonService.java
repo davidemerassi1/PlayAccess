@@ -1,10 +1,15 @@
 package com.lody.virtual.client.stub;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
+
+import androidx.core.app.NotificationCompat;
 
 
 /**
@@ -16,7 +21,10 @@ public class DaemonService extends Service {
     private static final int NOTIFY_ID = 1001;
 
 	public static void startup(Context context) {
-		context.startService(new Intent(context, DaemonService.class));
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+			context.startForegroundService(new Intent(context, DaemonService.class));
+		else
+			context.startService(new Intent(context, DaemonService.class));
 	}
 
 	@Override
@@ -33,8 +41,14 @@ public class DaemonService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-        startService(new Intent(this, InnerService.class));
-        startForeground(NOTIFY_ID, new Notification());
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			Notification notification = createNotification(getApplicationContext());
+			startForeground(NOTIFY_ID, notification);
+			startService(new Intent(this, InnerService.class));
+		} else {
+			startService(new Intent(this, InnerService.class));
+			startForeground(NOTIFY_ID, new Notification());
+		}
 
 	}
 
@@ -47,7 +61,12 @@ public class DaemonService extends Service {
 
         @Override
         public int onStartCommand(Intent intent, int flags, int startId) {
-            startForeground(NOTIFY_ID, new Notification());
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				Notification notification = createNotification(getApplicationContext());
+				startForeground(NOTIFY_ID, notification);
+			} else {
+				startForeground(NOTIFY_ID, new Notification());
+			}
             stopForeground(true);
             stopSelf();
             return super.onStartCommand(intent, flags, startId);
@@ -60,4 +79,20 @@ public class DaemonService extends Service {
 	}
 
 
+	private static Notification createNotification(Context context) {
+		// Creare un canale di notifica per Android 8 e versioni successive
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+			NotificationChannel channel = new NotificationChannel("YOUR_CHANNEL_ID", "Foreground Service", NotificationManager.IMPORTANCE_DEFAULT);
+			notificationManager.createNotificationChannel(channel);
+		}
+
+		NotificationCompat.Builder builder;
+		// Costruire e restituire la notifica
+		builder = new NotificationCompat.Builder(context, "YOUR_CHANNEL_ID")
+				.setContentTitle("Foreground Service")
+				.setContentText("Il servizio è in esecuzione in primo piano");
+
+		return builder.build();
+	}
 }

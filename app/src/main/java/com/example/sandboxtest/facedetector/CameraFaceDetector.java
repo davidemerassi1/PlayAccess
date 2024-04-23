@@ -1,15 +1,10 @@
 package com.example.sandboxtest.facedetector;
 
-import static androidx.core.app.ActivityCompat.requestPermissions;
-
-import android.Manifest;
 import android.content.Context;
 import android.media.Image;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ExperimentalGetImage;
@@ -17,13 +12,8 @@ import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
-import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.LifecycleOwner;
 
-import com.example.sandboxtest.actionsConfigurator.OnFaceRecognizedListener;
 import com.example.sandboxtest.utils.AlwaysForegroundLifecycleOwner;
 import com.google.android.gms.tasks.Task;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -35,8 +25,6 @@ import com.google.mlkit.vision.face.FaceDetectorOptions;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import mirror.android.app.Activity;
 
 public class CameraFaceDetector {
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
