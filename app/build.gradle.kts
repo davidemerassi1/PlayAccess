@@ -15,6 +15,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    sourceSets {
+        getByName("main").java.srcDirs("libs")
+    }
 
     buildTypes {
         release {
@@ -52,7 +55,32 @@ dependencies {
     implementation("androidx.camera:camera-view:1.3.2")
     implementation ("com.google.mlkit:face-detection:16.1.6")
     testImplementation("junit:junit:4.13.2")
-    implementation(project(":lib"))
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    implementation(project(":Bcore"))
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+/*
+    //implementation("com.android.support:multidex:1.0.3")
+
+    // Promise Support
+    implementation("org.jdeferred:jdeferred-android-aar:1.2.4")
+
+    // ThirdParty
+    implementation("com.jonathanfinerty.once:once:1.0.3")
+
+    val appCenterSdkVersion = "3.0.0"
+    implementation("com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}")
+    implementation("com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}")
+
+    //implementation("com.kyleduo.switchbutton:library:1.4.6")
+    implementation("com.allenliu.versionchecklib:library:1.8.3")
+    implementation("com.github.medyo:android-about-page:1.2.2")
+    //implementation("moe.feng:AlipayZeroSdk:1.1")
+
+    // Glide
+    /*implementation("com.github.bumptech.glide:glide:4.8.0") {
+        exclude(group = "com.android.support")
+    }*/
+    annotationProcessor("com.github.bumptech.glide:compiler:4.8.0")*/
 }

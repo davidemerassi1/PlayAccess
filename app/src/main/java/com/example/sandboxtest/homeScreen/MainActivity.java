@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Instrumentation;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -12,9 +13,6 @@ import com.example.sandboxtest.actionsConfigurator.OverlayView;
 import com.example.sandboxtest.databinding.ActivityMainBinding;
 import com.example.sandboxtest.facedetector.CameraFaceDetector;
 import com.example.sandboxtest.installedApps.InstalledAppsActivity;
-import com.lody.virtual.client.core.VirtualCore;
-import com.lody.virtual.client.ipc.VActivityManager;
-import com.lody.virtual.remote.InstalledAppInfo;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,12 +32,14 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import top.niunaijun.blackbox.BlackBoxCore;
+import top.niunaijun.blackbox.core.system.user.BUserInfo;
+
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private AppAdapter adapter;
-    private List<InstalledAppInfo> installedApps;
-    private VirtualCore vc = VirtualCore.get();
-    private VActivityManager am = VActivityManager.get();
+    private List<ApplicationInfo> installedApps;
+    private BlackBoxCore core = BlackBoxCore.get();
     private static final int REQUEST_CODE_DRAW_OVERLAY_PERMISSION = 123;
     private CameraFaceDetector cameraFaceDetector;
 
@@ -80,7 +80,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        installedApps = vc.getInstalledApps(0);
+        installedApps = core.getInstalledApplications(0, 0);
+        Log.d("InstalledApps", installedApps.size() + "");
         if (installedApps.isEmpty())
             findViewById(R.id.alert).setVisibility(View.VISIBLE);
         else
@@ -90,8 +91,9 @@ public class MainActivity extends AppCompatActivity {
         adapter = new AppAdapter(installedApps, getApplicationContext(), new OnItemClickListener() {
             @Override
             public void onItemClick(String packageName) {
-                Intent intent = VirtualCore.get().getLaunchIntent(packageName, 0);
-                VActivityManager.get().startActivity(intent, 0);
+                /*Intent intent = VirtualCore.get().getLaunchIntent(packageName, 0);
+                VActivityManager.get().startActivity(intent, 0);*/
+                core.launchApk(packageName, 0);
                 showOverlayView(packageName);
             }
 
@@ -100,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Uninstall " + name + "?");
                 builder.setPositiveButton("Yes", (dialog, which) -> {
-                    vc.uninstallPackage(packageName);
+                    core.uninstallPackage(packageName);
                     installedApps.remove(pos);
                     adapter.notifyItemRemoved(pos);
                 });

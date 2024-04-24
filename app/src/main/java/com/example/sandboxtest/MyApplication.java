@@ -6,17 +6,23 @@ import android.content.Context;
 import androidx.room.Room;
 
 import com.example.sandboxtest.database.AssociationsDb;
-import com.lody.virtual.client.core.VirtualCore;
+
+import top.niunaijun.blackbox.BlackBoxCore;
+import top.niunaijun.blackbox.app.configuration.ClientConfiguration;
 
 public class MyApplication extends Application {
     private AssociationsDb database;
 
-    @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         try {
-            VirtualCore.get().startup(base);
-        } catch (Throwable e) {
+            BlackBoxCore.get().doAttachBaseContext(base, new ClientConfiguration() {
+                @Override
+                public String getHostPackageName() {
+                    return base.getPackageName();
+                }
+            });
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -24,28 +30,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        VirtualCore virtualCore = VirtualCore.get();
-        virtualCore.initialize(new VirtualCore.VirtualInitializer() {
-            @Override
-            public void onMainProcess() {
-                // Main process callback
-            }
-
-            @Override
-            public void onVirtualProcess() {
-                // Virtual App process callback
-            }
-
-            @Override
-            public void onServerProcess() {
-                // Server-side process callback
-            }
-
-            @Override
-            public void onChildProcess() {
-                // Other sub-process callback
-            }
-        });
+        BlackBoxCore.get().doCreate();
 
         database = Room.databaseBuilder(this, AssociationsDb.class, "associations")
                 .fallbackToDestructiveMigration()

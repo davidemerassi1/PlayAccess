@@ -19,13 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.databinding.ActivityInstalledAppsBinding;
-import com.lody.virtual.client.core.VirtualCore;
-import com.lody.virtual.os.VUserManager;
-import com.lody.virtual.remote.InstallResult;
-import com.lody.virtual.server.pm.VUserManagerService;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import top.niunaijun.blackbox.BlackBoxCore;
+import top.niunaijun.blackbox.entity.pm.InstallOption;
+import top.niunaijun.blackbox.entity.pm.InstallResult;
 
 public class InstalledAppsActivity extends AppCompatActivity {
     private ActivityInstalledAppsBinding binding;
@@ -41,13 +41,13 @@ public class InstalledAppsActivity extends AppCompatActivity {
         binding = ActivityInstalledAppsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        VirtualCore vc = VirtualCore.get();
+        BlackBoxCore core = BlackBoxCore.get();
         PackageManager packageManager = getPackageManager();
         installedApplications = packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
         //si puo usare stream
         List<ApplicationInfo> list = new ArrayList<>();
         for (ApplicationInfo app : installedApplications) {
-            if ((app.flags & ApplicationInfo.FLAG_SYSTEM) == 0 && !vc.isAppInstalled(app.packageName) && !app.packageName.equals("com.example.sandboxtest")) {
+            if ((app.flags & ApplicationInfo.FLAG_SYSTEM) == 0 && !core.isInstalled(app.packageName, 0) && !app.packageName.equals("com.example.sandboxtest")) {
                 list.add(app);
             }
         }
@@ -61,14 +61,14 @@ public class InstalledAppsActivity extends AppCompatActivity {
                 View overlay = findViewById(R.id.overlay_layout);
                 installationResult.observe(this, result -> {
                     overlay.setVisibility(View.GONE);
-                    Toast.makeText(this, result.isSuccess ? "Installazione completata" : "Impossibile installare", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, result.success ? "Installazione completata" : "Impossibile installare:" + result.msg, Toast.LENGTH_SHORT).show();
                     list.remove(pos);
                     appAdapter.notifyItemRemoved(pos);
                 });
                 overlay.setVisibility(View.VISIBLE);
                 ((TextView) findViewById(R.id.installation_textview)).setText("Installing " + appName + "...");
                 new Thread(() -> {
-                    InstallResult result = vc.installPackage(packageSrc, 0);
+                    InstallResult result = core.installPackageAsUser(packageSrc, 0);
                     installationResult.postValue(result);
                 }).start();
                 overlay.setVisibility(View.VISIBLE);
