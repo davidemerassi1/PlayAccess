@@ -90,7 +90,8 @@ public class MainActivity extends AppCompatActivity {
         adapter = new AppAdapter(installedApps, getApplicationContext(), new OnItemClickListener() {
             @Override
             public void onItemClick(String packageName) {
-                am.launchApp(0, packageName);
+                Intent intent = VirtualCore.get().getLaunchIntent(packageName, 0);
+                VActivityManager.get().startActivity(intent, 0);
                 showOverlayView(packageName);
             }
 

@@ -4,13 +4,14 @@ import android.location.LocationManager;
 import android.location.LocationRequest;
 import android.os.Build;
 
+import com.lody.virtual.client.core.VirtualCore;
 import com.lody.virtual.client.hook.base.MethodProxy;
 import com.lody.virtual.client.hook.base.ReplaceLastPkgMethodProxy;
 import com.lody.virtual.client.ipc.VirtualLocationManager;
 import com.lody.virtual.helper.utils.ArrayUtils;
 import com.lody.virtual.helper.utils.Reflect;
 import com.lody.virtual.remote.vloc.VLocation;
-
+import com.lody.virtual.client.hook.utils.MethodParameterUtils;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -84,6 +85,11 @@ public class MethodProxies {
                 }
                 return 0;
             }
+            
+            if (Build.VERSION.SDK_INT >= 30) {
+                args[3] = VirtualCore.get().getContext().getPackageName();
+            }
+            
             return super.call(who, method, args);
         }
     }
@@ -254,6 +260,7 @@ public class MethodProxies {
 
         @Override
         public Object call(Object who, Method method, Object... args) throws Throwable {
+            MethodParameterUtils.replaceFirstAppPkg(args);
             if (!isFakeLocationEnable()) {
                 return super.call(who, method, args);
             }
@@ -282,7 +289,7 @@ public class MethodProxies {
 
         @Override
         public Object afterCall(Object who, Method method, Object[] args, Object result) throws Throwable {
-            if (!isFakeLocationEnable()) {
+            if (isFakeLocationEnable()) {
                 return super.afterCall(who, method, args, result);
             }
             try {
