@@ -30,6 +30,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     private Map<Event, Association> map = new HashMap<>();
     private Map<Event, Instrumentation> instrumentations = new HashMap<>();
     private ActionExecutor executor = new ActionExecutor(getContext());
+    private boolean configurationOpened = false;
 
     public OverlayView(Context context) {
         super(context);
@@ -78,6 +79,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             instrumentations = new HashMap<>();
             for (Event event : map.keySet())
                 instrumentations.put(event, new Instrumentation());
+            configurationOpened = false;
         });
 
         collapsedView.setOnTouchListener(new View.OnTouchListener() {
@@ -103,6 +105,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
                             params.width = WindowManager.LayoutParams.MATCH_PARENT;
                             params.height = WindowManager.LayoutParams.MATCH_PARENT;
                             windowManager.updateViewLayout(OverlayView.this, params);
+                            configurationOpened = true;
                         }
                         return true;
 
@@ -120,12 +123,13 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             CameraFaceDetector cameraFaceDetector = new CameraFaceDetector(getContext(), this);
             cameraFaceDetector.startDetection();
         }).start();
-
     }
 
     private boolean sliding = false;
     @Override
     public void onFaceRecognized(Face face) {
+        if (configurationOpened)
+            return;
         for (Association association: map.values()) {
             Instrumentation instrumentation = instrumentations.get(association.event);
             if (!association.event.isJoystickEvent()) {

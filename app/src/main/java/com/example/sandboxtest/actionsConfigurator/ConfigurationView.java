@@ -1,12 +1,15 @@
 package com.example.sandboxtest.actionsConfigurator;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -29,10 +32,8 @@ import java.util.Map;
 public class ConfigurationView extends RelativeLayout {
     private boolean isFABOpen = false;
     private FloatingActionButton fab;
-    private FloatingActionButton newTouchFab;
-    private FloatingActionButton newJoystickFab;
-    private TextView newTouchTextView;
-    private TextView newJoystickTextView;
+    private RelativeLayout optionsLayout;
+    private List<LinearLayout> fabLayouts = new ArrayList<>();
     private RelativeLayout actions;
     private Context context;
     private String applicationPackage;
@@ -73,35 +74,34 @@ public class ConfigurationView extends RelativeLayout {
         isFABOpen = true;
         Animation rotateAnimation = AnimationUtils.loadAnimation(context, R.anim.rotate);
         fab.startAnimation(rotateAnimation);
-        newTouchFab.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
-        newJoystickFab.animate().translationY(-getResources().getDimension(R.dimen.standard_105));
-        //fab3.animate().translationY(-getResources().getDimension(R.dimen.standard_155));
-        newTouchTextView.setVisibility(VISIBLE);
-        newJoystickTextView.setVisibility(VISIBLE);
-        newTouchTextView.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
-        newJoystickTextView.animate().translationY(-getResources().getDimension(R.dimen.standard_105));
+        int dp = -55;
+        for (LinearLayout layout : fabLayouts) {
+            layout.animate().translationY(toPx(dp));
+            dp -= 50;
+            layout.getChildAt(0).setVisibility(VISIBLE);
+        }
     }
 
     private void closeFABMenu() {
         isFABOpen = false;
         Animation rotateAnimation = AnimationUtils.loadAnimation(context, R.anim.rotate_reverse);
         fab.startAnimation(rotateAnimation);
-        newTouchFab.animate().translationY(0);
-        newJoystickFab.animate().translationY(0);
-        newTouchTextView.setVisibility(GONE);
-        newJoystickTextView.setVisibility(GONE);
-        newTouchTextView.animate().translationY(0);
-        newJoystickTextView.animate().translationY(0);
+        for (LinearLayout layout : fabLayouts) {
+            layout.animate().translationY(0);
+            layout.getChildAt(0).setVisibility(GONE);
+        }
     }
 
     public void setup(String applicationPackage, AssociationDao associationsDb) {
         this.applicationPackage = applicationPackage;
         this.associationsDb = associationsDb;
         fab = findViewById(R.id.fab);
-        newTouchFab = findViewById(R.id.fab1);
-        newJoystickFab = findViewById(R.id.fab2);
-        newTouchTextView = findViewById(R.id.textViewFab1);
-        newJoystickTextView = findViewById(R.id.textViewFab2);
+        optionsLayout = findViewById(R.id.optionsLayout);
+        for (int i = 0; i < optionsLayout.getChildCount(); i++) {
+            LinearLayout layout = (LinearLayout) optionsLayout.getChildAt(i);
+            fabLayouts.add(layout);
+        }
+
         actions = findViewById(R.id.actions);
 
         fab.setOnClickListener(view -> {
@@ -111,14 +111,19 @@ public class ConfigurationView extends RelativeLayout {
                 closeFABMenu();
         });
 
-        newTouchFab.setOnClickListener(view -> {
+        fabLayouts.get(0).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
             showDialog(Action.TAP, false);
         });
 
-        newJoystickFab.setOnClickListener(view -> {
+        fabLayouts.get(1).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
             showDialog(Action.JOYSTICK, true);
+        });
+
+        fabLayouts.get(2).getChildAt(1).setOnClickListener(view -> {
+            closeFABMenu();
+            showDirectionDialog();
         });
 
         for (Association association : associationsDb.getAssociations(applicationPackage)) {
@@ -140,11 +145,26 @@ public class ConfigurationView extends RelativeLayout {
         }
     }
 
+    private void showDirectionDialog() {
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        SwipeDirectionDialog dialogLayout = (SwipeDirectionDialog) inflater.inflate(R.layout.dialog_swipe_direction_layout, this, false);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        layoutParams.setMargins(50, 0, 50, 0);
+        addView(dialogLayout, layoutParams);
+        dialogLayout.init((adapterView, view, i, l) -> {
+            Action selectedAction = (Action) adapterView.getItemAtPosition(i);
+            removeView(dialogLayout);
+            showDialog(selectedAction, false);
+        });
+    }
+
     private void showDialog(Action action, boolean joystick) {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         EventDialog dialogLayout = (EventDialog) inflater.inflate(R.layout.dialog_layout, this, false);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        layoutParams.setMargins(50, 0, 50, 0);
         addView(dialogLayout, layoutParams);
         dialogLayout.init(joystick,
                 view1 -> {
@@ -210,5 +230,9 @@ public class ConfigurationView extends RelativeLayout {
             events.remove(button.getEvent());
         }
         return events;
+    }
+
+    private static int toPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 }

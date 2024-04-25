@@ -9,15 +9,20 @@ import android.view.MotionEvent;
 
 public class ActionExecutor {
     private int statusBarHeight;
+    private int screenWidth;
+    private int screenHeight;
 
     public ActionExecutor(Context context) {
         statusBarHeight = getStatusBarHeight(context);
+        screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+        screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
     }
 
     public void touch(Instrumentation instrumentation, int targetX, int targetY) {
         long now = SystemClock.uptimeMillis();
+        //targetX = checkBoundX(targetX);
+        //targetY = checkBoundY(targetY);
         MotionEvent touchEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, targetX, targetY + statusBarHeight, 0);
-
         Log.d("OverlayView", "Touching at " + targetX + ", " + targetY + statusBarHeight + "...");
         new Thread(() -> {
             try {
@@ -30,6 +35,8 @@ public class ActionExecutor {
 
     public void release(Instrumentation instrumentation, int targetX, int targetY) {
         long now = SystemClock.uptimeMillis();
+        //targetX = checkBoundX(targetX);
+        //targetY = checkBoundY(targetY);
         MotionEvent touchEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_UP, targetX, targetY + statusBarHeight, 0);
         Log.d("OverlayView", "Releasing at " + targetX + ", " + targetY + statusBarHeight + "...");
         new Thread(() -> {
@@ -43,6 +50,8 @@ public class ActionExecutor {
 
     public void move(Instrumentation instrumentation, int toX, int toY) {
         long now = SystemClock.uptimeMillis();
+        //toX = checkBoundX(toX);
+        //toY = checkBoundY(toY);
         MotionEvent touchEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_MOVE, toX, toY + statusBarHeight, 0);
         Log.d("OverlayView", "Moving to " + toX + ", " + toY + statusBarHeight + "...");
         new Thread(() -> {
@@ -63,5 +72,17 @@ public class ActionExecutor {
         }
         Log.d("OverlayView", "StatusBar height: " + statusBarHeight);
         return statusBarHeight;
+    }
+
+    private int checkBoundX(int x) {
+        if (x < 0) return 0;
+        if (x > screenWidth) return screenWidth;
+        return x;
+    }
+
+    private int checkBoundY(int y) {
+        if (y < 0) return 0;
+        if (y > screenHeight) return screenHeight;
+        return y;
     }
 }

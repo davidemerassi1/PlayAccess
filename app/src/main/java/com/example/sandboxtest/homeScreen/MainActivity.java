@@ -2,7 +2,6 @@ package com.example.sandboxtest.homeScreen;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Instrumentation;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
@@ -19,13 +18,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.SystemClock;
 import android.provider.Settings;
 import android.text.Html;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -33,7 +30,6 @@ import android.widget.Toast;
 import java.util.List;
 
 import top.niunaijun.blackbox.BlackBoxCore;
-import top.niunaijun.blackbox.core.system.user.BUserInfo;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
@@ -116,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("ClickableViewAccessibility")
     private void showOverlayView(String applicationPackage) {
         WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        OverlayView overlay = (OverlayView) LayoutInflater.from(this).inflate(R.layout.overlay_button_layout, null);
+        OverlayView overlay = (OverlayView) LayoutInflater.from(this).inflate(R.layout.overlay_layout, null);
         overlay.init(windowManager, applicationPackage);
     }
 

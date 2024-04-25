@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.sandboxtest.actionsConfigurator.OverlayView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <!-- this is the collapsed layout -->
+    <RelativeLayout
+        android:id="@+id/layoutCollapsed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/collapsed_iv"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@android:drawable/btn_star_big_on" />
+    </RelativeLayout>
+
+    <!-- this is the expanded layout -->
+    <com.example.sandboxtest.actionsConfigurator.ConfigurationView
+        android:id="@+id/configurationView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/closeConfigurationBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="10dp"
+            android:backgroundTint="@android:color/transparent"
+            android:src="@drawable/close_icon" />
+
+        <RelativeLayout
+            android:id="@+id/optionsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="15dp"
+            android:gravity="bottom|end">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true">
+
+                <TextView
+                    android:id="@+id/textViewFab1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center_vertical"
+                    android:text="Tap"
+                    android:textColor="@color/white"
+                    android:visibility="gone"/>
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab1"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:backgroundTint="@color/primaryColor"
+                    app:borderWidth="0dp"
+                    app:fabCustomSize="45dp"
+                    app:srcCompat="@drawable/touch_icon"
+                    app:tint="@color/white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true">
+
+                <TextView
+                    android:id="@+id/textViewFab2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center_vertical"
+                    android:text="Joystick"
+                    android:textColor="@color/white"
+                    android:visibility="gone"/>
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab2"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:backgroundTint="@color/primaryColor"
+                    app:borderWidth="0dp"
+                    app:fabCustomSize="45dp"
+                    app:srcCompat="@drawable/joystick_icon"
+                    app:tint="@color/white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true">
+
+                <TextView
+                    android:id="@+id/textViewFab3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center_vertical"
+                    android:text="Swipe"
+                    android:textColor="@color/white"
+                    android:visibility="gone"/>
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab3"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:backgroundTint="@color/primaryColor"
+                    app:borderWidth="0dp"
+                    app:fabCustomSize="45dp"
+                    app:srcCompat="@drawable/swipe_icon"
+                    app:tint="@color/white" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:backgroundTint="@color/primaryColor"
+            app:borderWidth="0dp"
+            app:fabCustomSize="55dp"
+            app:srcCompat="@drawable/add_icon"
+            app:tint="@color/white" />
+
+        <RelativeLayout
+            android:id="@+id/actions"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.example.sandboxtest.actionsConfigurator.ConfigurationView>
+</com.example.sandboxtest.actionsConfigurator.OverlayView>

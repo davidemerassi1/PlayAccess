@@ -36,9 +36,11 @@ public class DraggableButton extends androidx.appcompat.widget.AppCompatImageBut
         setScaleType(ScaleType.FIT_XY);
         setLayoutParams(new FrameLayout.LayoutParams(120, 120));
         switch (action) {
-            case TAP:
-                setImageResource(R.drawable.touch_icon);
-                break;
+            case TAP -> setImageResource(R.drawable.touch_icon);
+            case SWIPE_DOWN -> setImageResource(R.drawable.swipe_down_icon);
+            case SWIPE_UP -> setImageResource(R.drawable.swipe_up_icon);
+            case SWIPE_LEFT -> setImageResource(R.drawable.swipe_left_icon);
+            case SWIPE_RIGHT -> setImageResource(R.drawable.swipe_right_icon);
         }
     }
 
