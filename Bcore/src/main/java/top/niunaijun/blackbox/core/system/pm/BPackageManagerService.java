@@ -15,6 +15,7 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.RemoteException;
 import android.text.TextUtils;
 
@@ -704,9 +705,9 @@ public class BPackageManagerService extends IBPackageManagerService.Stub impleme
             }
             result.packageName = aPackage.packageName;
 
-            /*if (option.isFlag(InstallOption.FLAG_SYSTEM)) {
+            if (option.isFlag(InstallOption.FLAG_SYSTEM) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 aPackage.applicationInfo = BlackBoxCore.getPackageManager().getPackageInfo(aPackage.packageName, 0).applicationInfo;
-            }*/
+            }
             BPackageSettings bPackageSettings = mSettings.getPackageLPw(aPackage.packageName, aPackage, option);
 
             // stop pkg
