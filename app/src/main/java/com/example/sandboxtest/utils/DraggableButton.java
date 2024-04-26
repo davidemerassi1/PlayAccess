@@ -1,21 +1,15 @@
 package com.example.sandboxtest.utils;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.actionsConfigurator.Action;
 import com.example.sandboxtest.actionsConfigurator.Event;
 import com.example.sandboxtest.actionsConfigurator.EventButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class DraggableButton extends androidx.appcompat.widget.AppCompatImageButton implements EventButton, View.OnTouchListener {
     private float lastTouchX;
@@ -36,11 +30,12 @@ public class DraggableButton extends androidx.appcompat.widget.AppCompatImageBut
         setScaleType(ScaleType.FIT_XY);
         setLayoutParams(new FrameLayout.LayoutParams(120, 120));
         switch (action) {
-            case TAP -> setImageResource(R.drawable.touch_icon);
+            case TAP -> setImageResource(R.drawable.tap_icon);
             case SWIPE_DOWN -> setImageResource(R.drawable.swipe_down_icon);
             case SWIPE_UP -> setImageResource(R.drawable.swipe_up_icon);
             case SWIPE_LEFT -> setImageResource(R.drawable.swipe_left_icon);
             case SWIPE_RIGHT -> setImageResource(R.drawable.swipe_right_icon);
+            case LONG_TAP -> setImageResource(R.drawable.long_tap_icon);
         }
     }
 

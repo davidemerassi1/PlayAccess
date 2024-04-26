@@ -7,18 +7,22 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.example.sandboxtest.database.Association;
+
 public class ActionExecutor {
     private int statusBarHeight;
     private int screenWidth;
     private int screenHeight;
+    private Instrumentation instrumentation;
 
     public ActionExecutor(Context context) {
         statusBarHeight = getStatusBarHeight(context);
         screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
         screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
+        instrumentation = new Instrumentation();
     }
 
-    public void touch(Instrumentation instrumentation, int targetX, int targetY) {
+    public void touch(int targetX, int targetY) {
         long now = SystemClock.uptimeMillis();
         //targetX = checkBoundX(targetX);
         //targetY = checkBoundY(targetY);
@@ -33,7 +37,7 @@ public class ActionExecutor {
         }).start();
     }
 
-    public void release(Instrumentation instrumentation, int targetX, int targetY) {
+    public void release(int targetX, int targetY) {
         long now = SystemClock.uptimeMillis();
         //targetX = checkBoundX(targetX);
         //targetY = checkBoundY(targetY);
@@ -48,7 +52,7 @@ public class ActionExecutor {
         }).start();
     }
 
-    public void move(Instrumentation instrumentation, int toX, int toY) {
+    public void move(int toX, int toY) {
         long now = SystemClock.uptimeMillis();
         //toX = checkBoundX(toX);
         //toY = checkBoundY(toY);
@@ -74,15 +78,55 @@ public class ActionExecutor {
         return statusBarHeight;
     }
 
-    private int checkBoundX(int x) {
-        if (x < 0) return 0;
-        if (x > screenWidth) return screenWidth;
-        return x;
+    public void execute(Association association) {
+        switch (association.action) {
+            case TAP:
+                touch(association.x, association.y);
+                sleep(10);
+                release(association.x, association.y);
+                break;
+            case SWIPE_UP:
+                touch(association.x, association.y);
+                sleep(10);
+                move(association.x, association.y - 100);
+                sleep(10);
+                release(association.x, association.y - 100);
+                break;
+            case SWIPE_DOWN:
+                touch(association.x, association.y);
+                sleep(10);
+                move(association.x, association.y + 100);
+                sleep(10);
+                release(association.x, association.y + 100);
+                break;
+            case SWIPE_LEFT:
+                touch(association.x, association.y);
+                sleep(10);
+                move(association.x - 100, association.y);
+                sleep(10);
+                release(association.x - 100, association.y);
+                break;
+            case SWIPE_RIGHT:
+                touch(association.x, association.y);
+                sleep(10);
+                move(association.x + 100, association.y);
+                sleep(10);
+                release(association.x + 100, association.y);
+                break;
+            case LONG_TAP:
+                touch(association.x, association.y);
+                sleep(2000);
+                release(association.x, association.y);
+                break;
+        }
     }
 
-    private int checkBoundY(int y) {
-        if (y < 0) return 0;
-        if (y > screenHeight) return screenHeight;
-        return y;
+    private void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
+

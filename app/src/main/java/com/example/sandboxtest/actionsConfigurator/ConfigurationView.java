@@ -126,6 +126,11 @@ public class ConfigurationView extends RelativeLayout {
             showDirectionDialog();
         });
 
+        fabLayouts.get(3).getChildAt(1).setOnClickListener(view -> {
+            closeFABMenu();
+            showDialog(Action.LONG_TAP, false);
+        });
+
         for (Association association : associationsDb.getAssociations(applicationPackage)) {
             if (association.action == Action.JOYSTICK) {
                 ResizableDraggableButton button = new ResizableDraggableButton(context, association.event);

@@ -6,6 +6,7 @@ public enum Action {
     SWIPE_DOWN,
     SWIPE_LEFT,
     SWIPE_RIGHT,
+    LONG_TAP,
     JOYSTICK;
 
     public String toString() {
@@ -20,6 +21,8 @@ public enum Action {
                 return "Swipe left";
             case SWIPE_RIGHT:
                 return "Swipe right";
+            case LONG_TAP:
+                return "Long tap";
             case JOYSTICK:
                 return "Joystick";
             default:

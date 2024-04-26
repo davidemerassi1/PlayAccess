@@ -28,7 +28,7 @@ import java.util.Map;
 public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener {
     private AssociationDao associationsDb;
     private Map<Event, Association> map = new HashMap<>();
-    private Map<Event, Instrumentation> instrumentations = new HashMap<>();
+    private Map<Event, ActionExecutor> executors = new HashMap<>();
     private ActionExecutor executor = new ActionExecutor(getContext());
     private boolean configurationOpened = false;
 
@@ -64,7 +64,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         new Thread(() -> {
             for (Association association : associationsDb.getAssociations(applicationPackage)) {
                 map.put(association.event, association);
-                instrumentations.put(association.event, new Instrumentation());
+                executors.put(association.event, new ActionExecutor(getContext()));
             }
             configurationView.setup(applicationPackage, associationsDb);
         }).start();
@@ -76,9 +76,9 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             params.height = WindowManager.LayoutParams.WRAP_CONTENT;
             windowManager.updateViewLayout(this, params);
             map = configurationView.save();
-            instrumentations = new HashMap<>();
+            executors = new HashMap<>();
             for (Event event : map.keySet())
-                instrumentations.put(event, new Instrumentation());
+                executors.put(event, new ActionExecutor(getContext()));
             configurationOpened = false;
         });
 
@@ -126,32 +126,33 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     }
 
     private boolean sliding = false;
+    private ActionExecutor joystickExecutor = new ActionExecutor(getContext());
     @Override
     public void onFaceRecognized(Face face) {
         if (configurationOpened)
             return;
         for (Association association: map.values()) {
-            Instrumentation instrumentation = instrumentations.get(association.event);
+            ActionExecutor executor = executors.get(association.event);
             if (!association.event.isJoystickEvent()) {
                 switch(association.event) {
                     case SMILE:
                         if (face.getSmilingProbability() > 0.3)
-                            association.execute(executor, instrumentation);
+                            executor.execute(association);
                         break;
                 }
             } else {
                 if (Math.abs(face.getHeadEulerAngleX()) > 10 || Math.abs(face.getHeadEulerAngleY()) > 20) {
                     if (sliding)
-                        executor.move(instrumentation, (-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) face.getHeadEulerAngleX() * association.radius / 30) + association.y);
+                        joystickExecutor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) face.getHeadEulerAngleX() * association.radius / 30) + association.y);
                     else {
                         sliding = true;
-                        executor.touch(instrumentation, association.x, association.y);
-                        executor.move(instrumentation, (-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) face.getHeadEulerAngleX() * association.radius / 30) + association.y);
+                        joystickExecutor.touch(association.x, association.y);
+                        joystickExecutor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) face.getHeadEulerAngleX() * association.radius / 30) + association.y);
                     }
                 } else {
                     if (sliding) {
                         sliding = false;
-                        executor.release(instrumentation, association.x, association.y);
+                        joystickExecutor.release(association.x, association.y);
                     }
                 }
             }
