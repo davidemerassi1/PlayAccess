@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,7 +21,6 @@ import com.example.sandboxtest.database.AssociationDao;
 import com.example.sandboxtest.database.AssociationsDb;
 import com.example.sandboxtest.utils.DraggableButton;
 import com.example.sandboxtest.utils.ResizableDraggableButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class ConfigurationView extends RelativeLayout {
     private boolean isFABOpen = false;
-    private FloatingActionButton fab;
+    private ImageButton fab;
     private RelativeLayout optionsLayout;
     private List<LinearLayout> fabLayouts = new ArrayList<>();
     private RelativeLayout actions;

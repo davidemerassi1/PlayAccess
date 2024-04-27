@@ -1,7 +1,11 @@
 package com.example.sandboxtest.actionsConfigurator;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Instrumentation;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.os.Build;
@@ -25,12 +29,15 @@ import com.google.mlkit.vision.face.Face;
 import java.util.HashMap;
 import java.util.Map;
 
+import top.niunaijun.blackbox.BlackBoxCore;
+import top.niunaijun.blackbox.app.configuration.AppLifecycleCallback;
+
 public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener {
     private AssociationDao associationsDb;
     private Map<Event, Association> map = new HashMap<>();
     private Map<Event, ActionExecutor> executors = new HashMap<>();
-    private ActionExecutor executor = new ActionExecutor(getContext());
     private boolean configurationOpened = false;
+    private String applicationPackage;
 
     public OverlayView(Context context) {
         super(context);
@@ -41,6 +48,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     }
 
     public void init(WindowManager windowManager, String applicationPackage) {
+        this.applicationPackage = applicationPackage;
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -129,8 +137,9 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     private ActionExecutor joystickExecutor = new ActionExecutor(getContext());
     @Override
     public void onFaceRecognized(Face face) {
-        if (configurationOpened)
+        if (getVisibility() == GONE || configurationOpened)
             return;
+        Log.d("Face", "injecting input for " + applicationPackage);
         for (Association association: map.values()) {
             ActionExecutor executor = executors.get(association.event);
             if (!association.event.isJoystickEvent()) {

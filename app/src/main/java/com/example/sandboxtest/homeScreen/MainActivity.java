@@ -2,16 +2,17 @@ package com.example.sandboxtest.homeScreen;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Bundle;
 
 import com.example.sandboxtest.R;
-import com.example.sandboxtest.actionsConfigurator.OverlayView;
 import com.example.sandboxtest.databinding.ActivityMainBinding;
-import com.example.sandboxtest.facedetector.CameraFaceDetector;
 import com.example.sandboxtest.installedApps.InstalledAppsActivity;
+import com.example.sandboxtest.utils.OverlayManager;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,9 +23,7 @@ import android.provider.Settings;
 import android.text.Html;
 
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.util.List;
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private List<ApplicationInfo> installedApps;
     private BlackBoxCore core = BlackBoxCore.get();
     private static final int REQUEST_CODE_DRAW_OVERLAY_PERMISSION = 123;
-    private CameraFaceDetector cameraFaceDetector;
+    private OverlayManager overlayManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +53,15 @@ public class MainActivity extends AppCompatActivity {
 
         checkOverlayPermission();
 
+        overlayManager = new OverlayManager(this);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.example.sandboxtest.ACTION_CREATE_OVERLAY");
+        intentFilter.addAction("com.example.sandboxtest.ACTION_HIDE_OVERLAY");
+        intentFilter.addAction("com.example.sandboxtest.ACTION_SHOW_OVERLAY");
+        intentFilter.addAction("com.example.sandboxtest.ACTION_DESTROY_OVERLAY");
+        registerReceiver(overlayManager, intentFilter);
+
         requestPermissions(new String[]{Manifest.permission.CAMERA}, 0);
-        //cameraFaceDetector = new CameraFaceDetector(this);
     }
 
     private void checkOverlayPermission() {
@@ -90,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
                 /*Intent intent = VirtualCore.get().getLaunchIntent(packageName, 0);
                 VActivityManager.get().startActivity(intent, 0);*/
                 core.launchApk(packageName, 0);
-                showOverlayView(packageName);
             }
 
             @Override
@@ -109,19 +114,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private void showOverlayView(String applicationPackage) {
-        WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        OverlayView overlay = (OverlayView) LayoutInflater.from(this).inflate(R.layout.overlay_layout, null);
-        overlay.init(windowManager, applicationPackage);
-    }
-
-    /*private void removeOverlay() {
-        if (overlay != null && overlay.getParent() != null) {
-            windowManager.removeView(overlay);
-        }
-    }*/
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -137,5 +129,11 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(overlayManager);
     }
 }
