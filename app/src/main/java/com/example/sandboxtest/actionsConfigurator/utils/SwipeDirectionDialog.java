@@ -1,8 +1,7 @@
-package com.example.sandboxtest.actionsConfigurator;
+package com.example.sandboxtest.actionsConfigurator.utils;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
@@ -11,8 +10,7 @@ import android.widget.ListView;
 import androidx.annotation.Nullable;
 
 import com.example.sandboxtest.R;
-
-import java.util.List;
+import com.example.sandboxtest.database.Action;
 
 public class SwipeDirectionDialog extends LinearLayout {
     private ListView listView;

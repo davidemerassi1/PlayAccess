@@ -1,15 +1,7 @@
 package com.example.sandboxtest.database;
 
-import android.app.Instrumentation;
-
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-import com.example.sandboxtest.actionsConfigurator.Action;
-import com.example.sandboxtest.actionsConfigurator.ActionExecutor;
-import com.example.sandboxtest.actionsConfigurator.Event;
-import com.example.sandboxtest.actionsConfigurator.OverlayView;
 
 @Entity(primaryKeys = {"applicationPackage", "event"})
 public class Association {

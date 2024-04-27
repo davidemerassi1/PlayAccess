@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.example.sandboxtest.actionsConfigurator.EventDialog xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.sandboxtest.actionsConfigurator.utils.EventDialog xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
@@ -58,4 +58,4 @@
         android:textColor="#FF0000"
         android:visibility="gone" />
 
-</com.example.sandboxtest.actionsConfigurator.EventDialog>
+</com.example.sandboxtest.actionsConfigurator.utils.EventDialog>

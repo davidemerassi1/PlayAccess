@@ -2,7 +2,6 @@ package com.example.sandboxtest.homeScreen;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
@@ -12,7 +11,7 @@ import android.os.Bundle;
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.databinding.ActivityMainBinding;
 import com.example.sandboxtest.installedApps.InstalledAppsActivity;
-import com.example.sandboxtest.utils.OverlayManager;
+import com.example.sandboxtest.actionsConfigurator.OverlayManager;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;

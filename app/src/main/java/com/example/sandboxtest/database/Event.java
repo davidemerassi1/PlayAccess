@@ -1,4 +1,4 @@
-package com.example.sandboxtest.actionsConfigurator;
+package com.example.sandboxtest.database;
 
 public enum Event {
     SMILE("Smile", false),

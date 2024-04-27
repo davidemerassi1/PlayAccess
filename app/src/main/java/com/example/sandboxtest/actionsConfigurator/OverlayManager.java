@@ -1,4 +1,4 @@
-package com.example.sandboxtest.utils;
+package com.example.sandboxtest.actionsConfigurator;
 
 import static android.content.Context.WINDOW_SERVICE;
 import static androidx.core.content.ContextCompat.getSystemService;

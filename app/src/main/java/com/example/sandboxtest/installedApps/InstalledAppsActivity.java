@@ -3,6 +3,7 @@ package com.example.sandboxtest.installedApps;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.example.sandboxtest.R;
 import com.example.sandboxtest.databinding.ActivityInstalledAppsBinding;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import top.niunaijun.blackbox.BlackBoxCore;
@@ -32,6 +34,8 @@ public class InstalledAppsActivity extends AppCompatActivity {
     private List<ApplicationInfo> installedApplications;
     private AppAdapter appAdapter;
     private MutableLiveData<InstallResult> installationResult = new MutableLiveData<>();
+    private MutableLiveData<Boolean> listLoaded = new MutableLiveData<>(false);
+    private BlackBoxCore core;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +44,48 @@ public class InstalledAppsActivity extends AppCompatActivity {
 
         binding = ActivityInstalledAppsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        core = BlackBoxCore.get();
 
-        BlackBoxCore core = BlackBoxCore.get();
+        new Thread(() -> {
+            loadApps();
+            listLoaded.postValue(true);
+        }).start();
+
+        listLoaded.observe(this, loaded -> {
+            if (loaded) {
+                binding.progressBar2.setVisibility(View.GONE);
+                RecyclerView recyclerView = findViewById(R.id.appList);
+                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                appAdapter = new AppAdapter(installedApplications, getApplicationContext(), (appName, packageSrc, pos) -> {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Installare " + appName + "?");
+                    builder.setPositiveButton("Si", (dialog, which) -> {
+                        View overlay = findViewById(R.id.overlay_layout);
+                        installationResult.observe(this, result -> {
+                            overlay.setVisibility(View.GONE);
+                            Toast.makeText(this, result.success ? "Installazione completata" : "Impossibile installare:" + result.msg, Toast.LENGTH_SHORT).show();
+                            installedApplications.remove(pos);
+                            appAdapter.notifyItemRemoved(pos);
+                        });
+                        overlay.setVisibility(View.VISIBLE);
+                        ((TextView) findViewById(R.id.installation_textview)).setText("Installing " + appName + "...");
+                        new Thread(() -> {
+                            InstallResult result = core.installPackageAsUser(packageSrc, 0);
+                            installationResult.postValue(result);
+                        }).start();
+                        overlay.setVisibility(View.VISIBLE);
+                    });
+                    builder.setNegativeButton("No", (dialog, which) -> {
+                        Log.d("AppViewHolder", "Non installare " + packageSrc);
+                    });
+                    builder.create().show();
+                });
+                recyclerView.setAdapter(appAdapter);
+            }
+        });
+    }
+
+    private void loadApps() {
         PackageManager packageManager = getPackageManager();
         installedApplications = packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
         //si puo usare stream
@@ -52,32 +96,9 @@ public class InstalledAppsActivity extends AppCompatActivity {
             }
         }
         installedApplications = list;
-        RecyclerView recyclerView = findViewById(R.id.appList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        appAdapter = new AppAdapter(installedApplications, getApplicationContext(), (appName, packageSrc, pos) -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Installare " + appName + "?");
-            builder.setPositiveButton("Si", (dialog, which) -> {
-                View overlay = findViewById(R.id.overlay_layout);
-                installationResult.observe(this, result -> {
-                    overlay.setVisibility(View.GONE);
-                    Toast.makeText(this, result.success ? "Installazione completata" : "Impossibile installare:" + result.msg, Toast.LENGTH_SHORT).show();
-                    list.remove(pos);
-                    appAdapter.notifyItemRemoved(pos);
-                });
-                overlay.setVisibility(View.VISIBLE);
-                ((TextView) findViewById(R.id.installation_textview)).setText("Installing " + appName + "...");
-                new Thread(() -> {
-                    InstallResult result = core.installPackageAsUser(packageSrc, 0);
-                    installationResult.postValue(result);
-                }).start();
-                overlay.setVisibility(View.VISIBLE);
-            });
-            builder.setNegativeButton("No", (dialog, which) -> {
-                Log.d("AppViewHolder", "Non installare " + packageSrc);
-            });
-            builder.create().show();
-        });
-        recyclerView.setAdapter(appAdapter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            installedApplications.sort(Comparator.comparing(a -> a.loadLabel(packageManager).toString()));
+        }
+        listLoaded.postValue(true);
     }
 }

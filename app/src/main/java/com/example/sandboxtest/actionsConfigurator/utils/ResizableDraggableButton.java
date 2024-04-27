@@ -1,22 +1,19 @@
-package com.example.sandboxtest.utils;
+package com.example.sandboxtest.actionsConfigurator.utils;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowMetrics;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.example.sandboxtest.R;
-import com.example.sandboxtest.actionsConfigurator.Event;
-import com.example.sandboxtest.actionsConfigurator.EventButton;
+import com.example.sandboxtest.database.Event;
 
 public class ResizableDraggableButton extends FrameLayout implements EventButton {
     private ImageButton fab;

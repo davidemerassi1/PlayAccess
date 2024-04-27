@@ -1,4 +1,4 @@
-package com.example.sandboxtest.actionsConfigurator;
+package com.example.sandboxtest.actionsConfigurator.utils;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,6 +7,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.example.sandboxtest.R;
+import com.example.sandboxtest.database.Event;
 
 import java.util.List;
 

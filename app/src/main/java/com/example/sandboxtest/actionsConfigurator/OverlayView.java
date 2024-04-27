@@ -1,15 +1,8 @@
 package com.example.sandboxtest.actionsConfigurator;
 
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.Instrumentation;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.os.Build;
-import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -27,15 +20,13 @@ import com.example.sandboxtest.MyApplication;
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.database.Association;
 import com.example.sandboxtest.database.AssociationDao;
+import com.example.sandboxtest.database.Event;
 import com.example.sandboxtest.facedetector.CameraFaceDetector;
 import com.example.sandboxtest.facedetector.OnFaceRecognizedListener;
 import com.google.mlkit.vision.face.Face;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import top.niunaijun.blackbox.BlackBoxCore;
-import top.niunaijun.blackbox.app.configuration.AppLifecycleCallback;
 
 public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener, LifecycleOwner {
     private AssociationDao associationsDb;
@@ -158,13 +149,13 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
                         break;
                 }
             } else {
-                if (Math.abs(face.getHeadEulerAngleX()) > 10 || Math.abs(face.getHeadEulerAngleY()) > 20) {
+                if (Math.abs(face.getHeadEulerAngleX() -10) > 10 || Math.abs(face.getHeadEulerAngleY()) > 20) {
                     if (sliding)
-                        joystickExecutor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) face.getHeadEulerAngleX() * association.radius / 30) + association.y);
+                        joystickExecutor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) (face.getHeadEulerAngleX()-10) * association.radius / 30) + association.y);
                     else {
                         sliding = true;
                         joystickExecutor.touch(association.x, association.y);
-                        joystickExecutor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) face.getHeadEulerAngleX() * association.radius / 30) + association.y);
+                        joystickExecutor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) (face.getHeadEulerAngleX()-10) * association.radius / 30) + association.y);
                     }
                 } else {
                     if (sliding) {

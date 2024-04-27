@@ -1,4 +1,4 @@
-package com.example.sandboxtest.utils;
+package com.example.sandboxtest.actionsConfigurator.utils;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,9 +7,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.example.sandboxtest.R;
-import com.example.sandboxtest.actionsConfigurator.Action;
-import com.example.sandboxtest.actionsConfigurator.Event;
-import com.example.sandboxtest.actionsConfigurator.EventButton;
+import com.example.sandboxtest.database.Action;
+import com.example.sandboxtest.database.Event;
 
 public class DraggableButton extends androidx.appcompat.widget.AppCompatImageButton implements EventButton, View.OnTouchListener {
     private float lastTouchX;

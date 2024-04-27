@@ -16,8 +16,8 @@
     <TextView
         android:id="@+id/homeAppName"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:gravity="top"
-        android:text="TextView"
-        android:textAlignment="center" />
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:maxLines="2"
+        android:ellipsize="end"/>
 </LinearLayout>

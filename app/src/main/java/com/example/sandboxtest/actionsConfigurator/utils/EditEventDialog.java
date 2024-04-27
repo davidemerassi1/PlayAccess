@@ -1,9 +1,7 @@
-package com.example.sandboxtest.actionsConfigurator;
+package com.example.sandboxtest.actionsConfigurator.utils;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -11,6 +9,7 @@ import android.widget.RadioGroup;
 import androidx.annotation.Nullable;
 
 import com.example.sandboxtest.R;
+import com.example.sandboxtest.database.Event;
 
 import java.util.List;
 
