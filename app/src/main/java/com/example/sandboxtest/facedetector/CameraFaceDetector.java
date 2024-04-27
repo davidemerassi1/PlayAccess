@@ -13,6 +13,7 @@ import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.example.sandboxtest.utils.AlwaysForegroundLifecycleOwner;
 import com.google.android.gms.tasks.Task;
@@ -39,7 +40,7 @@ public class CameraFaceDetector {
     private FaceDetector faceDetector = FaceDetection.getClient(options);
     private OnFaceRecognizedListener listener;
 
-    public CameraFaceDetector(Context context, OnFaceRecognizedListener listener) {
+    public CameraFaceDetector(Context context, OnFaceRecognizedListener listener, LifecycleOwner lifecycleOwner) {
         this.listener = listener;
         cameraProviderFuture = ProcessCameraProvider.getInstance(context);
 
@@ -57,7 +58,7 @@ public class CameraFaceDetector {
                 imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(context), this::detectFaces);
 
                 Preview preview = new Preview.Builder().build();
-                Camera camera = cameraProvider.bindToLifecycle(new AlwaysForegroundLifecycleOwner(), cameraSelector, preview, imageAnalysis);
+                Camera camera = cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, preview, imageAnalysis);
             } catch (ExecutionException | InterruptedException e) {
                 Log.e(TAG, "Error", e);
             }

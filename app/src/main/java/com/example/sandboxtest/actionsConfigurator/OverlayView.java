@@ -18,6 +18,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleRegistry;
+
 import com.example.sandboxtest.MyApplication;
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.database.Association;
@@ -32,12 +37,13 @@ import java.util.Map;
 import top.niunaijun.blackbox.BlackBoxCore;
 import top.niunaijun.blackbox.app.configuration.AppLifecycleCallback;
 
-public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener {
+public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener, LifecycleOwner {
     private AssociationDao associationsDb;
     private Map<Event, Association> map = new HashMap<>();
     private Map<Event, ActionExecutor> executors = new HashMap<>();
     private boolean configurationOpened = false;
     private String applicationPackage;
+    private LifecycleRegistry lifecycleRegistry;
 
     public OverlayView(Context context) {
         super(context);
@@ -128,9 +134,11 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         });
 
         new Thread(() -> {
-            CameraFaceDetector cameraFaceDetector = new CameraFaceDetector(getContext(), this);
+            CameraFaceDetector cameraFaceDetector = new CameraFaceDetector(getContext(), this, this);
             cameraFaceDetector.startDetection();
         }).start();
+
+        lifecycleRegistry = new LifecycleRegistry(this);
     }
 
     private boolean sliding = false;
@@ -166,5 +174,25 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
                 }
             }
         }
+    }
+
+    public void start() {
+        setVisibility(VISIBLE);
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
+    }
+
+    public void stop() {
+        setVisibility(GONE);
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
+    }
+
+    public void destroy() {
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
+    }
+
+    @NonNull
+    @Override
+    public Lifecycle getLifecycle() {
+        return lifecycleRegistry;
     }
 }

@@ -32,13 +32,15 @@ public class OverlayManager extends BroadcastReceiver {
         String packageName = i.getPackage();
         switch (intent.getAction()) {
             case "com.example.sandboxtest.ACTION_CREATE_OVERLAY":
-                OverlayView overlay = (OverlayView) LayoutInflater.from(context).inflate(R.layout.overlay_layout, null);
-                overlay.init(windowManager, packageName);
-                overlays.put(packageName, overlay);
+                if (!overlays.containsKey(packageName)) {
+                    OverlayView overlay = (OverlayView) LayoutInflater.from(context).inflate(R.layout.overlay_layout, null);
+                    overlay.init(windowManager, packageName);
+                    overlays.put(packageName, overlay);
+                }
                 break;
             case "com.example.sandboxtest.ACTION_HIDE_OVERLAY":
                 if (overlays.containsKey(packageName)) {
-                    overlays.get(packageName).setVisibility(View.GONE);
+                    overlays.get(packageName).stop();
                 }
                 break;
             case "com.example.sandboxtest.ACTION_SHOW_OVERLAY":
@@ -47,12 +49,15 @@ public class OverlayManager extends BroadcastReceiver {
                     overlayView.init(windowManager, packageName);
                     overlays.put(packageName, overlayView);
                 }
-                overlays.get(packageName).setVisibility(View.VISIBLE);
+                overlays.get(packageName).start();
                 break;
             case "com.example.sandboxtest.ACTION_DESTROY_OVERLAY":
                 if (overlays.containsKey(packageName)) {
-                    windowManager.removeView(overlays.get(packageName));
-                    overlays.remove(packageName);
+                    if (overlays.containsKey(packageName)) {
+                        overlays.get(packageName).destroy();
+                        windowManager.removeView(overlays.get(packageName));
+                        overlays.remove(packageName);
+                    }
                 }
                 break;
         }
