@@ -6,6 +6,8 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.InputDevice;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,21 +22,25 @@ import com.example.sandboxtest.MyApplication;
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.database.Association;
 import com.example.sandboxtest.database.AssociationDao;
-import com.example.sandboxtest.database.Event;
+import com.example.sandboxtest.database.CameraEvent;
 import com.example.sandboxtest.facedetector.CameraFaceDetector;
 import com.example.sandboxtest.facedetector.OnFaceRecognizedListener;
 import com.google.mlkit.vision.face.Face;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener, LifecycleOwner {
     private AssociationDao associationsDb;
-    private Map<Event, Association> map = new HashMap<>();
-    private Map<Event, ActionExecutor> executors = new HashMap<>();
+    private Map<String, Association> map = new HashMap<>();
+    private Map<String, ActionExecutor> executors = new HashMap<>();
     private boolean configurationOpened = false;
+    private ConfigurationView configurationView;
     private String applicationPackage;
     private LifecycleRegistry lifecycleRegistry;
+    private boolean controllerMode = false;
 
     public OverlayView(Context context) {
         super(context);
@@ -52,7 +58,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
                         WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
                         WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                 PixelFormat.TRANSLUCENT);
         params.gravity = Gravity.TOP | Gravity.START;
         params.x = 10;
@@ -61,7 +67,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         View collapsedView = this.findViewById(R.id.layoutCollapsed);
         View expandedView = this.findViewById(R.id.configurationView);
 
-        ConfigurationView configurationView = findViewById(R.id.configurationView);
+        configurationView = findViewById(R.id.configurationView);
 
         MyApplication application = (MyApplication) getContext().getApplicationContext();
         associationsDb = application.getDatabase().getDao();
@@ -82,7 +88,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             windowManager.updateViewLayout(this, params);
             map = configurationView.save();
             executors = new HashMap<>();
-            for (Event event : map.keySet())
+            for (String event : map.keySet())
                 executors.put(event, new ActionExecutor(getContext()));
             configurationOpened = false;
         });
@@ -130,6 +136,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         }).start();
 
         lifecycleRegistry = new LifecycleRegistry(this);
+        //new InputDeviceChecker(getContext(), this);
     }
 
     private boolean sliding = false;
@@ -140,9 +147,12 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             return;
         Log.d("Face", "injecting input for " + applicationPackage);
         for (Association association: map.values()) {
+            if (!CameraEvent.exists(association.event))
+                continue;
+            CameraEvent event = CameraEvent.valueOf(association.event);
             ActionExecutor executor = executors.get(association.event);
-            if (!association.event.isJoystickEvent()) {
-                switch(association.event) {
+            if (!event.isJoystickEvent()) {
+                switch(event) {
                     case SMILE:
                         if (face.getSmilingProbability() > 0.3)
                             executor.execute(association);
@@ -185,5 +195,46 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     @Override
     public Lifecycle getLifecycle() {
         return lifecycleRegistry;
+    }
+
+
+    private List<Integer> pressedKeys = new ArrayList<>();
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) {
+            if (!configurationOpened)
+                Log.d("OverlayView", "onKeyUp: " + KeyEvent.keyCodeToString(keyCode));
+            else
+                configurationView.onKeyUp(keyCode, event);
+
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) {
+            if (!configurationOpened)
+                Log.d("OverlayView", "onKeyDown: " + KeyEvent.keyCodeToString(keyCode));
+            else
+                configurationView.onKeyDown(keyCode, event);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        // Verifica se l'evento proviene da un joystick
+        if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK &&
+                event.getAction() == MotionEvent.ACTION_MOVE) {
+            if (!configurationOpened) {
+                float x = event.getAxisValue(MotionEvent.AXIS_X);
+                float y = event.getAxisValue(MotionEvent.AXIS_Y);
+                Log.d("OverlayView", "onGenericMotionEvent: " + x + " " + y);
+            } else {
+                configurationView.onGenericMotionEvent(event);
+            }
+        }
+        return true;
     }
 }

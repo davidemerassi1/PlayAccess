@@ -3,7 +3,9 @@ package com.example.sandboxtest.actionsConfigurator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -19,9 +21,9 @@ import com.example.sandboxtest.actionsConfigurator.utils.SwipeDirectionDialog;
 import com.example.sandboxtest.database.Action;
 import com.example.sandboxtest.database.Association;
 import com.example.sandboxtest.database.AssociationDao;
-import com.example.sandboxtest.database.Event;
 import com.example.sandboxtest.actionsConfigurator.utils.DraggableButton;
 import com.example.sandboxtest.actionsConfigurator.utils.ResizableDraggableButton;
+import com.example.sandboxtest.database.CameraEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,26 +40,34 @@ public class ConfigurationView extends RelativeLayout {
     private Context context;
     private String applicationPackage;
     private AssociationDao associationsDb;
+    private EventDialog eventDialog;
+    private EditEventDialog editEventDialog;
     private OnClickListener updateListener = v -> {
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        EditEventDialog dialogLayout = (EditEventDialog) inflater.inflate(R.layout.edit_dialog_layout, this, false);
+        editEventDialog = (EditEventDialog) inflater.inflate(R.layout.edit_dialog_layout, this, false);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         layoutParams.setMargins(50, 0, 50, 0);
         EventButton eventButton = (EventButton) v;
-        dialogLayout.init(
+        editEventDialog.init(
                 eventButton.getEvent(),
                 view -> {
-                    eventButton.setEvent(dialogLayout.getSelectedEvent());
-                    removeView(dialogLayout);
+                    eventButton.setEvent(editEventDialog.getSelectedEvent());
+                    removeView(editEventDialog);
+                    editEventDialog = null;
                 },
                 view -> {
                     actions.removeView(v);
-                    removeView(dialogLayout);
+                    removeView(editEventDialog);
+                    editEventDialog = null;
                 },
-                view -> removeView(dialogLayout),
+                view -> {
+                    removeView(editEventDialog);
+                    editEventDialog = null;
+                },
+                eventButton instanceof ResizableDraggableButton,
                 availableEvents());
-        addView(dialogLayout, layoutParams);
+        addView(editEventDialog, layoutParams);
     };
 
     public ConfigurationView(Context context) {
@@ -166,19 +176,20 @@ public class ConfigurationView extends RelativeLayout {
 
     private void showDialog(Action action, boolean joystick) {
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        EventDialog dialogLayout = (EventDialog) inflater.inflate(R.layout.dialog_layout, this, false);
+        eventDialog = (EventDialog) inflater.inflate(R.layout.dialog_layout, this, false);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         layoutParams.setMargins(50, 0, 50, 0);
-        addView(dialogLayout, layoutParams);
-        dialogLayout.init(joystick,
+        addView(eventDialog, layoutParams);
+        eventDialog.init(joystick,
                 view1 -> {
-                    Event selectedEvent = dialogLayout.getSelectedEvent();
+                    String selectedEvent = eventDialog.getSelectedEvent();
                     if (selectedEvent == null) {
-                        dialogLayout.showErrorMessage();
+                        eventDialog.showErrorMessage();
                         return;
                     }
-                    removeView(dialogLayout);
+                    removeView(eventDialog);
+                    eventDialog = null;
                     if (joystick) {
                         ResizableDraggableButton resizableDraggableButton = new ResizableDraggableButton(context, selectedEvent);
                         resizableDraggableButton.setOnClickListener(updateListener);
@@ -189,13 +200,16 @@ public class ConfigurationView extends RelativeLayout {
                         actions.addView(draggableButton);
                     }
                 },
-                view1 -> removeView(dialogLayout),
+                view1 -> {
+                    removeView(eventDialog);
+                    eventDialog = null;
+                },
                 availableEvents()
         );
     }
 
-    public Map<Event, Association> save() {
-        Map<Event, Association> map = new HashMap<>();
+    public Map<String, Association> save() {
+        Map<String, Association> map = new HashMap<>();
 
         for (int i = 0; i < actions.getChildCount(); i++) {
             View view = actions.getChildAt(i);
@@ -228,16 +242,41 @@ public class ConfigurationView extends RelativeLayout {
         return (float) (center - radius);
     }
 
-    private List<Event> availableEvents() {
-        ArrayList<Event> events = new ArrayList<>(Arrays.asList(Event.values()));
+    private List<CameraEvent> availableEvents() {
+        ArrayList<CameraEvent> events = new ArrayList<>(Arrays.asList(CameraEvent.values()));
         for (int i = 0; i < actions.getChildCount(); i++) {
             EventButton button = (EventButton) actions.getChildAt(i);
-            events.remove(button.getEvent());
+            String eventName = button.getEvent();
+            if (!CameraEvent.exists(eventName))
+                continue;
+            CameraEvent event = CameraEvent.valueOf(eventName);
+            events.remove(event);
         }
         return events;
     }
 
     private static int toPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (eventDialog != null)
+            eventDialog.onKeyUp(keyCode, event);
+        return true;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (eventDialog != null)
+            eventDialog.onKeyDown(keyCode, event);
+        return true;
+    }
+
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        if (eventDialog != null)
+            eventDialog.onGenericMotionEvent(event);
+        return true;
     }
 }

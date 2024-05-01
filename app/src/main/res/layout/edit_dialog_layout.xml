@@ -6,18 +6,77 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Opzione 1 -->
+        <TextView
+            android:id="@+id/option1TextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="FACE ACTIONS"
+            android:textColor="@color/primaryColor"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:textStyle="bold"
+            android:textSize="16dp"/>
+
+        <!-- Opzione 2 -->
+        <TextView
+            android:id="@+id/option2TextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="CONTROLLER ACTIONS"
+            android:textColor="@android:color/darker_gray"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:textSize="16dp"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/faceControlLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Modifica evento"
-        android:textSize="20sp"
-        android:layout_marginBottom="10dp"/>
+        android:visibility="visible">
+        <TextView
+            android:id="@+id/noEventsTextview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Nessun evento disponibile"
+            android:visibility="gone"/>
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        </RadioGroup>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/controllerLayout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </RadioGroup>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/controllerTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Premi il tasto che vuoi associare a questo evento"/>
+    </RelativeLayout>
 
     <!-- Pulsanti OK e Annulla -->
     <LinearLayout

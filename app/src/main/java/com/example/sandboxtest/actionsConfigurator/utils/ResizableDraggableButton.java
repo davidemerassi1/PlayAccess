@@ -13,7 +13,6 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.example.sandboxtest.R;
-import com.example.sandboxtest.database.Event;
 
 public class ResizableDraggableButton extends FrameLayout implements EventButton {
     private ImageButton fab;
@@ -23,7 +22,7 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
     private float lastTouchY;
     private float posX;
     private float posY;
-    private Event event;
+    private String event;
     private OnClickListener listener;
 
     public ResizableDraggableButton(Context context) {
@@ -44,7 +43,7 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
         init();
     }
 
-    public ResizableDraggableButton(Context context, Event event) {
+    public ResizableDraggableButton(Context context, String event) {
         super(context);
         this.context = context;
         this.event = event;
@@ -151,11 +150,11 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
         fab.requestLayout();
     }
 
-    public Event getEvent() {
+    public String getEvent() {
         return event;
     }
 
-    public void setEvent(Event event) {
+    public void setEvent(String event) {
         this.event = event;
     }
 

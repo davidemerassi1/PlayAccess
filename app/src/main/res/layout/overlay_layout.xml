@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:visibility="gone">
 
     <!-- this is the collapsed layout -->
@@ -27,6 +29,15 @@
         android:layout_height="match_parent"
         android:background="#80000000"
         android:visibility="gone">
+
+        <TextView
+            android:id="@+id/configurationMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="Controller mode"
+            android:textColor="@color/white" />
 
         <ImageButton
             android:id="@+id/closeConfigurationBtn"

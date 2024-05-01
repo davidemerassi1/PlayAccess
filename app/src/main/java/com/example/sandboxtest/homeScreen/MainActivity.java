@@ -2,9 +2,11 @@ package com.example.sandboxtest.homeScreen;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
+import android.hardware.input.InputManager;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -22,6 +24,9 @@ import android.provider.Settings;
 import android.text.Html;
 
 import android.util.Log;
+import android.view.InputDevice;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -36,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private BlackBoxCore core = BlackBoxCore.get();
     private static final int REQUEST_CODE_DRAW_OVERLAY_PERMISSION = 123;
     private OverlayManager overlayManager;
+    private InputListener inputListener = new InputListener();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +67,9 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(overlayManager, intentFilter);
 
         requestPermissions(new String[]{Manifest.permission.CAMERA}, 0);
+
+        InputManager inputManager = (InputManager) getSystemService(Context.INPUT_SERVICE);
+        inputManager.registerInputDeviceListener(inputListener, null);
     }
 
     private void checkOverlayPermission() {
