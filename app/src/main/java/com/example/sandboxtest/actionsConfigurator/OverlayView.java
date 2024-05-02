@@ -34,13 +34,13 @@ import java.util.Map;
 
 public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener, LifecycleOwner {
     private AssociationDao associationsDb;
-    private Map<String, Association> map = new HashMap<>();
+    private Map<String, Association> faceMap = new HashMap<>();
+    private Map<String, Association> controllerMap = new HashMap<>();
     private Map<String, ActionExecutor> executors = new HashMap<>();
     private boolean configurationOpened = false;
     private ConfigurationView configurationView;
     private String applicationPackage;
     private LifecycleRegistry lifecycleRegistry;
-    private boolean controllerMode = false;
 
     public OverlayView(Context context) {
         super(context);
@@ -74,7 +74,10 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
 
         new Thread(() -> {
             for (Association association : associationsDb.getAssociations(applicationPackage)) {
-                map.put(association.event, association);
+                if (CameraEvent.exists(association.event))
+                    faceMap.put(association.event, association);
+                else
+                    controllerMap.put(association.event, association);
                 executors.put(association.event, new ActionExecutor(getContext()));
             }
             configurationView.setup(applicationPackage, associationsDb);
@@ -86,10 +89,15 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             params.width = WindowManager.LayoutParams.WRAP_CONTENT;
             params.height = WindowManager.LayoutParams.WRAP_CONTENT;
             windowManager.updateViewLayout(this, params);
-            map = configurationView.save();
+            List<Association> associationList = configurationView.save();
             executors = new HashMap<>();
-            for (String event : map.keySet())
-                executors.put(event, new ActionExecutor(getContext()));
+            for (Association association : associationList) {
+                if (CameraEvent.exists(association.event))
+                    faceMap.put(association.event, association);
+                else
+                    controllerMap.put(association.event, association);
+                executors.put(association.event, new ActionExecutor(getContext()));
+            }
             configurationOpened = false;
         });
 
@@ -146,9 +154,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         if (getVisibility() == GONE || configurationOpened)
             return;
         Log.d("Face", "injecting input for " + applicationPackage);
-        for (Association association: map.values()) {
-            if (!CameraEvent.exists(association.event))
-                continue;
+        for (Association association: faceMap.values()) {
             CameraEvent event = CameraEvent.valueOf(association.event);
             ActionExecutor executor = executors.get(association.event);
             if (!event.isJoystickEvent()) {
@@ -198,15 +204,15 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     }
 
 
-    private List<Integer> pressedKeys = new ArrayList<>();
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) {
-            if (!configurationOpened)
-                Log.d("OverlayView", "onKeyUp: " + KeyEvent.keyCodeToString(keyCode));
+            if (!configurationOpened) {
+                if (controllerMap.containsKey(KeyEvent.keyCodeToString(keyCode)))
+                    executors.get(KeyEvent.keyCodeToString(keyCode)).execute(controllerMap.get(KeyEvent.keyCodeToString(keyCode)));
+            }
             else
                 configurationView.onKeyUp(keyCode, event);
-
         }
         return true;
     }
@@ -222,15 +228,34 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         return true;
     }
 
+
+    boolean controllersliding = false;
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         // Verifica se l'evento proviene da un joystick
         if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK &&
                 event.getAction() == MotionEvent.ACTION_MOVE) {
             if (!configurationOpened) {
-                float x = event.getAxisValue(MotionEvent.AXIS_X);
-                float y = event.getAxisValue(MotionEvent.AXIS_Y);
-                Log.d("OverlayView", "onGenericMotionEvent: " + x + " " + y);
+                if (controllerMap.containsKey("JOYSTICK")) {
+                    Association association = controllerMap.get("JOYSTICK");
+                    float x = event.getAxisValue(MotionEvent.AXIS_X);
+                    float y = event.getAxisValue(MotionEvent.AXIS_Y);
+                    Log.d("OverlayView", "onGenericMotionEvent: " + x + " " + y);
+                    if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1) {
+                        if (controllersliding)
+                            joystickExecutor.move(-(int)(x * association.radius) + association.x, -(int) (y * association.radius) + association.y);
+                        else {
+                            controllersliding = true;
+                            joystickExecutor.touch(association.x, association.y);
+                            joystickExecutor.move(-(int)(x * association.radius) + association.x, -(int) (y * association.radius) + association.y);
+                        }
+                    } else {
+                        if (controllersliding) {
+                            controllersliding = false;
+                            joystickExecutor.release(association.x, association.y);
+                        }
+                    }
+                }
             } else {
                 configurationView.onGenericMotionEvent(event);
             }

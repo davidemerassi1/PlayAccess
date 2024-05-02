@@ -3,6 +3,7 @@ package com.example.sandboxtest.actionsConfigurator.utils;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +23,7 @@ import java.util.List;
 public class EditEventDialog extends LinearLayout {
     private boolean isControllerSelected = false;
     private int pressedButton;
+    private RadioGroup radioGroup;
 
     public EditEventDialog(Context context) {
         super(context);
@@ -36,28 +38,14 @@ public class EditEventDialog extends LinearLayout {
     }
 
     public void init(String currentEvent, OnClickListener okListener, OnClickListener deleteListener, OnClickListener cancelListener, boolean joystick, List<CameraEvent> availableEvents) {
-        RadioGroup radioGroup = findViewById(R.id.radioGroup);
+        radioGroup = findViewById(R.id.radioGroup);
 
-        if (CameraEvent.exists(currentEvent)) {
-            RadioButton currentChoice = new RadioButton(getContext());
-            CameraEvent event = CameraEvent.valueOf(currentEvent);
-            currentChoice.setText(event.getName());
-            currentChoice.setTag(event);
-            radioGroup.addView(currentChoice);
-            radioGroup.check(currentChoice.getId());
-        }
-
-        for (CameraEvent option : availableEvents) {
-            if (joystick != option.isJoystickEvent())
-                continue;
-            RadioButton radioButton = new RadioButton(getContext());
-            radioButton.setTag(option);
-            radioButton.setText(option.getName());
-            radioGroup.addView(radioButton);
-        }
-
-        if (radioGroup.getChildCount() == 0)
-            findViewById(R.id.noEventsTextview).setVisibility(VISIBLE);
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId != -1) {
+                pressedButton = -1;
+                ((TextView) findViewById(R.id.controllerTextView)).setText("Premi il tasto che vuoi associare a questo evento");
+            }
+        });
 
         findViewById(R.id.cancelButton).setOnClickListener(cancelListener);
         findViewById(R.id.okButton).setOnClickListener(okListener);
@@ -69,37 +57,59 @@ public class EditEventDialog extends LinearLayout {
         faceOptionText.setOnClickListener(v -> {
             faceOptionText.setTextColor(ContextCompat.getColor(getContext(), R.color.primaryColor));
             faceOptionText.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-            controllerOptionText.setTextColor(ContextCompat.getColor(getContext(),android.R.color.darker_gray));
+            controllerOptionText.setTextColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
             controllerOptionText.setTypeface(Typeface.DEFAULT);
             findViewById(R.id.faceControlLayout).setVisibility(View.VISIBLE);
             findViewById(R.id.controllerLayout).setVisibility(View.GONE);
             isControllerSelected = false;
-            ((TextView) findViewById(R.id.controllerTextView)).setText("Premi il tasto che vuoi associare a questo evento");
         });
 
         controllerOptionText.setOnClickListener(v -> {
             controllerOptionText.setTextColor(ContextCompat.getColor(getContext(), R.color.primaryColor));
             controllerOptionText.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-            faceOptionText.setTextColor(ContextCompat.getColor(getContext(),android.R.color.darker_gray));
+            faceOptionText.setTextColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
             faceOptionText.setTypeface(Typeface.DEFAULT);
             findViewById(R.id.controllerLayout).setVisibility(View.VISIBLE);
             findViewById(R.id.faceControlLayout).setVisibility(View.GONE);
             isControllerSelected = true;
-            ((RadioGroup) findViewById(R.id.radioGroup)).clearCheck();
         });
+
+        if (CameraEvent.exists(currentEvent)) {
+            RadioButton currentChoice = new RadioButton(getContext());
+            CameraEvent event = CameraEvent.valueOf(currentEvent);
+            currentChoice.setText(event.getName());
+            currentChoice.setTag(event);
+            radioGroup.addView(currentChoice);
+            radioGroup.check(currentChoice.getId());
+            pressedButton = -1;
+        } else {
+            ((TextView) findViewById(R.id.controllerTextView)).setText(currentEvent);
+            pressedButton = currentEvent.equals("JOYSTICK") ? 0 : KeyEvent.keyCodeFromString(currentEvent);
+            controllerOptionText.performClick();
+        }
+
+        for (CameraEvent option : availableEvents) {
+            if (joystick != option.isJoystickEvent())
+                continue;
+            RadioButton radioButton = new RadioButton(getContext());
+            radioButton.setTag(option);
+            radioButton.setText(option.getName());
+            radioGroup.addView(radioButton);
+        }
     }
 
     public String getSelectedEvent() {
-        if (isControllerSelected)
-            return KeyEvent.keyCodeToString(pressedButton);
-        else {
+        if (pressedButton == -1) {
             RadioGroup radioGroup = findViewById(R.id.radioGroup);
             int selectedId = radioGroup.getCheckedRadioButtonId();
             if (selectedId == -1)
                 return null;
             RadioButton radioButton = findViewById(selectedId);
             return radioButton.getTag().toString();
-        }
+        } else if (pressedButton == 0)
+            return "JOYSTICK";
+        else
+            return KeyEvent.keyCodeToString(pressedButton);
     }
 
     public void showErrorMessage() {
@@ -109,6 +119,7 @@ public class EditEventDialog extends LinearLayout {
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (isControllerSelected) {
+            radioGroup.clearCheck();
             pressedButton = keyCode;
             ((TextView) findViewById(R.id.controllerTextView)).setText(KeyEvent.keyCodeToString(keyCode));
         }
@@ -117,10 +128,10 @@ public class EditEventDialog extends LinearLayout {
 
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
-        // Verifica se l'evento proviene da un joystick
         if (isControllerSelected) {
+            radioGroup.clearCheck();
+            pressedButton = 0;
             ((TextView) findViewById(R.id.controllerTextView)).setText("JOYSTICK");
-            pressedButton = -1;
         }
         return false;
     }

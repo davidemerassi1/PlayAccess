@@ -21,6 +21,7 @@ import java.util.List;
 public class EventDialog extends LinearLayout {
     private boolean isControllerSelected = false;
     private int pressedButton;
+    private RadioGroup radioGroup;
 
     public EventDialog(Context context) {
         super(context);
@@ -35,7 +36,15 @@ public class EventDialog extends LinearLayout {
     }
 
     public void init(boolean joystick, OnClickListener okListener, OnClickListener cancelListener, List<CameraEvent> availableEvents) {
-        RadioGroup radioGroup = findViewById(R.id.radioGroup);
+        radioGroup = findViewById(R.id.radioGroup);
+
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId != -1) {
+                pressedButton = -1;
+                ((TextView) findViewById(R.id.controllerTextView)).setText("Premi il tasto che vuoi associare a questo evento");
+            }
+        });
+
         for (CameraEvent option : availableEvents) {
             if (joystick != option.isJoystickEvent())
                 continue;
@@ -61,7 +70,6 @@ public class EventDialog extends LinearLayout {
             findViewById(R.id.faceControlLayout).setVisibility(View.VISIBLE);
             findViewById(R.id.controllerLayout).setVisibility(View.GONE);
             isControllerSelected = false;
-            ((TextView) findViewById(R.id.controllerTextView)).setText("Premi il tasto che vuoi associare a questo evento");
         });
 
         controllerOptionText.setOnClickListener(v -> {
@@ -72,21 +80,21 @@ public class EventDialog extends LinearLayout {
             findViewById(R.id.controllerLayout).setVisibility(View.VISIBLE);
             findViewById(R.id.faceControlLayout).setVisibility(View.GONE);
             isControllerSelected = true;
-            ((RadioGroup) findViewById(R.id.radioGroup)).clearCheck();
         });
     }
 
     public String getSelectedEvent() {
-        if (isControllerSelected)
-            return KeyEvent.keyCodeToString(pressedButton);
-        else {
+        if (pressedButton == -1) {
             RadioGroup radioGroup = findViewById(R.id.radioGroup);
             int selectedId = radioGroup.getCheckedRadioButtonId();
             if (selectedId == -1)
                 return null;
             RadioButton radioButton = findViewById(selectedId);
             return radioButton.getTag().toString();
-        }
+        } else if (pressedButton == 0)
+            return "JOYSTICK";
+        else
+            return KeyEvent.keyCodeToString(pressedButton);
     }
 
     public void showErrorMessage() {
@@ -96,6 +104,7 @@ public class EventDialog extends LinearLayout {
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (isControllerSelected) {
+            radioGroup.clearCheck();
             pressedButton = keyCode;
             ((TextView) findViewById(R.id.controllerTextView)).setText(KeyEvent.keyCodeToString(keyCode));
         }
@@ -104,10 +113,10 @@ public class EventDialog extends LinearLayout {
 
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
-        // Verifica se l'evento proviene da un joystick
         if (isControllerSelected) {
+            radioGroup.clearCheck();
+            pressedButton = 0;
             ((TextView) findViewById(R.id.controllerTextView)).setText("JOYSTICK");
-            pressedButton = -1;
         }
         return false;
     }

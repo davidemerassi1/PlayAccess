@@ -28,6 +28,7 @@ import com.example.sandboxtest.database.CameraEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +53,12 @@ public class ConfigurationView extends RelativeLayout {
         editEventDialog.init(
                 eventButton.getEvent(),
                 view -> {
-                    eventButton.setEvent(editEventDialog.getSelectedEvent());
+                    String selectedEvent = editEventDialog.getSelectedEvent();
+                    if (selectedEvent == null) {
+                        editEventDialog.showErrorMessage();
+                        return;
+                    }
+                    eventButton.setEvent(selectedEvent);
                     removeView(editEventDialog);
                     editEventDialog = null;
                 },
@@ -208,8 +214,8 @@ public class ConfigurationView extends RelativeLayout {
         );
     }
 
-    public Map<String, Association> save() {
-        Map<String, Association> map = new HashMap<>();
+    public List<Association> save() {
+        List<Association> list = new LinkedList<>();
 
         for (int i = 0; i < actions.getChildCount(); i++) {
             View view = actions.getChildAt(i);
@@ -217,21 +223,21 @@ public class ConfigurationView extends RelativeLayout {
                 DraggableButton button = (DraggableButton) view;
                 int xCenter = center(button.getX(), button.getWidth());
                 int yCenter = center(button.getY(), button.getHeight());
-                map.put(button.getEvent(), new Association(applicationPackage, button.getEvent(), button.getAction(), xCenter, yCenter, null));
+                list.add(new Association(applicationPackage, button.getEvent(), button.getAction(), xCenter, yCenter, null));
             } else if (view instanceof ResizableDraggableButton) {
                 ResizableDraggableButton button = (ResizableDraggableButton) view;
                 int xCenter = center(button.getX(), button.getWidth());
                 int yCenter = center(button.getY(), button.getHeight());
-                map.put(button.getEvent(), new Association(applicationPackage, button.getEvent(), Action.JOYSTICK, xCenter, yCenter, button.getWidth() / 2));
+                list.add(new Association(applicationPackage, button.getEvent(), Action.JOYSTICK, xCenter, yCenter, button.getWidth() / 2));
             }
         }
 
         new Thread(() -> {
             associationsDb.deleteAssociations(applicationPackage);
-            associationsDb.insert(map.values().toArray(new Association[0]));
+            associationsDb.insert(list.toArray(new Association[0]));
         }).start();
 
-        return map;
+        return list;
     }
 
     private int center(float value, int size) {
@@ -263,6 +269,8 @@ public class ConfigurationView extends RelativeLayout {
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (eventDialog != null)
             eventDialog.onKeyUp(keyCode, event);
+        else if (editEventDialog != null)
+            editEventDialog.onKeyUp(keyCode, event);
         return true;
     }
 
@@ -270,6 +278,8 @@ public class ConfigurationView extends RelativeLayout {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (eventDialog != null)
             eventDialog.onKeyDown(keyCode, event);
+        else if (editEventDialog != null)
+            editEventDialog.onKeyDown(keyCode, event);
         return true;
     }
 
@@ -277,6 +287,8 @@ public class ConfigurationView extends RelativeLayout {
     public boolean onGenericMotionEvent(MotionEvent event) {
         if (eventDialog != null)
             eventDialog.onGenericMotionEvent(event);
+        else if (editEventDialog != null)
+            editEventDialog.onGenericMotionEvent(event);
         return true;
     }
 }
