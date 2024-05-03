@@ -34,9 +34,8 @@ import java.util.Map;
 
 public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener, LifecycleOwner {
     private AssociationDao associationsDb;
-    private Map<String, Association> faceMap = new HashMap<>();
-    private Map<String, Association> controllerMap = new HashMap<>();
-    private Map<String, ActionExecutor> executors = new HashMap<>();
+    private Map<CameraEvent, Association> faceMap = new HashMap<>();
+    private Map<Integer, Association> controllerMap = new HashMap<>();
     private boolean configurationOpened = false;
     private ConfigurationView configurationView;
     private String applicationPackage;
@@ -75,10 +74,9 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         new Thread(() -> {
             for (Association association : associationsDb.getAssociations(applicationPackage)) {
                 if (CameraEvent.exists(association.event))
-                    faceMap.put(association.event, association);
+                    faceMap.put(CameraEvent.valueOf(association.event), association);
                 else
-                    controllerMap.put(association.event, association);
-                executors.put(association.event, new ActionExecutor(getContext()));
+                    controllerMap.put(KeyEvent.keyCodeFromString(association.event), association);
             }
             configurationView.setup(applicationPackage, associationsDb);
         }).start();
@@ -90,13 +88,11 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             params.height = WindowManager.LayoutParams.WRAP_CONTENT;
             windowManager.updateViewLayout(this, params);
             List<Association> associationList = configurationView.save();
-            executors = new HashMap<>();
             for (Association association : associationList) {
                 if (CameraEvent.exists(association.event))
-                    faceMap.put(association.event, association);
+                    faceMap.put(CameraEvent.valueOf(association.event), association);
                 else
-                    controllerMap.put(association.event, association);
-                executors.put(association.event, new ActionExecutor(getContext()));
+                    controllerMap.put(KeyEvent.keyCodeFromString(association.event), association);
             }
             configurationOpened = false;
         });
@@ -148,37 +144,40 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     }
 
     private boolean sliding = false;
-    private ActionExecutor joystickExecutor = new ActionExecutor(getContext());
+    private ActionExecutor executor = new ActionExecutor(getContext());
+
     @Override
     public void onFaceRecognized(Face face) {
         if (getVisibility() == GONE || configurationOpened)
             return;
         Log.d("Face", "injecting input for " + applicationPackage);
-        for (Association association: faceMap.values()) {
+        for (Association association : faceMap.values()) {
             CameraEvent event = CameraEvent.valueOf(association.event);
-            ActionExecutor executor = executors.get(association.event);
             if (!event.isJoystickEvent()) {
-                switch(event) {
+                switch (event) {
                     case SMILE:
                         if (face.getSmilingProbability() > 0.3)
                             executor.execute(association);
                         break;
                 }
             } else {
-                if (Math.abs(face.getHeadEulerAngleX() -10) > 10 || Math.abs(face.getHeadEulerAngleY()) > 20) {
-                    if (sliding)
-                        joystickExecutor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) (face.getHeadEulerAngleX()-10) * association.radius / 30) + association.y);
-                    else {
-                        sliding = true;
-                        joystickExecutor.touch(association.x, association.y);
-                        joystickExecutor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) (face.getHeadEulerAngleX()-10) * association.radius / 30) + association.y);
+                new Thread(() -> {
+                    if (Math.abs(face.getHeadEulerAngleX() - 10) > 10 || Math.abs(face.getHeadEulerAngleY()) > 20) {
+                        if (sliding) {
+                            ActionExecutor.sleep(10);
+                            executor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) (face.getHeadEulerAngleX() - 10) * association.radius / 30) + association.y, association.event);
+                        } else {
+                            sliding = true;
+                            executor.touch(association.x, association.y, association.event);
+                            executor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) (face.getHeadEulerAngleX() - 10) * association.radius / 30) + association.y, association.event);
+                        }
+                    } else {
+                        if (sliding) {
+                            sliding = false;
+                            executor.release(association.x, association.y, association.event);
+                        }
                     }
-                } else {
-                    if (sliding) {
-                        sliding = false;
-                        joystickExecutor.release(association.x, association.y);
-                    }
-                }
+                }).start();
             }
         }
     }
@@ -208,10 +207,9 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) {
             if (!configurationOpened) {
-                if (controllerMap.containsKey(KeyEvent.keyCodeToString(keyCode)))
-                    executors.get(KeyEvent.keyCodeToString(keyCode)).execute(controllerMap.get(KeyEvent.keyCodeToString(keyCode)));
-            }
-            else
+                if (controllerMap.containsKey(keyCode))
+                    executor.execute(controllerMap.get(keyCode));
+            } else
                 configurationView.onKeyUp(keyCode, event);
         }
         return true;
@@ -230,31 +228,34 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
 
 
     boolean controllersliding = false;
+
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         // Verifica se l'evento proviene da un joystick
         if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK &&
                 event.getAction() == MotionEvent.ACTION_MOVE) {
             if (!configurationOpened) {
-                if (controllerMap.containsKey("JOYSTICK")) {
-                    Association association = controllerMap.get("JOYSTICK");
-                    float x = event.getAxisValue(MotionEvent.AXIS_X);
-                    float y = event.getAxisValue(MotionEvent.AXIS_Y);
-                    Log.d("OverlayView", "onGenericMotionEvent: " + x + " " + y);
-                    if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1) {
-                        if (controllersliding)
-                            joystickExecutor.move(-(int)(x * association.radius) + association.x, -(int) (y * association.radius) + association.y);
-                        else {
-                            controllersliding = true;
-                            joystickExecutor.touch(association.x, association.y);
-                            joystickExecutor.move(-(int)(x * association.radius) + association.x, -(int) (y * association.radius) + association.y);
+                if (controllerMap.containsKey(0)) {
+                    new Thread(() -> {
+                        Association association = controllerMap.get(0);
+                        float x = event.getAxisValue(MotionEvent.AXIS_X);
+                        float y = event.getAxisValue(MotionEvent.AXIS_Y);
+                        Log.d("OverlayView", "onGenericMotionEvent: " + x + " " + y);
+                        if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1) {
+                            if (controllersliding)
+                                executor.move(-(int) (x * association.radius) + association.x, -(int) (y * association.radius) + association.y, association.event);
+                            else {
+                                controllersliding = true;
+                                executor.touch(association.x, association.y, association.event);
+                                executor.move(-(int) (x * association.radius) + association.x, -(int) (y * association.radius) + association.y, association.event);
+                            }
+                        } else {
+                            if (controllersliding) {
+                                controllersliding = false;
+                                executor.release(association.x, association.y, association.event);
+                            }
                         }
-                    } else {
-                        if (controllersliding) {
-                            controllersliding = false;
-                            joystickExecutor.release(association.x, association.y);
-                        }
-                    }
+                    }).start();
                 }
             } else {
                 configurationView.onGenericMotionEvent(event);
