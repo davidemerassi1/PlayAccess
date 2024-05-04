@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -20,7 +21,7 @@ import com.example.sandboxtest.database.CameraEvent;
 
 import java.util.List;
 
-public class EditEventDialog extends LinearLayout {
+public class EditEventDialog extends FrameLayout {
     private boolean isControllerSelected = false;
     private int pressedButton;
     private RadioGroup radioGroup;
@@ -38,11 +39,13 @@ public class EditEventDialog extends LinearLayout {
     }
 
     public void init(String currentEvent, OnClickListener okListener, OnClickListener deleteListener, OnClickListener cancelListener, boolean joystick, List<CameraEvent> availableEvents) {
+        setElevation(30);
         radioGroup = findViewById(R.id.radioGroup);
 
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId != -1) {
                 pressedButton = -1;
+                hideSameKeyErrorMessage();
                 ((TextView) findViewById(R.id.controllerTextView)).setText("Premi il tasto che vuoi associare a questo evento");
             }
         });
@@ -112,8 +115,12 @@ public class EditEventDialog extends LinearLayout {
             return KeyEvent.keyCodeToString(pressedButton);
     }
 
-    public void showErrorMessage() {
+    public void showSameKeyErrorMessage() {
         findViewById(R.id.errorMessage).setVisibility(VISIBLE);
+    }
+
+    private void hideSameKeyErrorMessage() {
+        findViewById(R.id.errorMessage).setVisibility(GONE);
     }
 
     @Override
@@ -122,6 +129,7 @@ public class EditEventDialog extends LinearLayout {
             radioGroup.clearCheck();
             pressedButton = keyCode;
             ((TextView) findViewById(R.id.controllerTextView)).setText(KeyEvent.keyCodeToString(keyCode));
+            hideSameKeyErrorMessage();
         }
         return false;
     }
@@ -132,6 +140,7 @@ public class EditEventDialog extends LinearLayout {
             radioGroup.clearCheck();
             pressedButton = 0;
             ((TextView) findViewById(R.id.controllerTextView)).setText("JOYSTICK");
+            hideSameKeyErrorMessage();
         }
         return false;
     }

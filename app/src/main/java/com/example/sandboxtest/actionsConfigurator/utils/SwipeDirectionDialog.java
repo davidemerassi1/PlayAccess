@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -12,7 +13,7 @@ import androidx.annotation.Nullable;
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.database.Action;
 
-public class SwipeDirectionDialog extends LinearLayout {
+public class SwipeDirectionDialog extends FrameLayout {
     private ListView listView;
     private AdapterView.OnItemClickListener listener;
 

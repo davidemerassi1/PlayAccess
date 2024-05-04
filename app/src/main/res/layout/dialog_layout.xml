@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.example.sandboxtest.actionsConfigurator.utils.EventDialog xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:background="@android:color/transparent"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:layout_margin="20dp"
+        android:padding="16dp">
 
     <LinearLayout
         android:id="@+id/appBarLayout"
@@ -105,5 +114,15 @@
         android:text="Select an event to continue"
         android:textColor="#FF0000"
         android:visibility="gone" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sameEventErrorMessage"
+        android:textColor="#FF0000"
+        android:text="Questo evento è già associato a un'altra azione"
+        android:visibility="gone" />
+
+    </LinearLayout>
 
 </com.example.sandboxtest.actionsConfigurator.utils.EventDialog>

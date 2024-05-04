@@ -46,17 +46,19 @@ public class ConfigurationView extends RelativeLayout {
     private OnClickListener updateListener = v -> {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         editEventDialog = (EditEventDialog) inflater.inflate(R.layout.edit_dialog_layout, this, false);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-        layoutParams.setMargins(50, 0, 50, 0);
         EventButton eventButton = (EventButton) v;
         editEventDialog.init(
                 eventButton.getEvent(),
                 view -> {
                     String selectedEvent = editEventDialog.getSelectedEvent();
-                    if (selectedEvent == null) {
-                        editEventDialog.showErrorMessage();
-                        return;
+                    for (int i = 0; i < actions.getChildCount(); i++) {
+                        EventButton button = (EventButton) actions.getChildAt(i);
+                        if (button != eventButton && button.getEvent().equals(selectedEvent)) {
+                            editEventDialog.showSameKeyErrorMessage();
+                            return;
+                        }
                     }
                     eventButton.setEvent(selectedEvent);
                     removeView(editEventDialog);
@@ -169,9 +171,8 @@ public class ConfigurationView extends RelativeLayout {
     private void showDirectionDialog() {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         SwipeDirectionDialog dialogLayout = (SwipeDirectionDialog) inflater.inflate(R.layout.dialog_swipe_direction_layout, this, false);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-        layoutParams.setMargins(50, 0, 50, 0);
         addView(dialogLayout, layoutParams);
         dialogLayout.init((adapterView, view, i, l) -> {
             Action selectedAction = (Action) adapterView.getItemAtPosition(i);
@@ -183,9 +184,8 @@ public class ConfigurationView extends RelativeLayout {
     private void showDialog(Action action, boolean joystick) {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         eventDialog = (EventDialog) inflater.inflate(R.layout.dialog_layout, this, false);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-        layoutParams.setMargins(50, 0, 50, 0);
         addView(eventDialog, layoutParams);
         eventDialog.init(joystick,
                 view1 -> {
@@ -193,6 +193,13 @@ public class ConfigurationView extends RelativeLayout {
                     if (selectedEvent == null) {
                         eventDialog.showErrorMessage();
                         return;
+                    }
+                    for (int i = 0; i < actions.getChildCount(); i++) {
+                        EventButton button = (EventButton) actions.getChildAt(i);
+                        if (button.getEvent().equals(selectedEvent)) {
+                            eventDialog.showSameKeyErrorMessage();
+                            return;
+                        }
                     }
                     removeView(eventDialog);
                     eventDialog = null;
