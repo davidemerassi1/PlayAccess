@@ -1,20 +1,20 @@
 package com.example.sandboxtest.database;
 
-public enum CameraEvent {
+public enum CameraAction {
     SMILE("Smile", false),
     OTHER("Other", false),
     FACE_MOVEMENT("Face movement", true);
 
-    private boolean joystickEvent;
+    private boolean joystickAction;
     private String name;
 
-    CameraEvent(String name, boolean joystickEvent) {
-        this.joystickEvent = joystickEvent;
+    CameraAction(String name, boolean joystickAction) {
+        this.joystickAction = joystickAction;
         this.name = name;
     }
 
-    public boolean isJoystickEvent() {
-        return joystickEvent;
+    public boolean isJoystickAction() {
+        return joystickAction;
     }
 
     public String getName() {
@@ -22,7 +22,7 @@ public enum CameraEvent {
     }
 
     public static boolean exists(String name) {
-        for (CameraEvent event : CameraEvent.values()) {
+        for (CameraAction event : CameraAction.values()) {
             if (event.toString().equals(name)) {
                 return true;
             }

@@ -10,27 +10,24 @@ import android.view.MotionEvent;
 import com.example.sandboxtest.database.Association;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-public class ActionExecutor {
+public class EventExecutor {
     private int statusBarHeight;
     private Instrumentation instrumentation;
     private ArrayList<MotionEvent.PointerProperties> pointerProperties;
     private ArrayList<MotionEvent.PointerCoords> pointerCoords;
-    private ArrayList<String> events;
+    private ArrayList<String> actions;
     int currentId = 0;
 
-    public ActionExecutor(Context context) {
+    public EventExecutor(Context context) {
         statusBarHeight = getStatusBarHeight(context);
         instrumentation = new Instrumentation();
         pointerProperties = new ArrayList<>();
         pointerCoords = new ArrayList<>();
-        events = new ArrayList<>();
+        actions = new ArrayList<>();
     }
 
-    public void touch(int targetX, int targetY, String event) {
+    public void touch(int targetX, int targetY, String action) {
         MotionEvent.PointerProperties properties = new MotionEvent.PointerProperties();
         properties.id = currentId;
         currentId++;
@@ -38,8 +35,8 @@ public class ActionExecutor {
         pointerProperties.add(properties);
         MotionEvent.PointerCoords coords = createCoords(targetX, targetY + statusBarHeight);
         pointerCoords.add(coords);
-        events.add(event);
-        Log.d("ActionExecutor", "properties size: " + pointerProperties.size() + "coords size: " + pointerCoords.size() + "events size: " + events.size());
+        actions.add(action);
+        Log.d("ActionExecutor", "properties size: " + pointerProperties.size() + "coords size: " + pointerCoords.size() + "events size: " + actions.size());
         MotionEvent.PointerProperties[] propertiesArray = pointerProperties.toArray(new MotionEvent.PointerProperties[0]);
         MotionEvent.PointerCoords[] coordsArray = pointerCoords.toArray(new MotionEvent.PointerCoords[0]);
         long now = SystemClock.uptimeMillis();
@@ -58,7 +55,7 @@ public class ActionExecutor {
         }
     }
 
-    public void release(int targetX, int targetY, String event) {
+    public void release(int targetX, int targetY, String action) {
         long now = SystemClock.uptimeMillis();
         switch (pointerProperties.size()) {
             case 1:
@@ -68,17 +65,17 @@ public class ActionExecutor {
                 instrumentation.sendPointerSync(touchEvent);
                 pointerProperties.remove(0);
                 pointerCoords.remove(0);
-                events.remove(0);
+                actions.remove(0);
                 break;
             case 2:
-                if (events.get(0).equals(event)) {
+                if (actions.get(0).equals(action)) {
                     propertiesArray = pointerProperties.toArray(new MotionEvent.PointerProperties[0]);
                     coordsArray = pointerCoords.toArray(new MotionEvent.PointerCoords[0]);
                     touchEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_UP, 2, propertiesArray, coordsArray, 0, 0, 1, 1, 0, 0, 0, 0);
                     instrumentation.sendPointerSync(touchEvent);
                     pointerProperties.remove(0);
                     pointerCoords.remove(0);
-                    events.remove(0);
+                    actions.remove(0);
                     propertiesArray = pointerProperties.toArray(new MotionEvent.PointerProperties[0]);
                     coordsArray = pointerCoords.toArray(new MotionEvent.PointerCoords[0]);
                     touchEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, 1, propertiesArray, coordsArray, 0, 0, 1, 1, 0, 0, 0, 0);
@@ -90,17 +87,17 @@ public class ActionExecutor {
                     instrumentation.sendPointerSync(touchEvent);
                     pointerProperties.remove(1);
                     pointerCoords.remove(1);
-                    events.remove(1);
+                    actions.remove(1);
                 }
                 break;
         }
     }
 
-    public void move(int toX, int toY, String event) {
+    public void move(int toX, int toY, String action) {
         long now = SystemClock.uptimeMillis();
-        if (events.size() > 0 && events.get(0).equals(event))
+        if (actions.size() > 0 && actions.get(0).equals(action))
             pointerCoords.set(0, createCoords(toX, toY + statusBarHeight));
-        else if (events.size() > 1 && events.get(1).equals(event))
+        else if (actions.size() > 1 && actions.get(1).equals(action))
             pointerCoords.set(1, createCoords(toX, toY + statusBarHeight));
         else return;
         MotionEvent.PointerProperties[] propertiesArray = pointerProperties.toArray(new MotionEvent.PointerProperties[0]);
@@ -121,49 +118,49 @@ public class ActionExecutor {
     }
 
     public void execute(Association association) {
-        if (events.contains(association.event)) {
+        if (actions.contains(association.action)) {
             Log.d("ActionExecutor", "Event already in progress");
             return;
         }
         new Thread(() -> {
-            switch (association.action) {
+            switch (association.event) {
                 case TAP:
-                    touch(association.x, association.y, association.event);
+                    touch(association.x, association.y, association.action);
                     sleep(10);
-                    release(association.x, association.y, association.event);
+                    release(association.x, association.y, association.action);
                     break;
                 case SWIPE_UP:
-                    touch(association.x, association.y, association.event);
+                    touch(association.x, association.y, association.action);
                     sleep(10);
-                    move(association.x, association.y - 100, association.event);
+                    move(association.x, association.y - 100, association.action);
                     sleep(10);
-                    release(association.x, association.y - 100, association.event);
+                    release(association.x, association.y - 100, association.action);
                     break;
                 case SWIPE_DOWN:
-                    touch(association.x, association.y, association.event);
+                    touch(association.x, association.y, association.action);
                     sleep(10);
-                    move(association.x, association.y + 100, association.event);
+                    move(association.x, association.y + 100, association.action);
                     sleep(10);
-                    release(association.x, association.y + 100, association.event);
+                    release(association.x, association.y + 100, association.action);
                     break;
                 case SWIPE_LEFT:
-                    touch(association.x, association.y, association.event);
+                    touch(association.x, association.y, association.action);
                     sleep(10);
-                    move(association.x - 100, association.y, association.event);
+                    move(association.x - 100, association.y, association.action);
                     sleep(10);
-                    release(association.x - 100, association.y, association.event);
+                    release(association.x - 100, association.y, association.action);
                     break;
                 case SWIPE_RIGHT:
-                    touch(association.x, association.y, association.event);
+                    touch(association.x, association.y, association.action);
                     sleep(10);
-                    move(association.x + 100, association.y, association.event);
+                    move(association.x + 100, association.y, association.action);
                     sleep(10);
-                    release(association.x + 100, association.y, association.event);
+                    release(association.x + 100, association.y, association.action);
                     break;
                 case LONG_TAP:
-                    touch(association.x, association.y, association.event);
+                    touch(association.x, association.y, association.action);
                     sleep(2000);
-                    release(association.x, association.y, association.event);
+                    release(association.x, association.y, association.action);
                     break;
             }
         }).start();

@@ -7,7 +7,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -15,7 +14,7 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
 import com.example.sandboxtest.R;
-import com.example.sandboxtest.database.CameraEvent;
+import com.example.sandboxtest.database.CameraAction;
 
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class EventDialog extends FrameLayout {
         super(context, attrs, defStyleAttr);
     }
 
-    public void init(boolean joystick, OnClickListener okListener, OnClickListener cancelListener, List<CameraEvent> availableEvents) {
+    public void init(boolean joystick, OnClickListener okListener, OnClickListener cancelListener, List<CameraAction> availableActions) {
         setElevation(30);
         radioGroup = findViewById(R.id.radioGroup);
 
@@ -48,8 +47,8 @@ public class EventDialog extends FrameLayout {
             }
         });
 
-        for (CameraEvent option : availableEvents) {
-            if (joystick != option.isJoystickEvent())
+        for (CameraAction option : availableActions) {
+            if (joystick != option.isJoystickAction())
                 continue;
             RadioButton radioButton = new RadioButton(getContext());
             radioButton.setTag(option);
@@ -86,7 +85,7 @@ public class EventDialog extends FrameLayout {
         });
     }
 
-    public String getSelectedEvent() {
+    public String getSelectedAction() {
         if (pressedButton == -1) {
             RadioGroup radioGroup = findViewById(R.id.radioGroup);
             int selectedId = radioGroup.getCheckedRadioButtonId();

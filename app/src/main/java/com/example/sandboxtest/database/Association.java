@@ -8,16 +8,18 @@ public class Association {
     @NonNull
     public String applicationPackage;
     @NonNull
-    public String event;
+    public String action;
     @NonNull
-    public Action action;
+    public Event event;
     @NonNull
     public int x;
     @NonNull
     public int y;
     public Integer radius;
+    public String additionalAction1;
+    public String additionalAction2;
 
-    public Association(String applicationPackage, String event, Action action, int x, int y, Integer radius) {
+    public Association(String applicationPackage, String action, Event event, int x, int y, Integer radius) {
         this.applicationPackage = applicationPackage;
         this.event = event;
         this.action = action;

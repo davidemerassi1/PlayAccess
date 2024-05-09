@@ -5,13 +5,12 @@ import android.util.AttributeSet;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import androidx.annotation.Nullable;
 
 import com.example.sandboxtest.R;
-import com.example.sandboxtest.database.Action;
+import com.example.sandboxtest.database.Event;
 
 public class SwipeDirectionDialog extends FrameLayout {
     private ListView listView;
@@ -30,9 +29,9 @@ public class SwipeDirectionDialog extends FrameLayout {
     }
 
     public void init(AdapterView.OnItemClickListener listener) {
-        Action[] directions = {Action.SWIPE_UP, Action.SWIPE_DOWN, Action.SWIPE_LEFT, Action.SWIPE_RIGHT};
+        Event[] directions = {Event.SWIPE_UP, Event.SWIPE_DOWN, Event.SWIPE_LEFT, Event.SWIPE_RIGHT};
         listView = findViewById(R.id.swipeDirectionListView);
-        ArrayAdapter<Action> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, directions);
+        ArrayAdapter<Event> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, directions);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(listener);
     }

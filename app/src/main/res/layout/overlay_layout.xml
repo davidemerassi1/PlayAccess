@@ -157,6 +157,31 @@
                     app:srcCompat="@drawable/long_tap_icon"
                     app:tint="@color/white" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center_vertical"
+                    android:text="Monodimensional sliding"
+                    android:textColor="@color/white"
+                    android:visibility="gone" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:backgroundTint="@color/primaryColor"
+                    app:borderWidth="0dp"
+                    app:elevation="10dp"
+                    app:fabCustomSize="45dp"
+                    app:srcCompat="@drawable/monodimensional_sliding_icon"
+                    app:tint="@color/white" />
+            </LinearLayout>
         </RelativeLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -175,7 +200,7 @@
             app:tint="@color/white" />
 
         <RelativeLayout
-            android:id="@+id/actions"
+            android:id="@+id/events"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

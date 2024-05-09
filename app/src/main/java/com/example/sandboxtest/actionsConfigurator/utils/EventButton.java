@@ -1,6 +1,6 @@
 package com.example.sandboxtest.actionsConfigurator.utils;
 
 public interface EventButton {
-    public String getEvent();
-    public void setEvent(String event);
+    public String getAction();
+    public void setAction(String action);
 }

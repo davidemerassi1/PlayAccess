@@ -3,12 +3,10 @@ package com.example.sandboxtest.actionsConfigurator.utils;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -17,7 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.example.sandboxtest.R;
-import com.example.sandboxtest.database.CameraEvent;
+import com.example.sandboxtest.database.CameraAction;
 
 import java.util.List;
 
@@ -38,7 +36,7 @@ public class EditEventDialog extends FrameLayout {
         super(context, attrs, defStyleAttr);
     }
 
-    public void init(String currentEvent, OnClickListener okListener, OnClickListener deleteListener, OnClickListener cancelListener, boolean joystick, List<CameraEvent> availableEvents) {
+    public void init(String currentAction, OnClickListener okListener, OnClickListener deleteListener, OnClickListener cancelListener, boolean joystick, List<CameraAction> availableActions) {
         setElevation(30);
         radioGroup = findViewById(R.id.radioGroup);
 
@@ -77,22 +75,22 @@ public class EditEventDialog extends FrameLayout {
             isControllerSelected = true;
         });
 
-        if (CameraEvent.exists(currentEvent)) {
+        if (CameraAction.exists(currentAction)) {
             RadioButton currentChoice = new RadioButton(getContext());
-            CameraEvent event = CameraEvent.valueOf(currentEvent);
-            currentChoice.setText(event.getName());
-            currentChoice.setTag(event);
+            CameraAction action = CameraAction.valueOf(currentAction);
+            currentChoice.setText(action.getName());
+            currentChoice.setTag(action);
             radioGroup.addView(currentChoice);
             radioGroup.check(currentChoice.getId());
             pressedButton = -1;
         } else {
-            ((TextView) findViewById(R.id.controllerTextView)).setText(currentEvent);
-            pressedButton = currentEvent.equals("JOYSTICK") ? 0 : KeyEvent.keyCodeFromString(currentEvent);
+            ((TextView) findViewById(R.id.controllerTextView)).setText(currentAction);
+            pressedButton = currentAction.equals("JOYSTICK") ? 0 : KeyEvent.keyCodeFromString(currentAction);
             controllerOptionText.performClick();
         }
 
-        for (CameraEvent option : availableEvents) {
-            if (joystick != option.isJoystickEvent())
+        for (CameraAction option : availableActions) {
+            if (joystick != option.isJoystickAction())
                 continue;
             RadioButton radioButton = new RadioButton(getContext());
             radioButton.setTag(option);
@@ -101,7 +99,7 @@ public class EditEventDialog extends FrameLayout {
         }
     }
 
-    public String getSelectedEvent() {
+    public String getSelectedAction() {
         if (pressedButton == -1) {
             RadioGroup radioGroup = findViewById(R.id.radioGroup);
             int selectedId = radioGroup.getCheckedRadioButtonId();

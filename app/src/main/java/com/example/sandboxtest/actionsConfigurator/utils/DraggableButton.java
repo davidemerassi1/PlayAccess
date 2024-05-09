@@ -7,18 +7,18 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.example.sandboxtest.R;
-import com.example.sandboxtest.database.Action;
+import com.example.sandboxtest.database.Event;
 
 public class DraggableButton extends androidx.appcompat.widget.AppCompatImageButton implements EventButton, View.OnTouchListener {
     private float lastTouchX;
     private float lastTouchY;
     private float posX;
     private float posY;
-    private Action action;
-    private String event;
+    private Event event;
+    private String action;
     private OnClickListener listener;
 
-    public DraggableButton(Context context, Action action, String event) {
+    public DraggableButton(Context context, Event event, String action) {
         super(context);
         this.action = action;
         this.event = event;
@@ -27,7 +27,7 @@ public class DraggableButton extends androidx.appcompat.widget.AppCompatImageBut
         setBackgroundResource(R.drawable.circle_background_white);
         setScaleType(ScaleType.FIT_XY);
         setLayoutParams(new FrameLayout.LayoutParams(120, 120));
-        switch (action) {
+        switch (event) {
             case TAP -> setImageResource(R.drawable.tap_icon);
             case SWIPE_DOWN -> setImageResource(R.drawable.swipe_down_icon);
             case SWIPE_UP -> setImageResource(R.drawable.swipe_up_icon);
@@ -77,16 +77,16 @@ public class DraggableButton extends androidx.appcompat.widget.AppCompatImageBut
         return true;
     }
 
-    public Action getAction() {
-        return action;
-    }
-
-    public String getEvent() {
+    public Event getEvent() {
         return event;
     }
 
-    public void setEvent(String event) {
-        this.event = event;
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 
     public void setOnClickListener(OnClickListener listener) {

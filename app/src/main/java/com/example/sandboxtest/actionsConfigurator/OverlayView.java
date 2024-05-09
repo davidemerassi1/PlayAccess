@@ -22,19 +22,18 @@ import com.example.sandboxtest.MyApplication;
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.database.Association;
 import com.example.sandboxtest.database.AssociationDao;
-import com.example.sandboxtest.database.CameraEvent;
+import com.example.sandboxtest.database.CameraAction;
 import com.example.sandboxtest.facedetector.CameraFaceDetector;
 import com.example.sandboxtest.facedetector.OnFaceRecognizedListener;
 import com.google.mlkit.vision.face.Face;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener, LifecycleOwner {
     private AssociationDao associationsDb;
-    private Map<CameraEvent, Association> faceMap = new HashMap<>();
+    private Map<CameraAction, Association> faceMap = new HashMap<>();
     private Map<Integer, Association> controllerMap = new HashMap<>();
     private boolean configurationOpened = false;
     private ConfigurationView configurationView;
@@ -73,10 +72,10 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
 
         new Thread(() -> {
             for (Association association : associationsDb.getAssociations(applicationPackage)) {
-                if (CameraEvent.exists(association.event))
-                    faceMap.put(CameraEvent.valueOf(association.event), association);
+                if (CameraAction.exists(association.action))
+                    faceMap.put(CameraAction.valueOf(association.action), association);
                 else
-                    controllerMap.put(KeyEvent.keyCodeFromString(association.event), association);
+                    controllerMap.put(KeyEvent.keyCodeFromString(association.action), association);
             }
             configurationView.setup(applicationPackage, associationsDb);
         }).start();
@@ -89,10 +88,10 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             windowManager.updateViewLayout(this, params);
             List<Association> associationList = configurationView.save();
             for (Association association : associationList) {
-                if (CameraEvent.exists(association.event))
-                    faceMap.put(CameraEvent.valueOf(association.event), association);
+                if (CameraAction.exists(association.action))
+                    faceMap.put(CameraAction.valueOf(association.action), association);
                 else
-                    controllerMap.put(KeyEvent.keyCodeFromString(association.event), association);
+                    controllerMap.put(KeyEvent.keyCodeFromString(association.action), association);
             }
             configurationOpened = false;
         });
@@ -144,7 +143,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     }
 
     private boolean sliding = false;
-    private ActionExecutor executor = new ActionExecutor(getContext());
+    private EventExecutor executor = new EventExecutor(getContext());
 
     @Override
     public void onFaceRecognized(Face face) {
@@ -152,9 +151,9 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             return;
         Log.d("Face", "injecting input for " + applicationPackage);
         for (Association association : faceMap.values()) {
-            CameraEvent event = CameraEvent.valueOf(association.event);
-            if (!event.isJoystickEvent()) {
-                switch (event) {
+            CameraAction action = CameraAction.valueOf(association.action);
+            if (!action.isJoystickAction()) {
+                switch (action) {
                     case SMILE:
                         if (face.getSmilingProbability() > 0.3)
                             executor.execute(association);
@@ -164,17 +163,17 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
                 new Thread(() -> {
                     if (Math.abs(face.getHeadEulerAngleX() - 10) > 10 || Math.abs(face.getHeadEulerAngleY()) > 20) {
                         if (sliding) {
-                            ActionExecutor.sleep(10);
-                            executor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) (face.getHeadEulerAngleX() - 10) * association.radius / 30) + association.y, association.event);
+                            EventExecutor.sleep(10);
+                            executor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) (face.getHeadEulerAngleX() - 10) * association.radius / 30) + association.y, association.action);
                         } else {
                             sliding = true;
-                            executor.touch(association.x, association.y, association.event);
-                            executor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) (face.getHeadEulerAngleX() - 10) * association.radius / 30) + association.y, association.event);
+                            executor.touch(association.x, association.y, association.action);
+                            executor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) (face.getHeadEulerAngleX() - 10) * association.radius / 30) + association.y, association.action);
                         }
                     } else {
                         if (sliding) {
                             sliding = false;
-                            executor.release(association.x, association.y, association.event);
+                            executor.release(association.x, association.y, association.action);
                         }
                     }
                 }).start();
@@ -243,16 +242,16 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
                         Log.d("OverlayView", "onGenericMotionEvent: " + x + " " + y);
                         if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1) {
                             if (controllersliding)
-                                executor.move(-(int) (x * association.radius) + association.x, -(int) (y * association.radius) + association.y, association.event);
+                                executor.move(-(int) (x * association.radius) + association.x, -(int) (y * association.radius) + association.y, association.action);
                             else {
                                 controllersliding = true;
-                                executor.touch(association.x, association.y, association.event);
-                                executor.move(-(int) (x * association.radius) + association.x, -(int) (y * association.radius) + association.y, association.event);
+                                executor.touch(association.x, association.y, association.action);
+                                executor.move(-(int) (x * association.radius) + association.x, -(int) (y * association.radius) + association.y, association.action);
                             }
                         } else {
                             if (controllersliding) {
                                 controllersliding = false;
-                                executor.release(association.x, association.y, association.event);
+                                executor.release(association.x, association.y, association.action);
                             }
                         }
                     }).start();

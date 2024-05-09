@@ -1,13 +1,14 @@
 package com.example.sandboxtest.database;
 
-public enum Action {
+public enum Event {
     TAP,
     SWIPE_UP,
     SWIPE_DOWN,
     SWIPE_LEFT,
     SWIPE_RIGHT,
     LONG_TAP,
-    JOYSTICK;
+    JOYSTICK,
+    MONODIMENSIONAL_SLIDING;
 
     public String toString() {
         switch (this) {

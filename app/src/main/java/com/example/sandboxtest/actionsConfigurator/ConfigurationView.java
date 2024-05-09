@@ -18,26 +18,24 @@ import com.example.sandboxtest.actionsConfigurator.utils.EditEventDialog;
 import com.example.sandboxtest.actionsConfigurator.utils.EventButton;
 import com.example.sandboxtest.actionsConfigurator.utils.EventDialog;
 import com.example.sandboxtest.actionsConfigurator.utils.SwipeDirectionDialog;
-import com.example.sandboxtest.database.Action;
+import com.example.sandboxtest.database.Event;
 import com.example.sandboxtest.database.Association;
 import com.example.sandboxtest.database.AssociationDao;
 import com.example.sandboxtest.actionsConfigurator.utils.DraggableButton;
 import com.example.sandboxtest.actionsConfigurator.utils.ResizableDraggableButton;
-import com.example.sandboxtest.database.CameraEvent;
+import com.example.sandboxtest.database.CameraAction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class ConfigurationView extends RelativeLayout {
     private boolean isFABOpen = false;
     private ImageButton fab;
     private RelativeLayout optionsLayout;
     private List<LinearLayout> fabLayouts = new ArrayList<>();
-    private RelativeLayout actions;
+    private RelativeLayout events;
     private Context context;
     private String applicationPackage;
     private AssociationDao associationsDb;
@@ -50,22 +48,22 @@ public class ConfigurationView extends RelativeLayout {
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         EventButton eventButton = (EventButton) v;
         editEventDialog.init(
-                eventButton.getEvent(),
+                eventButton.getAction(),
                 view -> {
-                    String selectedEvent = editEventDialog.getSelectedEvent();
-                    for (int i = 0; i < actions.getChildCount(); i++) {
-                        EventButton button = (EventButton) actions.getChildAt(i);
-                        if (button != eventButton && button.getEvent().equals(selectedEvent)) {
+                    String selectedAction = editEventDialog.getSelectedAction();
+                    for (int i = 0; i < events.getChildCount(); i++) {
+                        EventButton button = (EventButton) events.getChildAt(i);
+                        if (button != eventButton && button.getAction().equals(selectedAction)) {
                             editEventDialog.showSameKeyErrorMessage();
                             return;
                         }
                     }
-                    eventButton.setEvent(selectedEvent);
+                    eventButton.setAction(selectedAction);
                     removeView(editEventDialog);
                     editEventDialog = null;
                 },
                 view -> {
-                    actions.removeView(v);
+                    events.removeView(v);
                     removeView(editEventDialog);
                     editEventDialog = null;
                 },
@@ -74,7 +72,7 @@ public class ConfigurationView extends RelativeLayout {
                     editEventDialog = null;
                 },
                 eventButton instanceof ResizableDraggableButton,
-                availableEvents());
+                availableActions());
         addView(editEventDialog, layoutParams);
     };
 
@@ -120,7 +118,7 @@ public class ConfigurationView extends RelativeLayout {
             fabLayouts.add(layout);
         }
 
-        actions = findViewById(R.id.actions);
+        events = findViewById(R.id.events);
 
         fab.setOnClickListener(view -> {
             if (!isFABOpen)
@@ -131,12 +129,12 @@ public class ConfigurationView extends RelativeLayout {
 
         fabLayouts.get(0).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(Action.TAP, false);
+            showDialog(Event.TAP, false);
         });
 
         fabLayouts.get(1).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(Action.JOYSTICK, true);
+            showDialog(Event.JOYSTICK, true);
         });
 
         fabLayouts.get(2).getChildAt(1).setOnClickListener(view -> {
@@ -146,22 +144,27 @@ public class ConfigurationView extends RelativeLayout {
 
         fabLayouts.get(3).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(Action.LONG_TAP, false);
+            showDialog(Event.LONG_TAP, false);
+        });
+
+        fabLayouts.get(4).getChildAt(1).setOnClickListener(view -> {
+            closeFABMenu();
+            //showDialog(Action.MONODIMENSIONAL_SLIDING, false);
         });
 
         for (Association association : associationsDb.getAssociations(applicationPackage)) {
-            if (association.action == Action.JOYSTICK) {
-                ResizableDraggableButton button = new ResizableDraggableButton(context, association.event);
+            if (association.event == Event.JOYSTICK) {
+                ResizableDraggableButton button = new ResizableDraggableButton(context, association.action);
                 button.setOnClickListener(updateListener);
                 button.setX(positionStart(association.x, association.radius));
                 button.setY(positionStart(association.y, association.radius));
-                actions.addView(button);
+                events.addView(button);
                 button.setDimensions(association.radius * 2);
                 button.setPadding(association.radius * 2);
             } else {
-                DraggableButton button = new DraggableButton(context, association.action, association.event);
+                DraggableButton button = new DraggableButton(context, association.event, association.action);
                 button.setOnClickListener(updateListener);
-                actions.addView(button);
+                events.addView(button);
                 button.setX(positionStart(association.x, button.getLayoutParams().width / 2));
                 button.setY(positionStart(association.y, button.getLayoutParams().width / 2));
             }
@@ -175,13 +178,13 @@ public class ConfigurationView extends RelativeLayout {
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         addView(dialogLayout, layoutParams);
         dialogLayout.init((adapterView, view, i, l) -> {
-            Action selectedAction = (Action) adapterView.getItemAtPosition(i);
+            Event selectedEvent = (Event) adapterView.getItemAtPosition(i);
             removeView(dialogLayout);
-            showDialog(selectedAction, false);
+            showDialog(selectedEvent, false);
         });
     }
 
-    private void showDialog(Action action, boolean joystick) {
+    private void showDialog(Event event, boolean joystick) {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         eventDialog = (EventDialog) inflater.inflate(R.layout.dialog_layout, this, false);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -189,14 +192,14 @@ public class ConfigurationView extends RelativeLayout {
         addView(eventDialog, layoutParams);
         eventDialog.init(joystick,
                 view1 -> {
-                    String selectedEvent = eventDialog.getSelectedEvent();
-                    if (selectedEvent == null) {
+                    String selectedAction = eventDialog.getSelectedAction();
+                    if (selectedAction == null) {
                         eventDialog.showErrorMessage();
                         return;
                     }
-                    for (int i = 0; i < actions.getChildCount(); i++) {
-                        EventButton button = (EventButton) actions.getChildAt(i);
-                        if (button.getEvent().equals(selectedEvent)) {
+                    for (int i = 0; i < events.getChildCount(); i++) {
+                        EventButton button = (EventButton) events.getChildAt(i);
+                        if (button.getAction().equals(selectedAction)) {
                             eventDialog.showSameKeyErrorMessage();
                             return;
                         }
@@ -204,38 +207,38 @@ public class ConfigurationView extends RelativeLayout {
                     removeView(eventDialog);
                     eventDialog = null;
                     if (joystick) {
-                        ResizableDraggableButton resizableDraggableButton = new ResizableDraggableButton(context, selectedEvent);
+                        ResizableDraggableButton resizableDraggableButton = new ResizableDraggableButton(context, selectedAction);
                         resizableDraggableButton.setOnClickListener(updateListener);
-                        actions.addView(resizableDraggableButton);
+                        events.addView(resizableDraggableButton);
                     } else {
-                        DraggableButton draggableButton = new DraggableButton(context, action, selectedEvent);
+                        DraggableButton draggableButton = new DraggableButton(context, event, selectedAction);
                         draggableButton.setOnClickListener(updateListener);
-                        actions.addView(draggableButton);
+                        events.addView(draggableButton);
                     }
                 },
                 view1 -> {
                     removeView(eventDialog);
                     eventDialog = null;
                 },
-                availableEvents()
+                availableActions()
         );
     }
 
     public List<Association> save() {
         List<Association> list = new LinkedList<>();
 
-        for (int i = 0; i < actions.getChildCount(); i++) {
-            View view = actions.getChildAt(i);
+        for (int i = 0; i < events.getChildCount(); i++) {
+            View view = events.getChildAt(i);
             if (view instanceof DraggableButton) {
                 DraggableButton button = (DraggableButton) view;
                 int xCenter = center(button.getX(), button.getWidth());
                 int yCenter = center(button.getY(), button.getHeight());
-                list.add(new Association(applicationPackage, button.getEvent(), button.getAction(), xCenter, yCenter, null));
+                list.add(new Association(applicationPackage, button.getAction(), button.getEvent(), xCenter, yCenter, null));
             } else if (view instanceof ResizableDraggableButton) {
                 ResizableDraggableButton button = (ResizableDraggableButton) view;
                 int xCenter = center(button.getX(), button.getWidth());
                 int yCenter = center(button.getY(), button.getHeight());
-                list.add(new Association(applicationPackage, button.getEvent(), Action.JOYSTICK, xCenter, yCenter, button.getWidth() / 2));
+                list.add(new Association(applicationPackage, button.getAction(), Event.JOYSTICK, xCenter, yCenter, button.getWidth() / 2));
             }
         }
 
@@ -255,17 +258,17 @@ public class ConfigurationView extends RelativeLayout {
         return (float) (center - radius);
     }
 
-    private List<CameraEvent> availableEvents() {
-        ArrayList<CameraEvent> events = new ArrayList<>(Arrays.asList(CameraEvent.values()));
-        for (int i = 0; i < actions.getChildCount(); i++) {
-            EventButton button = (EventButton) actions.getChildAt(i);
-            String eventName = button.getEvent();
-            if (!CameraEvent.exists(eventName))
+    private List<CameraAction> availableActions() {
+        ArrayList<CameraAction> actions = new ArrayList<>(Arrays.asList(CameraAction.values()));
+        for (int i = 0; i < events.getChildCount(); i++) {
+            EventButton button = (EventButton) events.getChildAt(i);
+            String actionName = button.getAction();
+            if (!CameraAction.exists(actionName))
                 continue;
-            CameraEvent event = CameraEvent.valueOf(eventName);
-            events.remove(event);
+            CameraAction action = CameraAction.valueOf(actionName);
+            actions.remove(action);
         }
-        return events;
+        return actions;
     }
 
     private static int toPx(int dp) {
