@@ -3,6 +3,7 @@ package com.example.sandboxtest.actionsConfigurator.utils;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class EventDialog extends FrameLayout {
     private boolean isControllerSelected = false;
-    private int pressedButton = -1;
+    private Integer selectedAction = null;
     private RadioGroup radioGroup;
 
     public EventDialog(Context context) {
@@ -41,9 +42,10 @@ public class EventDialog extends FrameLayout {
 
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId != -1) {
-                pressedButton = -1;
                 ((TextView) findViewById(R.id.controllerTextView)).setText("Premi il tasto che vuoi associare a questo evento");
-                hideSameKeyErrorMessage();
+                hideErrorMessages();
+                selectedAction = (Integer) findViewById(checkedId).getTag();
+                Log.d("EventDialog", "Selected action: " + selectedAction);
             }
         });
 
@@ -51,7 +53,7 @@ public class EventDialog extends FrameLayout {
             if (joystick != option.isJoystickAction())
                 continue;
             RadioButton radioButton = new RadioButton(getContext());
-            radioButton.setTag(option);
+            radioButton.setTag(option.getTag());
             radioButton.setText(option.getName());
             radioGroup.addView(radioButton);
         }
@@ -85,39 +87,30 @@ public class EventDialog extends FrameLayout {
         });
     }
 
-    public String getSelectedAction() {
-        if (pressedButton == -1) {
-            RadioGroup radioGroup = findViewById(R.id.radioGroup);
-            int selectedId = radioGroup.getCheckedRadioButtonId();
-            if (selectedId == -1)
-                return null;
-            RadioButton radioButton = findViewById(selectedId);
-            return radioButton.getTag().toString();
-        } else if (pressedButton == 0)
-            return "JOYSTICK";
-        else
-            return KeyEvent.keyCodeToString(pressedButton);
+    public Integer getSelectedAction() {
+        return selectedAction;
     }
 
     public void showErrorMessage() {
         findViewById(R.id.errorMessage).setVisibility(VISIBLE);
     }
 
-    public void showSameKeyErrorMessage() {
-        findViewById(R.id.sameEventErrorMessage).setVisibility(VISIBLE);
+    public void hideErrorMessages() {
+        findViewById(R.id.errorMessage).setVisibility(GONE);
+        findViewById(R.id.sameEventErrorMessage).setVisibility(GONE);
     }
 
-    private void hideSameKeyErrorMessage() {
-        findViewById(R.id.sameEventErrorMessage).setVisibility(GONE);
+    public void showSameKeyErrorMessage() {
+        findViewById(R.id.sameEventErrorMessage).setVisibility(VISIBLE);
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (isControllerSelected) {
             radioGroup.clearCheck();
-            pressedButton = keyCode;
+            selectedAction = keyCode;
             ((TextView) findViewById(R.id.controllerTextView)).setText(KeyEvent.keyCodeToString(keyCode));
-            hideSameKeyErrorMessage();
+            hideErrorMessages();
         }
         return false;
     }
@@ -126,9 +119,9 @@ public class EventDialog extends FrameLayout {
     public boolean onGenericMotionEvent(MotionEvent event) {
         if (isControllerSelected) {
             radioGroup.clearCheck();
-            pressedButton = 0;
+            selectedAction = 0;
             ((TextView) findViewById(R.id.controllerTextView)).setText("JOYSTICK");
-            hideSameKeyErrorMessage();
+            hideErrorMessages();
         }
         return false;
     }

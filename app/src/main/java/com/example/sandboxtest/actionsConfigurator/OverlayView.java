@@ -33,11 +33,9 @@ import java.util.Map;
 
 public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener, LifecycleOwner {
     private AssociationDao associationsDb;
-    private Map<CameraAction, Association> faceMap = new HashMap<>();
-    private Map<Integer, Association> controllerMap = new HashMap<>();
+    private Map<Integer, Association> map = new HashMap<>();
     private boolean configurationOpened = false;
     private ConfigurationView configurationView;
-    private String applicationPackage;
     private LifecycleRegistry lifecycleRegistry;
 
     public OverlayView(Context context) {
@@ -49,7 +47,6 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     }
 
     public void init(WindowManager windowManager, String applicationPackage) {
-        this.applicationPackage = applicationPackage;
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -71,12 +68,8 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         associationsDb = application.getDatabase().getDao();
 
         new Thread(() -> {
-            for (Association association : associationsDb.getAssociations(applicationPackage)) {
-                if (CameraAction.exists(association.action))
-                    faceMap.put(CameraAction.valueOf(association.action), association);
-                else
-                    controllerMap.put(KeyEvent.keyCodeFromString(association.action), association);
-            }
+            for (Association association : associationsDb.getAssociations(applicationPackage))
+                map.put(association.action, association);
             configurationView.setup(applicationPackage, associationsDb);
         }).start();
 
@@ -87,12 +80,8 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             params.height = WindowManager.LayoutParams.WRAP_CONTENT;
             windowManager.updateViewLayout(this, params);
             List<Association> associationList = configurationView.save();
-            for (Association association : associationList) {
-                if (CameraAction.exists(association.action))
-                    faceMap.put(CameraAction.valueOf(association.action), association);
-                else
-                    controllerMap.put(KeyEvent.keyCodeFromString(association.action), association);
-            }
+            for (Association association : associationList)
+                map.put(association.action, association);
             configurationOpened = false;
         });
 
@@ -149,35 +138,27 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     public void onFaceRecognized(Face face) {
         if (getVisibility() == GONE || configurationOpened)
             return;
-        Log.d("Face", "injecting input for " + applicationPackage);
-        for (Association association : faceMap.values()) {
-            CameraAction action = CameraAction.valueOf(association.action);
-            if (!action.isJoystickAction()) {
-                switch (action) {
-                    case SMILE:
-                        if (face.getSmilingProbability() > 0.3)
-                            executor.execute(association);
-                        break;
-                }
-            } else {
-                new Thread(() -> {
-                    if (Math.abs(face.getHeadEulerAngleX() - 10) > 10 || Math.abs(face.getHeadEulerAngleY()) > 20) {
-                        if (sliding) {
-                            EventExecutor.sleep(10);
-                            executor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) (face.getHeadEulerAngleX() - 10) * association.radius / 30) + association.y, association.action);
-                        } else {
-                            sliding = true;
-                            executor.touch(association.x, association.y, association.action);
-                            executor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) (face.getHeadEulerAngleX() - 10) * association.radius / 30) + association.y, association.action);
-                        }
+        if (face.getSmilingProbability() > 0.3 && map.containsKey(CameraAction.SMILE.getTag()))
+            executor.execute(map.get(CameraAction.SMILE.getTag()));
+        if (map.containsKey(CameraAction.FACE_MOVEMENT.getTag())) {
+            Association association = map.get(CameraAction.FACE_MOVEMENT.getTag());
+            new Thread(() -> {
+                if (Math.abs(face.getHeadEulerAngleX() - 10) > 10 || Math.abs(face.getHeadEulerAngleY()) > 20) {
+                    if (sliding) {
+                        EventExecutor.sleep(10);
+                        executor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) (face.getHeadEulerAngleX() - 10) * association.radius / 30) + association.y, association.action);
                     } else {
-                        if (sliding) {
-                            sliding = false;
-                            executor.release(association.x, association.y, association.action);
-                        }
+                        sliding = true;
+                        executor.touch(association.x, association.y, association.action);
+                        executor.move((-(int) face.getHeadEulerAngleY() * association.radius / 35) + association.x, (-(int) (face.getHeadEulerAngleX() - 10) * association.radius / 30) + association.y, association.action);
                     }
-                }).start();
-            }
+                } else {
+                    if (sliding) {
+                        sliding = false;
+                        executor.release(association.x, association.y, association.action);
+                    }
+                }
+            }).start();
         }
     }
 
@@ -206,8 +187,8 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) {
             if (!configurationOpened) {
-                if (controllerMap.containsKey(keyCode))
-                    executor.execute(controllerMap.get(keyCode));
+                if (map.containsKey(keyCode))
+                    executor.execute(map.get(keyCode));
             } else
                 configurationView.onKeyUp(keyCode, event);
         }
@@ -234,9 +215,9 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK &&
                 event.getAction() == MotionEvent.ACTION_MOVE) {
             if (!configurationOpened) {
-                if (controllerMap.containsKey(0)) {
+                if (map.containsKey(0)) {
                     new Thread(() -> {
-                        Association association = controllerMap.get(0);
+                        Association association = map.get(0);
                         float x = event.getAxisValue(MotionEvent.AXIS_X);
                         float y = event.getAxisValue(MotionEvent.AXIS_Y);
                         Log.d("OverlayView", "onGenericMotionEvent: " + x + " " + y);

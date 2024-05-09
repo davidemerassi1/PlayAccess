@@ -1,16 +1,18 @@
 package com.example.sandboxtest.database;
 
 public enum CameraAction {
-    SMILE("Smile", false),
-    OTHER("Other", false),
-    FACE_MOVEMENT("Face movement", true);
+    SMILE("Smile", false, -1),
+    OTHER("Other", false, -2),
+    FACE_MOVEMENT("Face movement", true, -3);
 
     private boolean joystickAction;
     private String name;
+    private int tag;
 
-    CameraAction(String name, boolean joystickAction) {
+    CameraAction(String name, boolean joystickAction, int tag) {
         this.joystickAction = joystickAction;
         this.name = name;
+        this.tag = tag;
     }
 
     public boolean isJoystickAction() {
@@ -28,5 +30,18 @@ public enum CameraAction {
             }
         }
         return false;
+    }
+
+    public int getTag() {
+        return tag;
+    }
+
+    public static CameraAction valueOf(int tag) {
+        for (CameraAction event : CameraAction.values()) {
+            if (event.getTag() == tag) {
+                return event;
+            }
+        }
+        return null;
     }
 }

@@ -3,6 +3,7 @@ package com.example.sandboxtest.actionsConfigurator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -50,10 +51,10 @@ public class ConfigurationView extends RelativeLayout {
         editEventDialog.init(
                 eventButton.getAction(),
                 view -> {
-                    String selectedAction = editEventDialog.getSelectedAction();
+                    int selectedAction = editEventDialog.getSelectedAction();
                     for (int i = 0; i < events.getChildCount(); i++) {
                         EventButton button = (EventButton) events.getChildAt(i);
-                        if (button != eventButton && button.getAction().equals(selectedAction)) {
+                        if (button != eventButton && button.getAction() == selectedAction) {
                             editEventDialog.showSameKeyErrorMessage();
                             return;
                         }
@@ -152,23 +153,24 @@ public class ConfigurationView extends RelativeLayout {
             //showDialog(Action.MONODIMENSIONAL_SLIDING, false);
         });
 
-        for (Association association : associationsDb.getAssociations(applicationPackage)) {
-            if (association.event == Event.JOYSTICK) {
-                ResizableDraggableButton button = new ResizableDraggableButton(context, association.action);
-                button.setOnClickListener(updateListener);
-                button.setX(positionStart(association.x, association.radius));
-                button.setY(positionStart(association.y, association.radius));
-                events.addView(button);
-                button.setDimensions(association.radius * 2);
-                button.setPadding(association.radius * 2);
-            } else {
-                DraggableButton button = new DraggableButton(context, association.event, association.action);
-                button.setOnClickListener(updateListener);
-                events.addView(button);
-                button.setX(positionStart(association.x, button.getLayoutParams().width / 2));
-                button.setY(positionStart(association.y, button.getLayoutParams().width / 2));
+            for (Association association : associationsDb.getAssociations(applicationPackage)) {
+                if (association.event == Event.JOYSTICK) {
+                    ResizableDraggableButton button = new ResizableDraggableButton(context, association.action);
+                    button.setOnClickListener(updateListener);
+                    button.setX(positionStart(association.x, association.radius));
+                    button.setY(positionStart(association.y, association.radius));
+                    events.addView(button);
+                    button.setDimensions(association.radius * 2);
+                    button.setPadding(association.radius * 2);
+                } else {
+                    DraggableButton button = new DraggableButton(context, association.event, association.action);
+                    button.setOnClickListener(updateListener);
+                    events.addView(button);
+                    button.setX(positionStart(association.x, button.getLayoutParams().width / 2));
+                    button.setY(positionStart(association.y, button.getLayoutParams().width / 2));
+                }
             }
-        }
+
     }
 
     private void showDirectionDialog() {
@@ -192,14 +194,15 @@ public class ConfigurationView extends RelativeLayout {
         addView(eventDialog, layoutParams);
         eventDialog.init(joystick,
                 view1 -> {
-                    String selectedAction = eventDialog.getSelectedAction();
+                    Integer selectedAction = eventDialog.getSelectedAction();
+                    Log.d("selectedAction", selectedAction.toString());
                     if (selectedAction == null) {
                         eventDialog.showErrorMessage();
                         return;
                     }
                     for (int i = 0; i < events.getChildCount(); i++) {
                         EventButton button = (EventButton) events.getChildAt(i);
-                        if (button.getAction().equals(selectedAction)) {
+                        if (button.getAction() == selectedAction) {
                             eventDialog.showSameKeyErrorMessage();
                             return;
                         }
@@ -262,10 +265,9 @@ public class ConfigurationView extends RelativeLayout {
         ArrayList<CameraAction> actions = new ArrayList<>(Arrays.asList(CameraAction.values()));
         for (int i = 0; i < events.getChildCount(); i++) {
             EventButton button = (EventButton) events.getChildAt(i);
-            String actionName = button.getAction();
-            if (!CameraAction.exists(actionName))
+            if (button.getAction() >= 0)
                 continue;
-            CameraAction action = CameraAction.valueOf(actionName);
+            CameraAction action = CameraAction.valueOf(button.getAction());
             actions.remove(action);
         }
         return actions;

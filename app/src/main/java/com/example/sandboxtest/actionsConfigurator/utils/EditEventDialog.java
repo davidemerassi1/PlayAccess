@@ -21,7 +21,7 @@ import java.util.List;
 
 public class EditEventDialog extends FrameLayout {
     private boolean isControllerSelected = false;
-    private int pressedButton;
+    private Integer selectedAction;
     private RadioGroup radioGroup;
 
     public EditEventDialog(Context context) {
@@ -36,15 +36,17 @@ public class EditEventDialog extends FrameLayout {
         super(context, attrs, defStyleAttr);
     }
 
-    public void init(String currentAction, OnClickListener okListener, OnClickListener deleteListener, OnClickListener cancelListener, boolean joystick, List<CameraAction> availableActions) {
+    public void init(int currentAction, OnClickListener okListener, OnClickListener deleteListener, OnClickListener cancelListener, boolean joystick, List<CameraAction> availableActions) {
         setElevation(30);
+
+        selectedAction = currentAction;
         radioGroup = findViewById(R.id.radioGroup);
 
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId != -1) {
-                pressedButton = -1;
-                hideSameKeyErrorMessage();
                 ((TextView) findViewById(R.id.controllerTextView)).setText("Premi il tasto che vuoi associare a questo evento");
+                selectedAction = (Integer) findViewById(checkedId).getTag();
+                hideErrorMessage();
             }
         });
 
@@ -75,17 +77,15 @@ public class EditEventDialog extends FrameLayout {
             isControllerSelected = true;
         });
 
-        if (CameraAction.exists(currentAction)) {
+        if (currentAction < 0) {
             RadioButton currentChoice = new RadioButton(getContext());
             CameraAction action = CameraAction.valueOf(currentAction);
             currentChoice.setText(action.getName());
-            currentChoice.setTag(action);
+            currentChoice.setTag(action.getTag());
             radioGroup.addView(currentChoice);
             radioGroup.check(currentChoice.getId());
-            pressedButton = -1;
         } else {
-            ((TextView) findViewById(R.id.controllerTextView)).setText(currentAction);
-            pressedButton = currentAction.equals("JOYSTICK") ? 0 : KeyEvent.keyCodeFromString(currentAction);
+            ((TextView) findViewById(R.id.controllerTextView)).setText(KeyEvent.keyCodeToString(currentAction));
             controllerOptionText.performClick();
         }
 
@@ -93,31 +93,21 @@ public class EditEventDialog extends FrameLayout {
             if (joystick != option.isJoystickAction())
                 continue;
             RadioButton radioButton = new RadioButton(getContext());
-            radioButton.setTag(option);
+            radioButton.setTag(option.getTag());
             radioButton.setText(option.getName());
             radioGroup.addView(radioButton);
         }
     }
 
-    public String getSelectedAction() {
-        if (pressedButton == -1) {
-            RadioGroup radioGroup = findViewById(R.id.radioGroup);
-            int selectedId = radioGroup.getCheckedRadioButtonId();
-            if (selectedId == -1)
-                return null;
-            RadioButton radioButton = findViewById(selectedId);
-            return radioButton.getTag().toString();
-        } else if (pressedButton == 0)
-            return "JOYSTICK";
-        else
-            return KeyEvent.keyCodeToString(pressedButton);
+    public Integer getSelectedAction() {
+        return selectedAction;
     }
 
     public void showSameKeyErrorMessage() {
         findViewById(R.id.errorMessage).setVisibility(VISIBLE);
     }
 
-    private void hideSameKeyErrorMessage() {
+    private void hideErrorMessage() {
         findViewById(R.id.errorMessage).setVisibility(GONE);
     }
 
@@ -125,9 +115,9 @@ public class EditEventDialog extends FrameLayout {
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (isControllerSelected) {
             radioGroup.clearCheck();
-            pressedButton = keyCode;
+            selectedAction = keyCode;
             ((TextView) findViewById(R.id.controllerTextView)).setText(KeyEvent.keyCodeToString(keyCode));
-            hideSameKeyErrorMessage();
+            hideErrorMessage();
         }
         return false;
     }
@@ -136,9 +126,9 @@ public class EditEventDialog extends FrameLayout {
     public boolean onGenericMotionEvent(MotionEvent event) {
         if (isControllerSelected) {
             radioGroup.clearCheck();
-            pressedButton = 0;
+            selectedAction = 0;
             ((TextView) findViewById(R.id.controllerTextView)).setText("JOYSTICK");
-            hideSameKeyErrorMessage();
+            hideErrorMessage();
         }
         return false;
     }

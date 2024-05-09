@@ -22,7 +22,7 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
     private float lastTouchY;
     private float posX;
     private float posY;
-    private String action;
+    private int action;
     private OnClickListener listener;
 
     public ResizableDraggableButton(Context context) {
@@ -43,7 +43,7 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
         init();
     }
 
-    public ResizableDraggableButton(Context context, String action) {
+    public ResizableDraggableButton(Context context, int action) {
         super(context);
         this.context = context;
         this.action = action;
@@ -150,11 +150,11 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
         fab.requestLayout();
     }
 
-    public String getAction() {
+    public int getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(int action) {
         this.action = action;
     }
 

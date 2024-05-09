@@ -3,12 +3,18 @@ package com.example.sandboxtest.database;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
-@Entity(primaryKeys = {"applicationPackage", "event"})
+@Entity(primaryKeys = {"applicationPackage", "action"})
 public class Association {
     @NonNull
     public String applicationPackage;
+
+    /*
+    >0: keycode del tasto premuto (definito da android)
+    0: joystick fisico
+    <0: face action
+    */
     @NonNull
-    public String action;
+    public int action;
     @NonNull
     public Event event;
     @NonNull
@@ -19,7 +25,7 @@ public class Association {
     public String additionalAction1;
     public String additionalAction2;
 
-    public Association(String applicationPackage, String action, Event event, int x, int y, Integer radius) {
+    public Association(String applicationPackage, int action, Event event, int x, int y, Integer radius) {
         this.applicationPackage = applicationPackage;
         this.event = event;
         this.action = action;

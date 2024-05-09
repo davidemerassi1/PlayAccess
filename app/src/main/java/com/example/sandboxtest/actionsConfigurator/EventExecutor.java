@@ -16,7 +16,7 @@ public class EventExecutor {
     private Instrumentation instrumentation;
     private ArrayList<MotionEvent.PointerProperties> pointerProperties;
     private ArrayList<MotionEvent.PointerCoords> pointerCoords;
-    private ArrayList<String> actions;
+    private ArrayList<Integer> actions;
     int currentId = 0;
 
     public EventExecutor(Context context) {
@@ -27,7 +27,7 @@ public class EventExecutor {
         actions = new ArrayList<>();
     }
 
-    public void touch(int targetX, int targetY, String action) {
+    public void touch(int targetX, int targetY, int action) {
         MotionEvent.PointerProperties properties = new MotionEvent.PointerProperties();
         properties.id = currentId;
         currentId++;
@@ -55,7 +55,7 @@ public class EventExecutor {
         }
     }
 
-    public void release(int targetX, int targetY, String action) {
+    public void release(int targetX, int targetY, int action) {
         long now = SystemClock.uptimeMillis();
         switch (pointerProperties.size()) {
             case 1:
@@ -68,7 +68,7 @@ public class EventExecutor {
                 actions.remove(0);
                 break;
             case 2:
-                if (actions.get(0).equals(action)) {
+                if (actions.get(0) == action) {
                     propertiesArray = pointerProperties.toArray(new MotionEvent.PointerProperties[0]);
                     coordsArray = pointerCoords.toArray(new MotionEvent.PointerCoords[0]);
                     touchEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_UP, 2, propertiesArray, coordsArray, 0, 0, 1, 1, 0, 0, 0, 0);
@@ -93,7 +93,7 @@ public class EventExecutor {
         }
     }
 
-    public void move(int toX, int toY, String action) {
+    public void move(int toX, int toY, int action) {
         long now = SystemClock.uptimeMillis();
         if (actions.size() > 0 && actions.get(0).equals(action))
             pointerCoords.set(0, createCoords(toX, toY + statusBarHeight));
