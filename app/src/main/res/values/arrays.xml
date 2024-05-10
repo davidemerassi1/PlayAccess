@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="swipe_directions">
+        <item>Swipe up</item>
+        <item>Swipe down</item>
+        <item>Swipe left</item>
+        <item>Swipe right</item>
+    </string-array>
+</resources>

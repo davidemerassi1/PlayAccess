@@ -15,10 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.example.sandboxtest.R;
-import com.example.sandboxtest.actionsConfigurator.utils.EditEventDialog;
 import com.example.sandboxtest.actionsConfigurator.utils.EventButton;
 import com.example.sandboxtest.actionsConfigurator.utils.EventDialog;
-import com.example.sandboxtest.actionsConfigurator.utils.SwipeDirectionDialog;
 import com.example.sandboxtest.database.Event;
 import com.example.sandboxtest.database.Association;
 import com.example.sandboxtest.database.AssociationDao;
@@ -41,40 +39,9 @@ public class ConfigurationView extends RelativeLayout {
     private String applicationPackage;
     private AssociationDao associationsDb;
     private EventDialog eventDialog;
-    private EditEventDialog editEventDialog;
     private OnClickListener updateListener = v -> {
-        LayoutInflater inflater = LayoutInflater.from(getContext());
-        editEventDialog = (EditEventDialog) inflater.inflate(R.layout.edit_dialog_layout, this, false);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         EventButton eventButton = (EventButton) v;
-        editEventDialog.init(
-                eventButton.getAction(),
-                view -> {
-                    int selectedAction = editEventDialog.getSelectedAction();
-                    for (int i = 0; i < events.getChildCount(); i++) {
-                        EventButton button = (EventButton) events.getChildAt(i);
-                        if (button != eventButton && button.getAction() == selectedAction) {
-                            editEventDialog.showSameKeyErrorMessage();
-                            return;
-                        }
-                    }
-                    eventButton.setAction(selectedAction);
-                    removeView(editEventDialog);
-                    editEventDialog = null;
-                },
-                view -> {
-                    events.removeView(v);
-                    removeView(editEventDialog);
-                    editEventDialog = null;
-                },
-                view -> {
-                    removeView(editEventDialog);
-                    editEventDialog = null;
-                },
-                eventButton instanceof ResizableDraggableButton,
-                availableActions());
-        addView(editEventDialog, layoutParams);
+        showDialog(eventButton, false);
     };
 
     public ConfigurationView(Context context) {
@@ -130,22 +97,22 @@ public class ConfigurationView extends RelativeLayout {
 
         fabLayouts.get(0).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(Event.TAP, false);
+            showDialog(new DraggableButton(context, Event.TAP, null), true);
         });
 
         fabLayouts.get(1).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(Event.JOYSTICK, true);
+            showDialog(new ResizableDraggableButton(context, (Integer) null), true);
         });
 
         fabLayouts.get(2).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDirectionDialog();
+            showDialog(new DraggableButton(context, Event.SWIPE_UP, null), true);
         });
 
         fabLayouts.get(3).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(Event.LONG_TAP, false);
+            showDialog(new DraggableButton(context, Event.LONG_TAP, null), true);
         });
 
         fabLayouts.get(4).getChildAt(1).setOnClickListener(view -> {
@@ -153,73 +120,61 @@ public class ConfigurationView extends RelativeLayout {
             //showDialog(Action.MONODIMENSIONAL_SLIDING, false);
         });
 
-            for (Association association : associationsDb.getAssociations(applicationPackage)) {
-                if (association.event == Event.JOYSTICK) {
-                    ResizableDraggableButton button = new ResizableDraggableButton(context, association.action);
-                    button.setOnClickListener(updateListener);
-                    button.setX(positionStart(association.x, association.radius));
-                    button.setY(positionStart(association.y, association.radius));
-                    events.addView(button);
-                    button.setDimensions(association.radius * 2);
-                    button.setPadding(association.radius * 2);
-                } else {
-                    DraggableButton button = new DraggableButton(context, association.event, association.action);
-                    button.setOnClickListener(updateListener);
-                    events.addView(button);
-                    button.setX(positionStart(association.x, button.getLayoutParams().width / 2));
-                    button.setY(positionStart(association.y, button.getLayoutParams().width / 2));
-                }
+        for (Association association : associationsDb.getAssociations(applicationPackage)) {
+            if (association.event == Event.JOYSTICK) {
+                ResizableDraggableButton button = new ResizableDraggableButton(context, association.action);
+                button.setOnClickListener(updateListener);
+                button.setX(positionStart(association.x, association.radius));
+                button.setY(positionStart(association.y, association.radius));
+                events.addView(button);
+                button.setDimensions(association.radius * 2);
+                button.setPadding(association.radius * 2);
+            } else {
+                DraggableButton button = new DraggableButton(context, association.event, association.action);
+                button.setOnClickListener(updateListener);
+                events.addView(button);
+                button.setX(positionStart(association.x, button.getLayoutParams().width / 2));
+                button.setY(positionStart(association.y, button.getLayoutParams().width / 2));
             }
-
+        }
     }
 
-    private void showDirectionDialog() {
-        LayoutInflater inflater = LayoutInflater.from(getContext());
-        SwipeDirectionDialog dialogLayout = (SwipeDirectionDialog) inflater.inflate(R.layout.dialog_swipe_direction_layout, this, false);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-        addView(dialogLayout, layoutParams);
-        dialogLayout.init((adapterView, view, i, l) -> {
-            Event selectedEvent = (Event) adapterView.getItemAtPosition(i);
-            removeView(dialogLayout);
-            showDialog(selectedEvent, false);
-        });
-    }
-
-    private void showDialog(Event event, boolean joystick) {
+    private void showDialog(EventButton eventButton, boolean isNew) {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         eventDialog = (EventDialog) inflater.inflate(R.layout.dialog_layout, this, false);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         addView(eventDialog, layoutParams);
-        eventDialog.init(joystick,
+        eventDialog.init(eventButton,
                 view1 -> {
                     Integer selectedAction = eventDialog.getSelectedAction();
-                    Log.d("selectedAction", selectedAction.toString());
                     if (selectedAction == null) {
                         eventDialog.showErrorMessage();
                         return;
                     }
+                    //se si toglie si può spostare tutta la logica in eventdialog
                     for (int i = 0; i < events.getChildCount(); i++) {
                         EventButton button = (EventButton) events.getChildAt(i);
-                        if (button.getAction() == selectedAction) {
+                        if (eventButton != button && button.getAction() == selectedAction) {
                             eventDialog.showSameKeyErrorMessage();
                             return;
                         }
                     }
+                    eventButton.setAction(selectedAction);
+                    eventButton.setEvent(eventDialog.getEvent());
+                    eventButton.setOnClickListener(updateListener);
                     removeView(eventDialog);
                     eventDialog = null;
-                    if (joystick) {
-                        ResizableDraggableButton resizableDraggableButton = new ResizableDraggableButton(context, selectedAction);
-                        resizableDraggableButton.setOnClickListener(updateListener);
-                        events.addView(resizableDraggableButton);
-                    } else {
-                        DraggableButton draggableButton = new DraggableButton(context, event, selectedAction);
-                        draggableButton.setOnClickListener(updateListener);
-                        events.addView(draggableButton);
-                    }
+                    if (isNew)
+                        events.addView((View) eventButton);
                 },
                 view1 -> {
+                    removeView(eventDialog);
+                    eventDialog = null;
+                },
+                isNew ? null :
+                view1 -> {
+                    events.removeView((View) eventButton);
                     removeView(eventDialog);
                     eventDialog = null;
                 },
@@ -281,8 +236,6 @@ public class ConfigurationView extends RelativeLayout {
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (eventDialog != null)
             eventDialog.onKeyUp(keyCode, event);
-        else if (editEventDialog != null)
-            editEventDialog.onKeyUp(keyCode, event);
         return true;
     }
 
@@ -290,8 +243,6 @@ public class ConfigurationView extends RelativeLayout {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (eventDialog != null)
             eventDialog.onKeyDown(keyCode, event);
-        else if (editEventDialog != null)
-            editEventDialog.onKeyDown(keyCode, event);
         return true;
     }
 
@@ -299,8 +250,6 @@ public class ConfigurationView extends RelativeLayout {
     public boolean onGenericMotionEvent(MotionEvent event) {
         if (eventDialog != null)
             eventDialog.onGenericMotionEvent(event);
-        else if (editEventDialog != null)
-            editEventDialog.onGenericMotionEvent(event);
         return true;
     }
 }

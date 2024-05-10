@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.example.sandboxtest.R;
+import com.example.sandboxtest.database.Event;
 
 public class ResizableDraggableButton extends FrameLayout implements EventButton {
     private ImageButton fab;
@@ -22,7 +23,7 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
     private float lastTouchY;
     private float posX;
     private float posY;
-    private int action;
+    private Integer action;
     private OnClickListener listener;
 
     public ResizableDraggableButton(Context context) {
@@ -43,7 +44,7 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
         init();
     }
 
-    public ResizableDraggableButton(Context context, int action) {
+    public ResizableDraggableButton(Context context, Integer action) {
         super(context);
         this.context = context;
         this.action = action;
@@ -53,7 +54,7 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
     @SuppressLint("ClickableViewAccessibility")
     public void init() {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.resizable_fab_layout, this, true);
+        inflater.inflate(R.layout.resizable_button_layout, this, true);
 
         fab = findViewById(R.id.fab);
         resizeButton = findViewById(R.id.resize_button);
@@ -150,7 +151,7 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
         fab.requestLayout();
     }
 
-    public int getAction() {
+    public Integer getAction() {
         return action;
     }
 
@@ -160,5 +161,14 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
 
     public void setOnClickListener(OnClickListener listener) {
         this.listener = listener;
+    }
+
+    @Override
+    public Event getEvent() {
+        return Event.JOYSTICK;
+    }
+
+    @Override
+    public void setEvent(Event event) {
     }
 }

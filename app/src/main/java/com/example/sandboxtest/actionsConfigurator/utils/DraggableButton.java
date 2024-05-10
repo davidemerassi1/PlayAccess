@@ -15,10 +15,10 @@ public class DraggableButton extends androidx.appcompat.widget.AppCompatImageBut
     private float posX;
     private float posY;
     private Event event;
-    private int action;
+    private Integer action;
     private OnClickListener listener;
 
-    public DraggableButton(Context context, Event event, int action) {
+    public DraggableButton(Context context, Event event, Integer action) {
         super(context);
         this.action = action;
         this.event = event;
@@ -81,7 +81,12 @@ public class DraggableButton extends androidx.appcompat.widget.AppCompatImageBut
         return event;
     }
 
-    public int getAction() {
+    @Override
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public Integer getAction() {
         return action;
     }
 
