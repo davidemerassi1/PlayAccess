@@ -18,9 +18,8 @@ public class DraggableButton extends androidx.appcompat.widget.AppCompatImageBut
     private Integer action;
     private OnClickListener listener;
 
-    public DraggableButton(Context context, Event event, Integer action) {
+    public DraggableButton(Context context, Event event) {
         super(context);
-        this.action = action;
         this.event = event;
         setOnTouchListener(this);
         setPadding(15, 15, 15, 15);
@@ -34,6 +33,7 @@ public class DraggableButton extends androidx.appcompat.widget.AppCompatImageBut
             case SWIPE_LEFT -> setImageResource(R.drawable.swipe_left_icon);
             case SWIPE_RIGHT -> setImageResource(R.drawable.swipe_right_icon);
             case LONG_TAP -> setImageResource(R.drawable.long_tap_icon);
+            case MONODIMENSIONAL_SLIDING -> setImageResource(R.drawable.monodimensional_sliding_icon);
         }
     }
 

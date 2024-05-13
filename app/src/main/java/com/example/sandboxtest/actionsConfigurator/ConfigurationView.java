@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.actionsConfigurator.utils.EventButton;
 import com.example.sandboxtest.actionsConfigurator.utils.EventDialog;
+import com.example.sandboxtest.actionsConfigurator.utils.ResizableSlidingDraggableButton;
 import com.example.sandboxtest.database.Event;
 import com.example.sandboxtest.database.Association;
 import com.example.sandboxtest.database.AssociationDao;
@@ -97,7 +98,7 @@ public class ConfigurationView extends RelativeLayout {
 
         fabLayouts.get(0).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(new DraggableButton(context, Event.TAP, null), true);
+            showDialog(new DraggableButton(context, Event.TAP), true);
         });
 
         fabLayouts.get(1).getChildAt(1).setOnClickListener(view -> {
@@ -107,17 +108,17 @@ public class ConfigurationView extends RelativeLayout {
 
         fabLayouts.get(2).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(new DraggableButton(context, Event.SWIPE_UP, null), true);
+            showDialog(new DraggableButton(context, Event.SWIPE_UP), true);
         });
 
         fabLayouts.get(3).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(new DraggableButton(context, Event.LONG_TAP, null), true);
+            showDialog(new DraggableButton(context, Event.LONG_TAP), true);
         });
 
         fabLayouts.get(4).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            //showDialog(Action.MONODIMENSIONAL_SLIDING, false);
+            showDialog(new ResizableSlidingDraggableButton(context, null, null, null), true);
         });
 
         for (Association association : associationsDb.getAssociations(applicationPackage)) {
@@ -129,8 +130,17 @@ public class ConfigurationView extends RelativeLayout {
                 events.addView(button);
                 button.setDimensions(association.radius * 2);
                 button.setPadding(association.radius * 2);
+            } else if (association.event == Event.MONODIMENSIONAL_SLIDING) {
+                ResizableSlidingDraggableButton button = new ResizableSlidingDraggableButton(context, association.action, association.additionalAction1, association.additionalAction2);
+                events.addView(button);
+                button.setOnClickListener(updateListener);
+                button.setX(positionStart(association.x, association.radius));
+                button.setY(positionStart(association.y, toPx(30)));
+                button.setDimensions(association.radius * 2);
+                //button.setPadding(association.radius * 2);
             } else {
-                DraggableButton button = new DraggableButton(context, association.event, association.action);
+                DraggableButton button = new DraggableButton(context, association.event);
+                button.setAction(association.action);
                 button.setOnClickListener(updateListener);
                 events.addView(button);
                 button.setX(positionStart(association.x, button.getLayoutParams().width / 2));
@@ -148,7 +158,7 @@ public class ConfigurationView extends RelativeLayout {
         eventDialog.init(eventButton,
                 view1 -> {
                     Integer selectedAction = eventDialog.getSelectedAction();
-                    if (selectedAction == null) {
+                    if (selectedAction == null || (eventButton.getEvent() == Event.MONODIMENSIONAL_SLIDING && (eventDialog.getSelectedAction2() == null || eventDialog.getSelectedAction3() == null)) ) {
                         eventDialog.showErrorMessage();
                         return;
                     }
@@ -161,6 +171,11 @@ public class ConfigurationView extends RelativeLayout {
                         }
                     }
                     eventButton.setAction(selectedAction);
+                    if (eventButton instanceof ResizableSlidingDraggableButton) {
+                        ResizableSlidingDraggableButton resizableSlidingDraggableButton = (ResizableSlidingDraggableButton) eventButton;
+                        resizableSlidingDraggableButton.setAction2(eventDialog.getSelectedAction2());
+                        resizableSlidingDraggableButton.setAction3(eventDialog.getSelectedAction3());
+                    }
                     eventButton.setEvent(eventDialog.getEvent());
                     eventButton.setOnClickListener(updateListener);
                     removeView(eventDialog);
@@ -191,12 +206,17 @@ public class ConfigurationView extends RelativeLayout {
                 DraggableButton button = (DraggableButton) view;
                 int xCenter = center(button.getX(), button.getWidth());
                 int yCenter = center(button.getY(), button.getHeight());
-                list.add(new Association(applicationPackage, button.getAction(), button.getEvent(), xCenter, yCenter, null));
+                list.add(new Association(applicationPackage, button.getAction(), button.getEvent(), xCenter, yCenter, null, null, null));
             } else if (view instanceof ResizableDraggableButton) {
                 ResizableDraggableButton button = (ResizableDraggableButton) view;
                 int xCenter = center(button.getX(), button.getWidth());
                 int yCenter = center(button.getY(), button.getHeight());
-                list.add(new Association(applicationPackage, button.getAction(), Event.JOYSTICK, xCenter, yCenter, button.getWidth() / 2));
+                list.add(new Association(applicationPackage, button.getAction(), Event.JOYSTICK, xCenter, yCenter, button.getWidth() / 2, null, null));
+            } else if (view instanceof ResizableSlidingDraggableButton) {
+                ResizableSlidingDraggableButton button = (ResizableSlidingDraggableButton) view;
+                int xCenter = center(button.getX(), button.getWidth());
+                int yCenter = center(button.getY(), button.getHeight());
+                list.add(new Association(applicationPackage, button.getAction(), Event.MONODIMENSIONAL_SLIDING, xCenter, yCenter, button.getWidth() / 2, button.getAction2(), button.getAction3()));
             }
         }
 

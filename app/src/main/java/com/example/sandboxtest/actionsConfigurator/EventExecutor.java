@@ -10,6 +10,8 @@ import android.view.MotionEvent;
 import com.example.sandboxtest.database.Association;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EventExecutor {
     private int statusBarHeight;
@@ -17,6 +19,7 @@ public class EventExecutor {
     private ArrayList<MotionEvent.PointerProperties> pointerProperties;
     private ArrayList<MotionEvent.PointerCoords> pointerCoords;
     private ArrayList<Integer> actions;
+    private Map<Association, Integer> x2d = new HashMap<>();
     int currentId = 0;
 
     public EventExecutor(Context context) {
@@ -56,6 +59,10 @@ public class EventExecutor {
     }
 
     public void release(int targetX, int targetY, int action) {
+        if (!actions.contains(action)) {
+            Log.d("ActionExecutor", "Event not in progress");
+            return;
+        }
         long now = SystemClock.uptimeMillis();
         switch (pointerProperties.size()) {
             case 1:
@@ -166,6 +173,61 @@ public class EventExecutor {
         }).start();
     }
 
+    /**
+     * Esegue movimento 2d (joystick)
+     *
+     * @param association
+     * @param x           coordinata x in [-1, 1]
+     * @param y           coordinata y in [-1, 1]
+     */
+    public void execute2d(Association association, float x, float y) {
+        new Thread(() -> {
+            if (actions.contains(association.action)) {
+                if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1) {
+                    move((int) (x * association.radius) + association.x, (int) (y * association.radius) + association.y, association.action);
+                } else {
+                    release(association.x, association.y, association.action);
+                }
+            } else {
+                if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1) {
+                    touch(association.x, association.y, association.action);
+                    move((int) (x * association.radius) + association.x, (int) (y * association.radius) + association.y, association.action);
+                }
+            }
+        }).start();
+    }
+
+    public void execute1d(Association association, Action1D action1d) {
+        new Thread(() -> {
+            switch (action1d) {
+                case MOVE_LEFT:
+                    if (x2d.containsKey(association)) {
+                        x2d.put(association, x2d.get(association) - 100);
+                        move(x2d.get(association), association.y, association.action);
+                    } else {
+                        touch(association.x, association.y, association.action);
+                        x2d.put(association, association.x-100);
+                        move(x2d.get(association), association.y, association.action);
+                    }
+                    break;
+                case MOVE_RIGHT:
+                    if (x2d.containsKey(association)) {
+                        x2d.put(association, x2d.get(association) + 100);
+                        move(x2d.get(association), association.y, association.action);
+                    } else {
+                        touch(association.x, association.y, association.action);
+                        x2d.put(association, association.x + 100);
+                        move(x2d.get(association), association.y, association.action);
+                    }
+                    break;
+                case RESET:
+                    release(association.x, association.y, association.action);
+                    x2d.remove(association);
+                    break;
+            }
+        }).start();
+    }
+
     private MotionEvent.PointerCoords createCoords(int x, int y) {
         MotionEvent.PointerCoords coords = new MotionEvent.PointerCoords();
         coords.x = x;
@@ -181,6 +243,10 @@ public class EventExecutor {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public enum Action1D {
+        MOVE_LEFT, MOVE_RIGHT, RESET
     }
 }
 

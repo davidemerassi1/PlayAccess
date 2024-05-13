@@ -22,15 +22,17 @@ public class Association {
     @NonNull
     public int y;
     public Integer radius;
-    public String additionalAction1;
-    public String additionalAction2;
+    public Integer additionalAction1;
+    public Integer additionalAction2;
 
-    public Association(String applicationPackage, int action, Event event, int x, int y, Integer radius) {
+    public Association(String applicationPackage, int action, Event event, int x, int y, Integer radius, Integer additionalAction1, Integer additionalAction2) {
         this.applicationPackage = applicationPackage;
         this.event = event;
         this.action = action;
         this.x = x;
         this.y = y;
         this.radius = radius;
+        this.additionalAction1 = additionalAction1;
+        this.additionalAction2 = additionalAction2;
     }
 }
