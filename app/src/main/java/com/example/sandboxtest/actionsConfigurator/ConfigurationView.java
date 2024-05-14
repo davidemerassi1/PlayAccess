@@ -137,7 +137,6 @@ public class ConfigurationView extends RelativeLayout {
                 button.setX(positionStart(association.x, association.radius));
                 button.setY(positionStart(association.y, toPx(30)));
                 button.setDimensions(association.radius * 2);
-                //button.setPadding(association.radius * 2);
             } else {
                 DraggableButton button = new DraggableButton(context, association.event);
                 button.setAction(association.action);
@@ -215,7 +214,7 @@ public class ConfigurationView extends RelativeLayout {
             } else if (view instanceof ResizableSlidingDraggableButton) {
                 ResizableSlidingDraggableButton button = (ResizableSlidingDraggableButton) view;
                 int xCenter = center(button.getX(), button.getWidth());
-                int yCenter = center(button.getY(), button.getHeight());
+                int yCenter = center(button.getY(), toPx(60));
                 list.add(new Association(applicationPackage, button.getAction(), Event.MONODIMENSIONAL_SLIDING, xCenter, yCenter, button.getWidth() / 2, button.getAction2(), button.getAction3()));
             }
         }

@@ -59,10 +59,12 @@ public class EventExecutor {
     }
 
     public void release(int targetX, int targetY, int action) {
+        Log.d("EventExecutor", "Releasing event");
         if (!actions.contains(action)) {
             Log.d("ActionExecutor", "Event not in progress");
             return;
         }
+        move(targetX, targetY, action);
         long now = SystemClock.uptimeMillis();
         switch (pointerProperties.size()) {
             case 1:
@@ -101,6 +103,7 @@ public class EventExecutor {
     }
 
     public void move(int toX, int toY, int action) {
+        Log.d("EventExecutor", "Moving event");
         long now = SystemClock.uptimeMillis();
         if (actions.size() > 0 && actions.get(0).equals(action))
             pointerCoords.set(0, createCoords(toX, toY + statusBarHeight));
@@ -183,13 +186,13 @@ public class EventExecutor {
     public void execute2d(Association association, float x, float y) {
         new Thread(() -> {
             if (actions.contains(association.action)) {
-                if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1) {
+                if (Math.abs(x) > 0.2 || Math.abs(y) > 0.2) {
                     move((int) (x * association.radius) + association.x, (int) (y * association.radius) + association.y, association.action);
                 } else {
                     release(association.x, association.y, association.action);
                 }
             } else {
-                if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1) {
+                if (Math.abs(x) > 0.2 || Math.abs(y) > 0.2) {
                     touch(association.x, association.y, association.action);
                     move((int) (x * association.radius) + association.x, (int) (y * association.radius) + association.y, association.action);
                 }
@@ -201,24 +204,20 @@ public class EventExecutor {
         new Thread(() -> {
             switch (action1d) {
                 case MOVE_LEFT:
-                    if (x2d.containsKey(association)) {
-                        x2d.put(association, x2d.get(association) - 100);
-                        move(x2d.get(association), association.y, association.action);
-                    } else {
+                    if (!x2d.containsKey(association)) {
                         touch(association.x, association.y, association.action);
-                        x2d.put(association, association.x-100);
-                        move(x2d.get(association), association.y, association.action);
+                        x2d.put(association, association.x);
                     }
+                    x2d.put(association, Math.max(x2d.get(association) - 100, association.x - association.radius));
+                    move(x2d.get(association), association.y, association.action);
                     break;
                 case MOVE_RIGHT:
-                    if (x2d.containsKey(association)) {
-                        x2d.put(association, x2d.get(association) + 100);
-                        move(x2d.get(association), association.y, association.action);
-                    } else {
+                    if (!x2d.containsKey(association)) {
                         touch(association.x, association.y, association.action);
-                        x2d.put(association, association.x + 100);
-                        move(x2d.get(association), association.y, association.action);
+                        x2d.put(association, association.x);
                     }
+                    x2d.put(association, Math.min(x2d.get(association) + 100, association.x + association.radius));
+                    move(x2d.get(association), association.y, association.action);
                     break;
                 case RESET:
                     release(association.x, association.y, association.action);
@@ -226,6 +225,14 @@ public class EventExecutor {
                     break;
             }
         }).start();
+    }
+
+    public void releaseAll() {
+        while (actions.size() > 0) {
+            Log.d("ActionExecutor", "Releasing event");
+            release((int)pointerCoords.get(0).x, (int)pointerCoords.get(0).y, actions.get(0));
+        }
+        x2d.clear();
     }
 
     private MotionEvent.PointerCoords createCoords(int x, int y) {

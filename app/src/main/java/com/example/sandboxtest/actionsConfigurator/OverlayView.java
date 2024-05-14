@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.example.sandboxtest.MyApplication;
 import com.example.sandboxtest.R;
@@ -38,6 +40,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     private boolean configurationOpened = false;
     private ConfigurationView configurationView;
     private LifecycleRegistry lifecycleRegistry;
+    private MutableLiveData<Boolean> needCamera = new MutableLiveData<>(false);
 
     public OverlayView(Context context) {
         super(context);
@@ -69,7 +72,12 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         associationsDb = application.getDatabase().getDao();
 
         new Thread(() -> {
+            needCamera.postValue(false);
             for (Association association : associationsDb.getAssociations(applicationPackage)) {
+                if (association.action < 0) {
+                    Log.d("OverlayView", "init: need camera");
+                    needCamera.postValue(true);
+                }
                 map.put(association.action, association);
                 if (association.event == Event.MONODIMENSIONAL_SLIDING) {
                     map.put(association.additionalAction1, association);
@@ -80,19 +88,26 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         }).start();
 
         expandedView.findViewById(R.id.closeConfigurationBtn).setOnClickListener(v -> {
+            new Thread(() -> executor.releaseAll()).start();
             collapsedView.setVisibility(View.VISIBLE);
             expandedView.setVisibility(View.GONE);
             params.width = WindowManager.LayoutParams.WRAP_CONTENT;
             params.height = WindowManager.LayoutParams.WRAP_CONTENT;
             windowManager.updateViewLayout(this, params);
             List<Association> associationList = configurationView.save();
+            map.clear();
+            boolean needed = false;
             for (Association association : associationList) {
                 map.put(association.action, association);
+                if (association.action < 0) {
+                    needed = true;
+                }
                 if (association.event == Event.MONODIMENSIONAL_SLIDING) {
                     map.put(association.additionalAction1, association);
                     map.put(association.additionalAction2, association);
                 }
             }
+            needCamera.postValue(needed);
             configurationOpened = false;
         });
 
@@ -140,6 +155,15 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
 
         lifecycleRegistry = new LifecycleRegistry(this);
         //new InputDeviceChecker(getContext(), this);
+
+        needCamera.observeForever(nc -> {
+            Log.d("OverlayView", "init: need camera observer");
+            if (nc) {
+                lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
+            } else {
+                lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
+            }
+        });
     }
 
     private EventExecutor executor = new EventExecutor(getContext());
@@ -163,7 +187,8 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
 
     public void start() {
         setVisibility(VISIBLE);
-        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
+        if (needCamera.getValue())
+            lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
     }
 
     public void stop() {
