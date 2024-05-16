@@ -10,6 +10,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        gradlePluginPortal()
         maven("https://jitpack.io")
         jcenter()
     }
@@ -25,3 +26,6 @@ include(":Bcore:android-mirror")
 include(":Bcore:pine-core")
 include(":Bcore:pine-xposed")
 include(":Bcore:pine-xposed-res")
+include (":feature:actionsconfigurator")
+include (":common")
+

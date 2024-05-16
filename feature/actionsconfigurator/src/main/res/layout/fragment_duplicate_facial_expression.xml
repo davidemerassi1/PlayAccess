@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.fragment.facialexpression.DuplicateFacialExpressionFragment"
+    >
+
+    <TextView
+        android:id="@+id/duplicateFacialExpressionMessage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/metropolis"
+        android:textSize="@dimen/P4_text_size"
+        android:layout_marginTop="@dimen/default_margin_medium_plus"
+        android:layout_marginHorizontal="@dimen/default_margin"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/feraction_duplicate_facial_expression_message"
+        android:gravity="center"
+        android:textAlignment="center"
+        />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="@dimen/default_margin_small_plus"
+        app:layout_constraintTop_toBottomOf="@id/duplicateFacialExpressionMessage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/buttonsBox"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/P6_text_size"
+                android:fontFamily="@font/metropolis"
+                android:text="@string/feraction_duplicate_registed_expression_text"
+                />
+
+            <ImageView
+                android:id="@+id/duplicateExpression"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="@dimen/default_margin_small"
+                tools:srcCompat="@tools:sample/avatars"
+                android:contentDescription="@string/feraction_registered_facial_expression_preview_content_description"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/default_margin_small_plus"
+            android:gravity="center"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/P6_text_size"
+                android:fontFamily="@font/metropolis"
+                android:text="@string/feraction_duplicate_acquired_expression_text"
+                />
+
+            <ImageView
+                android:id="@+id/acquiredExpression"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                tools:src="@tools:sample/avatars"
+                android:layout_marginTop="@dimen/default_margin_small"
+                android:contentDescription="@string/feraction_acquired_facial_expression_preview_content_description"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <com.ortiz.touchview.TouchImageView
+        android:id="@+id/zoomedFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:background="@color/black"
+        android:visibility="gone"
+        android:elevation="5dp"
+        android:backgroundTint="@color/black_semitransparent"
+        android:contentDescription="@string/feraction_frame_content_description"
+        tools:src="@tools:sample/avatars" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/buttonsBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="@dimen/default_margin_small_plus"
+        android:layout_marginBottom="@dimen/default_margin_large"
+        >
+
+        <include
+            android:id="@+id/retryButton"
+            layout="@layout/action_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/default_margin_small"
+            app:text="@{@string/feraction_retry_button}"
+            app:border="@{@drawable/red_button_border}"
+            />
+
+        <include
+            android:id="@+id/confirmButton"
+            layout="@layout/action_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/default_margin_small"
+            app:text="@{@string/confirm}"
+            app:border="@{@drawable/red_button_border}"
+            />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pulsante_esterno_nav_graph"
+    app:startDestination="@id/recordFacialExpressionFragment">
+
+    <fragment
+        android:id="@+id/recordFacialExpressionFragment"
+        android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment.facialexpression.RecordFacialExpressionFragment"
+        android:label="RecordFacialExpressionFragment"
+        tools:layout="@layout/fragment_record_facial_expression">
+        <action
+            android:id="@+id/action_recordFacialExpressionFragment_to_defineFacialExpressionFragment"
+            app:destination="@id/defineFacialExpressionFragment" />
+        <action
+            android:id="@+id/action_recordFacialExpressionFragment_to_duplicateFacialExpressionFragment"
+            app:destination="@id/duplicateFacialExpressionFragment" />
+        <action
+            android:id="@+id/action_recordFacialExpressionFragment_to_neutralFacialExpressionFragment"
+            app:destination="@id/neutralFacialExpressionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/defineFacialExpressionFragment"
+        android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment.facialexpression.DefineFacialExpressionFragment"
+        android:label="DefineFacialExpressionFragment"
+        tools:layout="@layout/fragment_define_facial_expression">
+        <action
+            android:id="@+id/action_defineFacialExpressionFragment_to_recordFacialExpressionFragment"
+            app:destination="@id/recordFacialExpressionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/duplicateFacialExpressionFragment"
+        android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment.facialexpression.DuplicateFacialExpressionFragment"
+        android:label="DuplicateFacialExpressionFragment" >
+        <argument
+            android:name="reRecorded"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <action
+            android:id="@+id/action_duplicateFacialExpressionFragment_to_defineFacialExpressionFragment"
+            app:destination="@id/defineFacialExpressionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/neutralFacialExpressionFragment"
+        android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment.facialexpression.NeutralFacialExpressionFragment"
+        android:label="fragment_neutral_facial_expression"
+        tools:layout="@layout/fragment_neutral_facial_expression" >
+    </fragment>
+
+</navigation>

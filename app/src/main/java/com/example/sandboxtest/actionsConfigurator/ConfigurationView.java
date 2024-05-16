@@ -30,6 +30,10 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import it.unimi.di.ewlab.iss.common.model.MainModel;
+import it.unimi.di.ewlab.iss.common.model.actions.Action;
+import it.unimi.di.ewlab.iss.common.storage.JsonManager;
+
 public class ConfigurationView extends RelativeLayout {
     private boolean isFABOpen = false;
     private ImageButton fab;
@@ -103,7 +107,7 @@ public class ConfigurationView extends RelativeLayout {
 
         fabLayouts.get(1).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(new ResizableDraggableButton(context, (Integer) null), true);
+            showDialog(new ResizableDraggableButton(context, (Action) null), true);
         });
 
         fabLayouts.get(2).getChildAt(1).setOnClickListener(view -> {
@@ -156,7 +160,7 @@ public class ConfigurationView extends RelativeLayout {
         addView(eventDialog, layoutParams);
         eventDialog.init(eventButton,
                 view1 -> {
-                    Integer selectedAction = eventDialog.getSelectedAction();
+                    Action selectedAction = eventDialog.getSelectedAction();
                     if (selectedAction == null || (eventButton.getEvent() == Event.MONODIMENSIONAL_SLIDING && (eventDialog.getSelectedAction2() == null || eventDialog.getSelectedAction3() == null)) ) {
                         eventDialog.showErrorMessage();
                         return;
@@ -174,6 +178,7 @@ public class ConfigurationView extends RelativeLayout {
                         ResizableSlidingDraggableButton resizableSlidingDraggableButton = (ResizableSlidingDraggableButton) eventButton;
                         resizableSlidingDraggableButton.setAction2(eventDialog.getSelectedAction2());
                         resizableSlidingDraggableButton.setAction3(eventDialog.getSelectedAction3());
+                        resizableSlidingDraggableButton.setResetToStart(eventDialog.getResetToStart());
                     }
                     eventButton.setEvent(eventDialog.getEvent());
                     eventButton.setOnClickListener(updateListener);
@@ -191,8 +196,7 @@ public class ConfigurationView extends RelativeLayout {
                     events.removeView((View) eventButton);
                     removeView(eventDialog);
                     eventDialog = null;
-                },
-                availableActions()
+                }
         );
     }
 
@@ -205,17 +209,17 @@ public class ConfigurationView extends RelativeLayout {
                 DraggableButton button = (DraggableButton) view;
                 int xCenter = center(button.getX(), button.getWidth());
                 int yCenter = center(button.getY(), button.getHeight());
-                list.add(new Association(applicationPackage, button.getAction(), button.getEvent(), xCenter, yCenter, null, null, null));
+                list.add(new Association(applicationPackage, button.getAction(), button.getEvent(), xCenter, yCenter, null, null, null, null));
             } else if (view instanceof ResizableDraggableButton) {
                 ResizableDraggableButton button = (ResizableDraggableButton) view;
                 int xCenter = center(button.getX(), button.getWidth());
                 int yCenter = center(button.getY(), button.getHeight());
-                list.add(new Association(applicationPackage, button.getAction(), Event.JOYSTICK, xCenter, yCenter, button.getWidth() / 2, null, null));
+                list.add(new Association(applicationPackage, button.getAction(), Event.JOYSTICK, xCenter, yCenter, button.getWidth() / 2, null, null, null));
             } else if (view instanceof ResizableSlidingDraggableButton) {
                 ResizableSlidingDraggableButton button = (ResizableSlidingDraggableButton) view;
                 int xCenter = center(button.getX(), button.getWidth());
                 int yCenter = center(button.getY(), toPx(60));
-                list.add(new Association(applicationPackage, button.getAction(), Event.MONODIMENSIONAL_SLIDING, xCenter, yCenter, button.getWidth() / 2, button.getAction2(), button.getAction3()));
+                list.add(new Association(applicationPackage, button.getAction(), Event.MONODIMENSIONAL_SLIDING, xCenter, yCenter, button.getWidth() / 2, button.getAction2(), button.getAction3(), button.getResetToStart()));
             }
         }
 
@@ -235,7 +239,8 @@ public class ConfigurationView extends RelativeLayout {
         return (float) (center - radius);
     }
 
-    private List<CameraAction> availableActions() {
+    /*private List<CameraAction> availableActions() {
+        Log.d("ConfigurationView", MainModel.getInstance().getActions().get(0).getName());
         ArrayList<CameraAction> actions = new ArrayList<>(Arrays.asList(CameraAction.values()));
         for (int i = 0; i < events.getChildCount(); i++) {
             EventButton button = (EventButton) events.getChildAt(i);
@@ -245,7 +250,7 @@ public class ConfigurationView extends RelativeLayout {
             actions.remove(action);
         }
         return actions;
-    }
+    }*/
 
     private static int toPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);

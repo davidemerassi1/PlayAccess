@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable name="text" type="String"/>
+        <variable name="background" type="android.graphics.drawable.Drawable"/>
+    </data>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"        android:id="@+id/directoryGestureSchermo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="5dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:background="@{background}"
+        tools:background="@drawable/orange_button_background">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/image_rounded_icon"
+            android:layout_height="@dimen/image_rounded_icon"
+            android:layout_marginEnd="@dimen/default_margin_small"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginTop="@dimen/default_margin"
+            android:layout_marginBottom="@dimen/default_margin"
+            android:src="@drawable/folder_white"
+            android:tint="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/directoryName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_margin="@dimen/default_margin"
+            android:text="@{text}"
+            android:fontFamily="@font/metropolis"
+            android:textSize="@dimen/P4_text_size"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="AZIONE"
+            />
+
+    </LinearLayout>
+
+</layout>

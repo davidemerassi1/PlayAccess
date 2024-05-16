@@ -34,6 +34,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        dataBinding = true
     }
 }
 
@@ -46,6 +47,9 @@ dependencies {
     implementation("androidx.navigation:navigation-ui:2.7.7")
     implementation ("com.google.code.gson:gson:2.9.1")
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.5.30")
+    implementation("com.google.dagger:hilt-android:2.40.1")
+    implementation(project(":common"))
+    implementation(project(":feature:actionsconfigurator"))
     val roomversion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomversion")
     annotationProcessor("androidx.room:room-compiler:$roomversion")
@@ -53,6 +57,7 @@ dependencies {
     implementation("androidx.camera:camera-core:1.3.2")
     implementation("androidx.camera:camera-lifecycle:1.3.2")
     implementation("androidx.camera:camera-view:1.3.2")
+    implementation("com.google.guava:guava:30.1-android")
     implementation ("com.google.mlkit:face-detection:16.1.6")
     testImplementation("junit:junit:4.13.2")
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))

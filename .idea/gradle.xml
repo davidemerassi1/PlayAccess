@@ -19,6 +19,9 @@
             <option value="$PROJECT_DIR$/Bcore/pine-xposed-res" />
             <option value="$PROJECT_DIR$/android-mirror" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/common" />
+            <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/actionsconfigurator" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

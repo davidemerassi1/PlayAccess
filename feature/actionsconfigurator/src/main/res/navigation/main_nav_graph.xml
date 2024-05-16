@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/directoriesFragment">
+
+    <fragment
+        android:id="@+id/directoriesFragment"
+        android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment.DirectoriesFragment"
+        android:label="DirectoriesFragment"
+        tools:layout="@layout/fragment_directories">
+        <action
+            android:id="@+id/action_listaAzioniFragment_to_aggiungiAzioneFragment"
+            app:destination="@id/aggiungiAzioneFragment" />
+        <action
+            android:id="@+id/action_directoriesFragment_to_actionsListFragment"
+            app:destination="@id/actionsListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/aggiungiAzioneFragment"
+        android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment.AggiungiAzioneFragment"
+        android:label="AggiungiAzioneFragment"
+        tools:layout="@layout/fragment_aggiungi_azione">
+        <action
+            android:id="@+id/action_aggiungiAzioneFragment_to_listaAzioniFragment"
+            app:destination="@id/directoriesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/actionsListFragment"
+        android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment.ActionsListFragment"
+        android:label="ActionsListFragment"
+        tools:layout="@layout/fragment_actions_list">
+        <action
+            android:id="@+id/action_listaGestureSchermoFragment_to_infoScreenGestureFragment"
+            app:destination="@id/infoScreenGestureFragment" />
+        <action
+            android:id="@+id/action_actionsListFragment_to_infoButtonActionFragment"
+            app:destination="@id/infoButtonActionFragment" />
+        <action
+            android:id="@+id/action_actionsListFragment_to_infoFacialExpressionActionFragment"
+            app:destination="@id/infoFacialExpressionActionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/infoScreenGestureFragment"
+        android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment.info.InfoScreenGestureFragment"
+        android:label="InfoScreenGestureFragment"
+        tools:layout="@layout/fragment_info_screen_gesture_action"/>
+
+    <fragment
+        android:id="@+id/infoButtonActionFragment"
+        android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment.info.InfoButtonActionFragment"
+        android:label="InfoButtonActionFragment"
+        tools:layout="@layout/fragment_info_button_action">
+
+        <action
+            android:id="@+id/action_infoButtonActionFragment_to_directoriesFragment"
+            app:destination="@id/directoriesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/infoFacialExpressionActionFragment"
+        android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment.info.InfoFacialExpressionActionFragment"
+        android:label="fragment_info_facial_expression_action"
+        tools:layout="@layout/fragment_info_facial_expression_action" >
+
+        <action
+            android:id="@+id/action_infoFacialExpressionActionFragment_to_directoriesFragment"
+            app:destination="@id/directoriesFragment" />
+    </fragment>
+
+</navigation>

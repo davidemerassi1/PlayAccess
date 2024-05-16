@@ -3,6 +3,8 @@ package com.example.sandboxtest.database;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
+import it.unimi.di.ewlab.iss.common.model.actions.Action;
+
 @Entity(primaryKeys = {"applicationPackage", "action"})
 public class Association {
     @NonNull
@@ -14,7 +16,7 @@ public class Association {
     <0: face action
     */
     @NonNull
-    public int action;
+    public Action action;
     @NonNull
     public Event event;
     @NonNull
@@ -22,10 +24,11 @@ public class Association {
     @NonNull
     public int y;
     public Integer radius;
-    public Integer additionalAction1;
-    public Integer additionalAction2;
+    public Action additionalAction1;
+    public Action additionalAction2;
+    public Boolean resetToStart;
 
-    public Association(String applicationPackage, int action, Event event, int x, int y, Integer radius, Integer additionalAction1, Integer additionalAction2) {
+    public Association(String applicationPackage, Action action, Event event, int x, int y, Integer radius, Action additionalAction1, Action additionalAction2, Boolean resetToStart) {
         this.applicationPackage = applicationPackage;
         this.event = event;
         this.action = action;
@@ -34,5 +37,6 @@ public class Association {
         this.radius = radius;
         this.additionalAction1 = additionalAction1;
         this.additionalAction2 = additionalAction2;
+        this.resetToStart = resetToStart;
     }
 }

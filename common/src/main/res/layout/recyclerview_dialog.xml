@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="it.unimi.di.ewlab.iss.common.configuratorsmodels.BaseDialog" />
+
+        <variable
+            name="icon"
+            type="int" />
+
+        <variable
+            name="title"
+            type="CharSequence" />
+
+        <variable
+            name="text"
+            type="CharSequence" />
+
+        <variable
+            name="emptyState"
+            type="Boolean" />
+
+        <variable
+            name="isExitEnable"
+            type="Boolean" />
+
+        <variable
+            name="listener"
+            type="it.unimi.di.ewlab.iss.common.configuratorsmodels.RecyclerViewDialog.RecyclerViewListener" />
+
+    </data>
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="10dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/exitIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/close_white"
+                android:tint="@color/black"
+                android:onClick="@{() -> listener.onPrimaryButtonClicked()}"
+                android:visibility="@{isExitEnable ? View.VISIBLE : View.INVISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/title_modal"
+                android:textSize="@dimen/H2_text_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_margin_small"
+                android:gravity="start"
+                android:maxLines="2"
+                android:text="@{title}"
+                android:textColor="#000000"
+                android:visibility="@{emptyState ? View.GONE : View.VISIBLE }"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Title Modal" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/actionEventList"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/default_margin_small"
+                android:scrollbars="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_modal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="5"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/emptyStateContainer"
+                android:visibility="@{emptyState ? View.VISIBLE : View.GONE }"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_modal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:layout_marginBottom="@dimen/default_margin"
+                    android:layout_marginLeft="@dimen/default_margin"
+                    android:layout_marginRight="@dimen/default_margin"
+                    android:text="@string/configurationdetails_empty_state"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

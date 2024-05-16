@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/intro_nagivation"
+    app:startDestination="@id/introWelcomeFragment">
+
+    <fragment
+        android:id="@+id/introWelcomeFragment"
+        android:name="it.unimi.di.ewlab.iss.common.ui.intro.fragments.IntroWelcomeFragment"
+        android:label="fragment_intro_welcome"
+        tools:layout="@layout/fragment_intro_welcome">
+        <action
+            android:id="@+id/action_introWelcomeFragment_to_introActionConfiguratorFragment"
+            app:destination="@id/introActionConfiguratorFragment"
+            app:enterAnim="@anim/slide_in_right_animation"
+            app:exitAnim="@anim/slide_out_left_animation"
+            app:popEnterAnim="@anim/slide_in_left_animation"
+            app:popExitAnim="@anim/slide_out_right_animation" />
+        <action
+            android:id="@+id/action_introWelcomeFragment_to_introAccessibilityServiceFragment"
+            app:destination="@id/introAccessibilityServiceFragment"
+            app:enterAnim="@anim/slide_in_right_animation"
+            app:exitAnim="@anim/slide_out_left_animation"
+            app:popEnterAnim="@anim/slide_in_left_animation"
+            app:popExitAnim="@anim/slide_out_right_animation" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/introActionConfiguratorFragment"
+        android:name="it.unimi.di.ewlab.iss.common.ui.intro.fragments.IntroActionsConfiguratorFragment"
+        android:label="fragment_intro_action_configurator"
+        tools:layout="@layout/fragment_intro_actions_configurator">
+        <action
+            android:id="@+id/action_introActionConfiguratorFragment_to_introGamesConfiguratorFragment"
+            app:destination="@id/introGamesConfiguratorFragment"
+            app:enterAnim="@anim/slide_in_right_animation"
+            app:exitAnim="@anim/slide_out_left_animation"
+            app:popEnterAnim="@anim/slide_in_left_animation"
+            app:popExitAnim="@anim/slide_out_right_animation" />
+        <action
+            android:id="@+id/action_introActionConfiguratorFragment_to_introAccessibilityServiceFragment"
+            app:destination="@id/introAccessibilityServiceFragment"
+            app:enterAnim="@anim/slide_in_right_animation"
+            app:exitAnim="@anim/slide_out_left_animation"
+            app:popEnterAnim="@anim/slide_in_left_animation"
+            app:popExitAnim="@anim/slide_out_right_animation" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/introGamesConfiguratorFragment"
+        android:name="it.unimi.di.ewlab.iss.common.ui.intro.fragments.IntroGamesConfiguratorFragment"
+        android:label="fragment_intro_games_configurator"
+        tools:layout="@layout/fragment_intro_games_configurator">
+        <action
+            android:id="@+id/action_introGamesConfiguratorFragment_to_introAccessibilityServiceFragment"
+            app:destination="@id/introAccessibilityServiceFragment"
+            app:enterAnim="@anim/slide_in_right_animation"
+            app:exitAnim="@anim/slide_out_left_animation"
+            app:popEnterAnim="@anim/slide_in_left_animation"
+            app:popExitAnim="@anim/slide_out_right_animation" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/introAccessibilityServiceFragment"
+        android:name="it.unimi.di.ewlab.iss.common.ui.intro.fragments.IntroAccessibilityServiceFragment"
+        android:label="fragment_intro_accessibility_service"
+        tools:layout="@layout/fragment_intro_accessibility_service">
+        <action
+            android:id="@+id/action_introAccessibilityServiceFragment_to_introPermissionsFragment"
+            app:destination="@id/introPermissionsFragment"
+            app:enterAnim="@anim/slide_in_right_animation"
+            app:exitAnim="@anim/slide_out_left_animation"
+            app:popEnterAnim="@anim/slide_in_left_animation"
+            app:popExitAnim="@anim/slide_out_right_animation" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/introPermissionsFragment"
+        android:name="it.unimi.di.ewlab.iss.common.ui.intro.fragments.IntroPermissionsFragment"
+        android:label="fragment_intro_permissions"
+        tools:layout="@layout/fragment_intro_permissions" />
+
+</navigation>

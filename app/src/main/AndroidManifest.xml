@@ -25,19 +25,32 @@
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.SandBoxTest"
         tools:targetApi="31">
+
         <activity
             android:name=".homeScreen.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="Sandbox Launcher"
             android:theme="@style/Base.Theme.SandBoxTest">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity android:name=".installedApps.InstalledAppsActivity" />
+
+        <activity
+            android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity.MainActivityConfAzioni"
+            android:label="PlayAccess"
+            android:exported="true"
+            android:noHistory="true"
+            android:taskAffinity="">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"

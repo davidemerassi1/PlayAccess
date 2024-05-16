@@ -9,13 +9,15 @@ import android.widget.FrameLayout;
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.database.Event;
 
+import it.unimi.di.ewlab.iss.common.model.actions.Action;
+
 public class DraggableButton extends androidx.appcompat.widget.AppCompatImageButton implements EventButton, View.OnTouchListener {
     private float lastTouchX;
     private float lastTouchY;
     private float posX;
     private float posY;
     private Event event;
-    private Integer action;
+    private Action action;
     private OnClickListener listener;
 
     public DraggableButton(Context context, Event event) {
@@ -86,11 +88,11 @@ public class DraggableButton extends androidx.appcompat.widget.AppCompatImageBut
         this.event = event;
     }
 
-    public Integer getAction() {
+    public Action getAction() {
         return action;
     }
 
-    public void setAction(int action) {
+    public void setAction(Action action) {
         this.action = action;
     }
 

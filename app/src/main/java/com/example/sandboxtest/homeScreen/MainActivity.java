@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.hardware.input.InputManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.example.sandboxtest.R;
@@ -70,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
 
         InputManager inputManager = (InputManager) getSystemService(Context.INPUT_SERVICE);
         inputManager.registerInputDeviceListener(inputListener, null);
+
+        /*if (!BlackBoxCore.get().isInstallGms(0))
+            BlackBoxCore.get().installGms(0);*/
     }
 
     private void checkOverlayPermission() {

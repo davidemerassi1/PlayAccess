@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pulsante_esterno_nav_graph"
+    app:startDestination="@id/aggiungiPulsanteEsternoFragment">
+
+    <fragment
+        android:id="@+id/aggiungiPulsanteEsternoFragment"
+        android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment.externalbutton.AggiungiPulsanteEsternoFragment"
+        android:label="AggiungiPulsanteEsternoFragment"
+        tools:layout="@layout/fragment_aggiungi_azione_pulsante_esterno">
+        <action
+            android:id="@+id/action_aggiungiPulsanteEsternoFragment_to_rilevaPulsanteEsternoFragment"
+            app:destination="@id/rilevaPulsanteEsternoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/rilevaPulsanteEsternoFragment"
+        android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment.externalbutton.RilevaPulsanteEsternoFragment"
+        android:label="RilevaPulsanteEsternoFragment"
+        tools:layout="@layout/fragment_rileva_pulsante_esterno">
+        <action
+            android:id="@+id/action_rilevaPulsanteEsternoFragment_to_configurazionePulsanteEsternoFragment"
+            app:destination="@id/configurazionePulsanteEsternoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/configurazionePulsanteEsternoFragment"
+        android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment.externalbutton.ConfigurazionePulsanteEsternoFragment"
+        android:label="ConfigurazionePulsanteEsternoFragment"
+        tools:layout="@layout/fragment_configurazione_pulsante_esterno">
+        <action
+            android:id="@+id/action_configurazionePulsanteEsternoFragment_to_aggiungiPulsanteEsternoFragment"
+            app:destination="@id/aggiungiPulsanteEsternoFragment" />
+    </fragment>
+
+</navigation>

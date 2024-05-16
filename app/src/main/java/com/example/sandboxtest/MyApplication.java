@@ -15,6 +15,7 @@ import com.example.sandboxtest.database.AssociationsDb;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.unimi.di.ewlab.iss.common.model.MainModel;
 import top.niunaijun.blackbox.BlackBoxCore;
 import top.niunaijun.blackbox.app.configuration.AppLifecycleCallback;
 import top.niunaijun.blackbox.app.configuration.ClientConfiguration;
@@ -84,9 +85,13 @@ public class MyApplication extends Application {
 
         BlackBoxCore.get().doCreate();
 
+
         database = Room.databaseBuilder(this, AssociationsDb.class, "associations")
                 .fallbackToDestructiveMigration()
                 .build();
+
+        MainModel.getInstance(this).initFolders(this);
+        MainModel.getInstance().loadScreenGestures();
     }
 
     public AssociationsDb getDatabase() {

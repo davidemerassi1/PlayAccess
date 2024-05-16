@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="screenGesturesNames">
+        <item>@string/ScreenGesture_tap_up</item>
+        <item>@string/ScreenGesture_tap_down</item>
+        <item>@string/ScreenGesture_tap_full_screen</item>
+        <item>@string/ScreenGesture_tap_left</item>
+        <item>@string/ScreenGesture_tap_right</item>
+        <item>@string/ScreenGesture_x_division_up</item>
+        <item>@string/ScreenGesture_x_division_down</item>
+        <item>@string/ScreenGesture_x_division_left</item>
+        <item>@string/ScreenGesture_x_division_right</item>
+        <item>@string/ScreenGesture_swipe_up</item>
+        <item>@string/ScreenGesture_swipe_down</item>
+        <item>@string/ScreenGesture_swipe_left</item>
+        <item>@string/ScreenGesture_swipe_right</item>
+    </string-array>
+</resources>

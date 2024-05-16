@@ -15,6 +15,8 @@ import android.widget.RelativeLayout;
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.database.Event;
 
+import it.unimi.di.ewlab.iss.common.model.actions.Action;
+
 public class ResizableSlidingDraggableButton extends FrameLayout implements EventButton {
     private ImageButton fab;
     private RelativeLayout layout;
@@ -24,9 +26,10 @@ public class ResizableSlidingDraggableButton extends FrameLayout implements Even
     private float lastTouchY;
     private float posX;
     private float posY;
-    private Integer action;
-    private Integer action2;
-    private Integer action3;
+    private Action action;
+    private Action action2;
+    private Action action3;
+    private boolean resetToStart;
     private OnClickListener listener;
 
     public ResizableSlidingDraggableButton(Context context) {
@@ -47,7 +50,7 @@ public class ResizableSlidingDraggableButton extends FrameLayout implements Even
         init();
     }
 
-    public ResizableSlidingDraggableButton(Context context, Integer action, Integer action2, Integer action3) {
+    public ResizableSlidingDraggableButton(Context context, Action action, Action action2, Action action3) {
         super(context);
         this.context = context;
         this.action = action;
@@ -137,27 +140,27 @@ public class ResizableSlidingDraggableButton extends FrameLayout implements Even
         layout.requestLayout();
     }
 
-    public Integer getAction() {
+    public Action getAction() {
         return action;
     }
 
-    public Integer getAction2() {
+    public Action getAction2() {
         return action2;
     }
 
-    public Integer getAction3() {
+    public Action getAction3() {
         return action3;
     }
 
-    public void setAction(int action) {
+    public void setAction(Action action) {
         this.action = action;
     }
 
-    public void setAction2(int action) {
+    public void setAction2(Action action) {
         this.action2 = action;
     }
 
-    public void setAction3(int action) {
+    public void setAction3(Action action) {
         this.action3 = action;
     }
 
@@ -172,5 +175,13 @@ public class ResizableSlidingDraggableButton extends FrameLayout implements Even
 
     @Override
     public void setEvent(Event event) {
+    }
+
+    public void setResetToStart(boolean resetToStart) {
+        this.resetToStart = resetToStart;
+    }
+
+    public boolean getResetToStart() {
+        return resetToStart;
     }
 }

@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">PlayAccess</string>
+
+    <string name="vocal_action">Vocal action</string>
+    <string name="external_button">External Button</string>
+    <string name="screen_gesture">Screen Gesture</string>
+    <string name="facial_expression">Facial Expression</string>
+
+    <!-- _______________________ STRINGHE Actions list ___________________ -->
+    <string name="actionmanager_gestures_directory">Gestures</string>
+    <string name="actionmanager_buttons_directory">External buttons</string>
+    <string name="actionmanager_facial_expressions_directory">Facial expressions</string>
+    <string name="actionmanager_test">Test expressions</string>
+    <string name="actionmanager_unrecognizedExpression">Not recognized</string>
+    <string name="actionmanager_close_button_content_description">Close button</string>
+    <string name="actionmanager_test_info_msg1">Try the recorded expressions and select the classification accuracy that best suits your needs.</string>
+    <string name="actionmanager_test_info_msg2">The higher the accuracy, the easier they are to reproduce, the lower the accuracy, the more precision is needed</string>
+    <string name="actionmanager_delete_action_dialog_msg">By deleting \"%1$s\", you will also delete the events associated with it.</string>
+    <string name="actionmanager_unavailable_name">Name "%1$s" unavailable</string>
+    <string name="actionmanager_action_saved">Action saved</string>
+    <string name="actionmanager_empty_name">Action name missing</string>
+    <string name="actionmanager_action_defined">Action defined</string>
+
+    <string name="externalbutton_already_registered_button">Button already registered</string>
+    <string name="externalbutton_no_button_pressed">No button has been pressed</string>
+    <string name="externalbutton_scanning_on">Scanning for buttons events</string>
+    <string name="externalbutton_press_button">Press the button to register</string>
+    <string name="externalbutton_accessibility_service_required">Enable PlayAccess to register new external buttons</string>
+    <string name="externalbutton_bluetooth_settings">Bluetooth settings</string>
+    <string name="externalbutton_no_device_detected">No external device detected</string>
+    <string name="externalbutton_connect_device">Connet one with bluetooth</string>
+    <string name="externalbutton_button_name">Button name</string>
+    <string name="externalbutton_bluetooth_permission">Grant bluetooth permissions</string>
+    <string name="externalbutton_no_bluetooth_permission">Bluetooth permissions not granted</string>
+
+    <!-- _______________________ STRINGHE Facial expression action definition ___________________ -->
+    <string name="feraction_title">Expression</string>
+    <string name="feraction_record_facial_expression_title">Recording</string>
+    <string name="feraction_define_facial_expression_title">Details</string>
+    <string name="feraction_duplicate_facial_expression_title">Recording</string>
+    <string name="feraction_face_missing_error">No face detected</string>
+    <string name="feraction_landmarks_missing_error">Face partially not framed</string>
+    <string name="feraction_camera_capture_content_description">Frontal camera acquisition</string>
+    <string name="feraction_start_acquisition_button">Record</string>
+    <string name="feraction_camera_initialization_error">Cannot access frontal camera</string>
+    <string name="feraction_insert_name">Insert expression name</string>
+    <string name="feraction_neutral_action_defined">Now define your favorite expression</string>
+    <string name="feraction_frame_content_description">Expression frame</string>
+    <string name="feraction_registered_facial_expression_preview_content_description">Registered facial expression preview</string>
+    <string name="feraction_acquired_facial_expression_preview_content_description">Acquired facial expression preview</string>
+    <string name="feraction_duplicate_facial_expression_message">
+        Similar expression found!\nTo avoid classification errors don\'t record the same expression twice
+    </string>
+    <string name="feraction_duplicate_registed_expression_text">Registered expression:</string>
+    <string name="feraction_duplicate_acquired_expression_text">Acquired expression:</string>
+    <string name="feraction_retry_button">Retry</string>
+    <string name="feraction_new_expression_message">Record a new facial expression</string>
+    <string name="feraction_recorded_expression_message">Record again the facial expression</string>
+    <string name="feraction_neutral_expression_message">Record first the neutral facial expression</string>
+    <string name="feraction_facial_expression_preview_content_description">Acquired expression preview</string>
+    <string name="feraction_record_info_title">Record an expression</string>
+    <string name="feraction_record_info_msg">Assume the expression you want to record, click on the "Record" button and stay still during the capture.</string>
+    <string name="feraction_no_camera_permission">Camera permission not granted</string>
+</resources>

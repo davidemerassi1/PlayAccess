@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+        <import type="android.graphics.drawable.Drawable" />
+        <import type="it.unimi.di.ewlab.iss.common.configuratorsmodels.BaseDialog" />
+        <import type="androidx.core.content.ContextCompat" />
+
+        <variable
+            name="textColor"
+            type="int" />
+
+        <variable
+            name="icon"
+            type="Drawable" />
+
+        <variable
+            name="iconTint"
+            type="int" />
+
+        <variable
+            name="title"
+            type="CharSequence" />
+
+        <variable
+            name="text"
+            type="CharSequence" />
+
+        <variable
+            name="textPrimaryButton"
+            type="CharSequence" />
+
+        <variable
+            name="textSecondaryButton"
+            type="CharSequence" />
+
+        <variable
+            name="check"
+            type="Boolean" />
+
+        <variable
+            name="checkText"
+            type="CharSequence" />
+
+        <variable
+            name="hideCloseButton"
+            type="boolean" />
+
+        <variable
+            name="listener"
+            type="it.unimi.di.ewlab.iss.common.configuratorsmodels.BaseDialog.BaseDialogListener" />
+
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/general_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/green_button_border"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/default_margin"
+            android:paddingTop="@dimen/default_margin_medium"
+            android:paddingBottom="@dimen/default_margin_medium">
+
+            <TextView
+                android:id="@+id/title_modal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/H2_text_size"
+                android:fontFamily="@font/metropolis"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:maxLines="2"
+                android:text="@{title}"
+                android:textColor="@{textColor == 0 ? @color/black : textColor}"
+                android:visibility="@{title == null ? View.GONE : View.VISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Title Modal" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_dialog"
+                android:layout_marginTop="10dp"
+                android:layout_width="@dimen/image_icon_medium_height"
+                android:layout_height="@dimen/image_icon_medium_height"
+                android:visibility="@{icon == null ? View.GONE : View.VISIBLE}"
+                android:src="@{icon}"
+                app:layout_constraintTop_toBottomOf="@id/title_modal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:tint="@{iconTint == 0 ? @color/black : iconTint}"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/text_modal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textSize="@dimen/P7_text_size"
+                android:fontFamily="@font/metropolis"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:lineSpacingExtra="2dp"
+                android:text="@{text}"
+                android:textColor="@{textColor == 0 ? @color/black : textColor}"
+                android:visibility="@{text == null  ? View.GONE : View.VISIBLE}"
+                app:layout_constraintTop_toBottomOf="@+id/img_dialog"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="Text Modal" />
+
+            <CheckBox
+                android:id="@+id/check_modal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/metropolis"
+                android:checked="@={check}"
+                android:gravity="center"
+                android:paddingVertical="2dp"
+                android:minHeight="0dp"
+                android:text="@{checkText}"
+                android:textSize="@dimen/P7_text_size"
+                android:textColor="@{textColor == 0 ? @color/black : textColor}"
+                android:visibility="@{checkText == null ? View.GONE : View.VISIBLE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_modal"
+                tools:text="Non mostrare più" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/check_modal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="@dimen/default_margin"
+                android:gravity="center"
+                android:visibility="@{(textPrimaryButton != null || textSecondaryButton != null) ? View.VISIBLE : View.GONE}">
+
+                <FrameLayout
+                    android:id="@+id/cancelButtonContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/white_button_background"
+                    android:elevation="5dp"
+                    android:layout_marginBottom="2dp"
+                    android:visibility="@{textSecondaryButton == null ? View.GONE : View.VISIBLE}">
+
+                    <TextView
+                        android:id="@+id/cancelButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/metropolis"
+                        android:onClick="@{() -> listener.onSecondaryButtonClicked()}"
+                        android:padding="@dimen/default_margin_small"
+                        android:text="@{textSecondaryButton}"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/P10_text_size"
+                        android:textAllCaps="false"
+                        tools:text="Annulla" />
+
+                </FrameLayout>
+
+                <View
+                    android:layout_width="@dimen/default_margin_medium"
+                    android:layout_height="0dp"
+                    android:visibility="@{(textPrimaryButton == null || textSecondaryButton== null) ? View.GONE : View.VISIBLE}"/>
+
+                <FrameLayout
+                    android:id="@+id/confirmButtonContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/green_button_background"
+                    android:elevation="5dp"
+                    android:layout_marginBottom="2dp"
+                    android:visibility="@{textPrimaryButton == null ? View.GONE : View.VISIBLE}">
+
+                    <TextView
+                        android:id="@+id/confirmButton"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:textStyle="bold"
+                        android:onClick="@{() -> listener.onPrimaryButtonClicked()}"
+                        android:fontFamily="@font/metropolis"
+                        android:padding="@dimen/default_margin_small"
+                        android:text="@{textPrimaryButton}"
+                        android:textSize="@dimen/P10_text_size"
+                        android:textColor="@color/white"
+                        android:textAllCaps="false"
+                        tools:text="Conferma"/>
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/closeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/image_icon_small_height"
+                android:adjustViewBounds="true"
+                android:tint="@{textColor == 0 ? @color/black : textColor}"
+                android:scaleType="fitCenter"
+                android:backgroundTint="@android:color/transparent"
+                android:contentDescription="@string/close"
+                app:srcCompat="@drawable/close_white"
+                android:visibility="@{(textPrimaryButton == null &amp;&amp; textSecondaryButton== null &amp;&amp; !hideCloseButton) ? View.VISIBLE : View.GONE}"
+                tools:tint="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/check_modal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="@dimen/default_margin"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

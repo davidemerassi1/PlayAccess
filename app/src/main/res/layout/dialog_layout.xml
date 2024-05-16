@@ -30,7 +30,7 @@
 
                 <!-- Opzione 1 -->
                 <TextView
-                    android:id="@+id/option1TextView"
+                    android:id="@+id/touchOptionTextView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -38,27 +38,44 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center"
-                    android:text="FACE ACTIONS"
+                    android:text="TOCCO"
                     android:textColor="@color/primaryColor"
+                    android:tag="SCREEN_GESTURE"
                     android:textSize="16dp"
                     android:textStyle="bold" />
 
                 <!-- Opzione 2 -->
                 <TextView
-                    android:id="@+id/option2TextView"
+                    android:id="@+id/externalButtonOptionTextView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center"
-                    android:text="CONTROLLER ACTIONS"
+                    android:text="PULSANTE ESTERNO"
                     android:textColor="@android:color/darker_gray"
+                    android:tag="BUTTON"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/faceOptionTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:text="VOLTO"
+                    android:textColor="@android:color/darker_gray"
+                    android:tag="FACIAL_EXPRESSION"
                     android:textSize="16dp" />
             </LinearLayout>
 
             <RelativeLayout
-                android:id="@+id/faceControlLayout"
+                android:id="@+id/selectionLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="visible">
@@ -71,27 +88,15 @@
                     android:textAlignment="center"
                     android:visibility="gone" />
 
-                <RadioGroup
-                    android:id="@+id/radioGroup"
+                <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/controllerLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/controllerTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Premi il tasto che vuoi associare a questo evento"
-                    android:textAlignment="center" />
+                    android:layout_height="200dp">
+                    <RadioGroup
+                        android:id="@+id/radioGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </ScrollView>
             </RelativeLayout>
 
             <LinearLayout
@@ -192,6 +197,12 @@
                     android:textAlignment="textEnd" />
             </LinearLayout>
 
+            <CheckBox
+                android:id="@+id/resetToStartCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Reset alla posizione iniziale" />
         </LinearLayout>
 
         <!-- Pulsanti OK e Annulla -->

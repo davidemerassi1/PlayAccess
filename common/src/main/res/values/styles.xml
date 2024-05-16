@@ -1,0 +1,70 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily">@font/metropolis</item>
+        <item name="fontFamily">@font/metropolis</item>
+    </style>
+
+    <style name="AppThemeMainActivity" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="TransparentScrollView" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="Theme.AppCompat.Translucent" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+    </style>
+
+    <style name="sliderRed" parent="@style/Widget.Material3.Slider">
+        <item name="labelStyle">@style/sliderLabelRed</item>
+        <item name="materialThemeOverlay">@style/sliderLabelText</item>
+        <item name="trackColorActive">@color/red</item>
+        <item name="trackColorInactive">@color/red_30percent</item>
+        <item name="tickColor">@color/white</item>
+        <item name="thumbColor">@color/red</item>
+        <item name="haloColor">@color/red_semitransparent</item>
+    </style>
+
+    <style name="sliderLabelRed" parent="@style/Widget.Material3.Tooltip">
+        <item name="backgroundTint">@color/red</item>
+        <item name="android:textAppearance">@style/sliderLabelText</item>
+    </style>
+
+    <style name="sliderGreen" parent="@style/Widget.Material3.Slider">
+        <item name="labelStyle">@style/sliderLabelGreen</item>
+        <item name="materialThemeOverlay">@style/sliderLabelText</item>
+        <item name="trackColorActive">@color/emerald</item>
+        <item name="trackColorInactive">@color/emerald_30percent</item>
+        <item name="tickColor">@color/white</item>
+        <item name="thumbColor">@color/emerald</item>
+        <item name="haloColor">@color/emerald_semitransparent</item>
+    </style>
+
+    <style name="sliderLabelGreen" parent="@style/Widget.Material3.Tooltip">
+        <item name="backgroundTint">@color/emerald</item>
+        <item name="android:textAppearance">@style/sliderLabelText</item>
+    </style>
+
+    <style name="sliderLabelText" parent="@style/TextAppearance.MaterialComponents.Tooltip">
+        <item name="labelBehavior">visible</item>
+        <item name="font">@font/metropolis</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+</resources>

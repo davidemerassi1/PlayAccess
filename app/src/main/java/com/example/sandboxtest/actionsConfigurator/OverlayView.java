@@ -34,9 +34,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.unimi.di.ewlab.iss.common.model.actions.Action;
+
 public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener, LifecycleOwner {
     private AssociationDao associationsDb;
-    private Map<Integer, Association> map = new HashMap<>();
+    private Map<Action, Association> map = new HashMap<>();
     private boolean configurationOpened = false;
     private ConfigurationView configurationView;
     private LifecycleRegistry lifecycleRegistry;
@@ -74,7 +76,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         new Thread(() -> {
             needCamera.postValue(false);
             for (Association association : associationsDb.getAssociations(applicationPackage)) {
-                if (association.action < 0) {
+                if (association.action.getActionType() == Action.ActionType.FACIAL_EXPRESSION) {
                     Log.d("OverlayView", "init: need camera");
                     needCamera.postValue(true);
                 }
@@ -99,7 +101,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             boolean needed = false;
             for (Association association : associationList) {
                 map.put(association.action, association);
-                if (association.action < 0) {
+                if (association.action.getActionType() == Action.ActionType.FACIAL_EXPRESSION) {
                     needed = true;
                 }
                 if (association.event == Event.MONODIMENSIONAL_SLIDING) {
@@ -172,7 +174,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     public void onFaceRecognized(Face face) {
         if (getVisibility() == GONE || configurationOpened)
             return;
-        if (face.getSmilingProbability() > 0.3 && map.containsKey(CameraAction.SMILE.getTag())) {
+        /*if (face.getSmilingProbability() > 0.3 && map.containsKey(CameraAction.SMILE.getTag())) {
             Association association = map.get(CameraAction.SMILE.getTag());
             if (association.event == Event.MONODIMENSIONAL_SLIDING)
                 execute2d(association, CameraAction.SMILE.getTag());
@@ -182,7 +184,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         if (map.containsKey(CameraAction.FACE_MOVEMENT.getTag())) {
             Association association = map.get(CameraAction.FACE_MOVEMENT.getTag());
             executor.execute2d(association, -face.getHeadEulerAngleY() / 35, -(face.getHeadEulerAngleX() - 10) / 30);
-        }
+        }*/
     }
 
     public void start() {
@@ -200,10 +202,10 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
     }
 
-    private void execute2d(Association association, int action) {
-        if (association.action == action)
+    private void execute2d(Association association, Action action) {
+        if (association.action.equals(action))
             executor.execute1d(association, EventExecutor.Action1D.MOVE_LEFT);
-        else if (association.additionalAction1 == action)
+        else if (association.additionalAction1.equals(action))
             executor.execute1d(association, EventExecutor.Action1D.MOVE_RIGHT);
         else
             executor.execute1d(association, EventExecutor.Action1D.RESET);
@@ -226,7 +228,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
                     if (association.event != Event.MONODIMENSIONAL_SLIDING)
                         executor.execute(association);
                     else {
-                        execute2d(association, keyCode);
+                        //execute2d(association, keyCode);
                     }
                 }
             } else

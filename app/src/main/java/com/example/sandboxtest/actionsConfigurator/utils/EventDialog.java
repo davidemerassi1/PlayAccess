@@ -10,12 +10,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
@@ -24,17 +24,22 @@ import com.example.sandboxtest.R;
 import com.example.sandboxtest.database.CameraAction;
 import com.example.sandboxtest.database.Event;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import it.unimi.di.ewlab.iss.common.model.MainModel;
+import it.unimi.di.ewlab.iss.common.model.actions.Action;
+
 public class EventDialog extends FrameLayout {
-    private boolean isControllerSelected = false;
-    private Integer selectedAction = null;
-    private Integer selectedAction2 = null;
-    private Integer selectedAction3 = null;
+    private Action selectedAction = null;
+    private Action selectedAction2 = null;
+    private Action selectedAction3 = null;
     private Event event;
     private RadioGroup radioGroup;
     private EventDialog secondaryEventDialog;
+    private TextView touchOptionText;
+    private TextView faceOptionText;
+    private TextView controllerOptionText;
+    private MainModel mainModel = MainModel.getInstance();
 
     public EventDialog(Context context) {
         super(context);
@@ -48,7 +53,7 @@ public class EventDialog extends FrameLayout {
         super(context, attrs, defStyleAttr);
     }
 
-    public void init(EventButton eventButton, OnClickListener okListener, OnClickListener cancelListener, OnClickListener deleteListener, List<CameraAction> availableActions) {
+    public void init(EventButton eventButton, OnClickListener okListener, OnClickListener cancelListener, OnClickListener deleteListener) {
         setElevation(30);
         radioGroup = findViewById(R.id.radioGroup);
         event = eventButton.getEvent();
@@ -99,9 +104,9 @@ public class EventDialog extends FrameLayout {
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
                 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                 addView(secondaryEventDialog, layoutParams);
-                secondaryEventDialog.initSecondaryAction(availableActions,
+                secondaryEventDialog.initSecondaryAction(
                         v1 -> {
-                            Integer a = secondaryEventDialog.getSelectedAction();
+                            Action a = secondaryEventDialog.getSelectedAction();
                             if (a == null) {
                                 secondaryEventDialog.showErrorMessage();
                                 return;
@@ -111,7 +116,7 @@ public class EventDialog extends FrameLayout {
                                 return;
                             }
                             selectedAction = a;
-                            ((TextView) findViewById(R.id.actionLeftTextView)).setText(getActionName(selectedAction));
+                            ((TextView) findViewById(R.id.actionLeftTextView)).setText(selectedAction.getName());
                             removeView(secondaryEventDialog);
                             secondaryEventDialog = null;
                         },
@@ -128,13 +133,13 @@ public class EventDialog extends FrameLayout {
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
                 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                 addView(secondaryEventDialog, layoutParams);
-                secondaryEventDialog.initSecondaryAction(availableActions,
+                secondaryEventDialog.initSecondaryAction(
                         v1 -> {
                             if (secondaryEventDialog.getSelectedAction() == null) {
                                 secondaryEventDialog.showErrorMessage();
                                 return;
                             }
-                            Integer a = secondaryEventDialog.getSelectedAction();
+                            Action a = secondaryEventDialog.getSelectedAction();
                             if (a == null) {
                                 secondaryEventDialog.showErrorMessage();
                                 return;
@@ -144,7 +149,7 @@ public class EventDialog extends FrameLayout {
                                 return;
                             }
                             selectedAction2 = a;
-                            ((TextView) findViewById(R.id.actionRightTextView)).setText(getActionName(selectedAction2));
+                            ((TextView) findViewById(R.id.actionRightTextView)).setText(selectedAction2.getName());
                             removeView(secondaryEventDialog);
                             secondaryEventDialog = null;
                         },
@@ -161,13 +166,13 @@ public class EventDialog extends FrameLayout {
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
                 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                 addView(secondaryEventDialog, layoutParams);
-                secondaryEventDialog.initSecondaryAction(availableActions,
+                secondaryEventDialog.initSecondaryAction(
                         v1 -> {
                             if (secondaryEventDialog.getSelectedAction() == null) {
                                 secondaryEventDialog.showErrorMessage();
                                 return;
                             }
-                            Integer a = secondaryEventDialog.getSelectedAction();
+                            Action a = secondaryEventDialog.getSelectedAction();
                             if (a == null) {
                                 secondaryEventDialog.showErrorMessage();
                                 return;
@@ -177,7 +182,7 @@ public class EventDialog extends FrameLayout {
                                 return;
                             }
                             selectedAction3 = a;
-                            ((TextView) findViewById(R.id.actionResetTextView)).setText(getActionName(selectedAction3));
+                            ((TextView) findViewById(R.id.actionResetTextView)).setText(selectedAction3.getName());
                             removeView(secondaryEventDialog);
                             secondaryEventDialog = null;
                         },
@@ -190,34 +195,18 @@ public class EventDialog extends FrameLayout {
 
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId != -1) {
-                ((TextView) findViewById(R.id.controllerTextView)).setText("Premi il tasto che vuoi associare a questo evento");
                 hideErrorMessages();
-                selectedAction = (Integer) findViewById(checkedId).getTag();
+                selectedAction = (Action) findViewById(checkedId).getTag();
             }
         });
 
-        TextView faceOptionText = findViewById(R.id.option1TextView);
-        TextView controllerOptionText = findViewById(R.id.option2TextView);
-
-        faceOptionText.setOnClickListener(v -> {
-            faceOptionText.setTextColor(ContextCompat.getColor(getContext(), R.color.primaryColor));
-            faceOptionText.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-            controllerOptionText.setTextColor(ContextCompat.getColor(getContext(),android.R.color.darker_gray));
-            controllerOptionText.setTypeface(Typeface.DEFAULT);
-            findViewById(R.id.faceControlLayout).setVisibility(View.VISIBLE);
-            findViewById(R.id.controllerLayout).setVisibility(View.GONE);
-            isControllerSelected = false;
-        });
-
-        controllerOptionText.setOnClickListener(v -> {
-            controllerOptionText.setTextColor(ContextCompat.getColor(getContext(), R.color.primaryColor));
-            controllerOptionText.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-            faceOptionText.setTextColor(ContextCompat.getColor(getContext(),android.R.color.darker_gray));
-            faceOptionText.setTypeface(Typeface.DEFAULT);
-            findViewById(R.id.controllerLayout).setVisibility(View.VISIBLE);
-            findViewById(R.id.faceControlLayout).setVisibility(View.GONE);
-            isControllerSelected = true;
-        });
+        touchOptionText = findViewById(R.id.touchOptionTextView);
+        faceOptionText = findViewById(R.id.faceOptionTextView);
+        controllerOptionText = findViewById(R.id.externalButtonOptionTextView);
+        faceOptionText.setOnClickListener(selectListener);
+        controllerOptionText.setOnClickListener(selectListener);
+        touchOptionText.setOnClickListener(selectListener);
+        touchOptionText.performClick();
 
         findViewById(R.id.okButton).setOnClickListener(okListener);
         findViewById(R.id.cancelButton).setOnClickListener(cancelListener);
@@ -227,12 +216,15 @@ public class EventDialog extends FrameLayout {
             findViewById(R.id.deleteButton).setOnClickListener(deleteListener);
             selectedAction = eventButton.getAction();
             if (event == Event.MONODIMENSIONAL_SLIDING) {
-                selectedAction2 = ((ResizableSlidingDraggableButton) eventButton).getAction2();
-                selectedAction3 = ((ResizableSlidingDraggableButton) eventButton).getAction3();
-                ((TextView) findViewById(R.id.actionLeftTextView)).setText(getActionName(selectedAction));
-                ((TextView) findViewById(R.id.actionRightTextView)).setText(getActionName(selectedAction2));
-                ((TextView) findViewById(R.id.actionResetTextView)).setText(getActionName(selectedAction3));
-            } else if (selectedAction < 0) {
+                ResizableSlidingDraggableButton b = (ResizableSlidingDraggableButton) eventButton;
+                selectedAction2 = b.getAction2();
+                selectedAction3 = b.getAction3();
+                if (b.getResetToStart())
+                    ((CheckBox) findViewById(R.id.resetToStartCheckBox)).setChecked(true);
+                ((TextView) findViewById(R.id.actionLeftTextView)).setText(selectedAction.getName());
+                ((TextView) findViewById(R.id.actionRightTextView)).setText(selectedAction2.getName());
+                ((TextView) findViewById(R.id.actionResetTextView)).setText(selectedAction3.getName());
+            /*} else if (selectedAction.getActionType() < 0) {
                 RadioButton currentChoice = new RadioButton(getContext());
                 CameraAction action = CameraAction.valueOf(selectedAction);
                 currentChoice.setText(action.getName());
@@ -240,78 +232,64 @@ public class EventDialog extends FrameLayout {
                 radioGroup.addView(currentChoice);
                 radioGroup.check(currentChoice.getId());
             } else {
-                ((TextView) findViewById(R.id.controllerTextView)).setText(getActionName(selectedAction));
-                controllerOptionText.performClick();
+                ((TextView) findViewById(R.id.controllerTextView)).setText(selectedAction.getName());
+                controllerOptionText.performClick();*/
             }
         }
-
-        for (CameraAction option : availableActions) {
-            if ((eventButton instanceof ResizableDraggableButton) != option.isJoystickAction())
-                continue;
-            RadioButton radioButton = new RadioButton(getContext());
-            radioButton.setTag(option.getTag());
-            radioButton.setText(option.getName());
-            radioGroup.addView(radioButton);
-        }
-        if (radioGroup.getChildCount() == 0)
-            findViewById(R.id.noEventsTextview).setVisibility(VISIBLE);
     }
 
-    private String getActionName(Integer action) {
-        if (action < 0)
-            return CameraAction.valueOf(action).getName();
-        else if (action == 0)
-            return "JOYSTICK";
-        else
-            return KeyEvent.keyCodeToString(action);
-    }
-
-    private void initSecondaryAction(List<CameraAction> availableActions, OnClickListener okListener, OnClickListener cancelListener) {
+    private void initSecondaryAction(OnClickListener okListener, OnClickListener cancelListener) {
         setElevation(30);
         radioGroup = findViewById(R.id.radioGroup);
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId != -1) {
-                ((TextView) findViewById(R.id.controllerTextView)).setText("Premi il tasto che vuoi associare a questo evento");
                 hideErrorMessages();
-                selectedAction = (Integer) findViewById(checkedId).getTag();
+                selectedAction = (Action) findViewById(checkedId).getTag();
             }
         });
 
-        TextView faceOptionText = findViewById(R.id.option1TextView);
-        TextView controllerOptionText = findViewById(R.id.option2TextView);
-
-        faceOptionText.setOnClickListener(v -> {
-            faceOptionText.setTextColor(ContextCompat.getColor(getContext(), R.color.primaryColor));
-            faceOptionText.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-            controllerOptionText.setTextColor(ContextCompat.getColor(getContext(),android.R.color.darker_gray));
-            controllerOptionText.setTypeface(Typeface.DEFAULT);
-            findViewById(R.id.faceControlLayout).setVisibility(View.VISIBLE);
-            findViewById(R.id.controllerLayout).setVisibility(View.GONE);
-            isControllerSelected = false;
-        });
-
-        controllerOptionText.setOnClickListener(v -> {
-            controllerOptionText.setTextColor(ContextCompat.getColor(getContext(), R.color.primaryColor));
-            controllerOptionText.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-            faceOptionText.setTextColor(ContextCompat.getColor(getContext(),android.R.color.darker_gray));
-            faceOptionText.setTypeface(Typeface.DEFAULT);
-            findViewById(R.id.controllerLayout).setVisibility(View.VISIBLE);
-            findViewById(R.id.faceControlLayout).setVisibility(View.GONE);
-            isControllerSelected = true;
-        });
+        touchOptionText = findViewById(R.id.touchOptionTextView);
+        faceOptionText = findViewById(R.id.faceOptionTextView);
+        controllerOptionText = findViewById(R.id.externalButtonOptionTextView);
+        faceOptionText.setOnClickListener(selectListener);
+        controllerOptionText.setOnClickListener(selectListener);
+        touchOptionText.setOnClickListener(selectListener);
 
         findViewById(R.id.okButton).setOnClickListener(okListener);
         findViewById(R.id.cancelButton).setOnClickListener(cancelListener);
+    }
 
-        for (CameraAction option : availableActions) {
+    private OnClickListener selectListener = v -> {
+        faceOptionText.setTextColor(ContextCompat.getColor(getContext(),android.R.color.darker_gray));
+        faceOptionText.setTypeface(Typeface.DEFAULT);
+        controllerOptionText.setTextColor(ContextCompat.getColor(getContext(),android.R.color.darker_gray));
+        controllerOptionText.setTypeface(Typeface.DEFAULT);
+        touchOptionText.setTextColor(ContextCompat.getColor(getContext(),android.R.color.darker_gray));
+        touchOptionText.setTypeface(Typeface.DEFAULT);
+        ((TextView) v).setTextColor(ContextCompat.getColor(getContext(), R.color.primaryColor));
+        ((TextView) v).setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+
+        while (radioGroup.getChildCount() > 0) {
+            radioGroup.removeView(radioGroup.getChildAt(0));
+        }
+
+        Action.ActionType actionType = Action.ActionType.valueOf((String) v.getTag());
+        findViewById(R.id.noEventsTextview).setVisibility(GONE);
+        for (Action option : MainModel.getInstance().getActions()) {
+            /*if ((eventButton instanceof ResizableDraggableButton) != option.isJoystickAction())
+                continue;*/
+            if (option.getActionType() != actionType)
+                continue;
             RadioButton radioButton = new RadioButton(getContext());
-            radioButton.setTag(option.getTag());
+            radioButton.setTag(option);
             radioButton.setText(option.getName());
+            if (selectedAction != null && selectedAction.equals(option))
+                radioButton.setChecked(true);
             radioGroup.addView(radioButton);
         }
         if (radioGroup.getChildCount() == 0)
             findViewById(R.id.noEventsTextview).setVisibility(VISIBLE);
-    }
+    };
 
     public void showErrorMessage() {
         findViewById(R.id.errorMessage).setVisibility(VISIBLE);
@@ -330,41 +308,20 @@ public class EventDialog extends FrameLayout {
         return event;
     }
 
-    public Integer getSelectedAction() {
+    public Action getSelectedAction() {
         return selectedAction;
     }
 
-    public Integer getSelectedAction2() {
+    public Action getSelectedAction2() {
         return selectedAction2;
     }
 
-    public Integer getSelectedAction3() {
+    public Action getSelectedAction3() {
         return selectedAction3;
     }
 
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (secondaryEventDialog != null)
-            return secondaryEventDialog.onKeyUp(keyCode, event);
-        if (isControllerSelected) {
-            radioGroup.clearCheck();
-            selectedAction = keyCode;
-            ((TextView) findViewById(R.id.controllerTextView)).setText(KeyEvent.keyCodeToString(keyCode));
-            hideErrorMessages();
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onGenericMotionEvent(MotionEvent event) {
-        if (secondaryEventDialog != null)
-            return secondaryEventDialog.onGenericMotionEvent(event);
-        if (isControllerSelected) {
-            radioGroup.clearCheck();
-            selectedAction = 0;
-            ((TextView) findViewById(R.id.controllerTextView)).setText("JOYSTICK");
-            hideErrorMessages();
-        }
-        return false;
+    public boolean getResetToStart() {
+        CheckBox checkBox = findViewById(R.id.resetToStartCheckBox);
+        return checkBox.isChecked();
     }
 }

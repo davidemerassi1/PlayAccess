@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+        <variable name="text" type="String"/>
+        <variable name="border" type="android.graphics.drawable.Drawable"/>
+    </data>
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/startAcquisitionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@{border}"
+        android:elevation="3dp"
+        android:gravity="center"
+        tools:background="@drawable/green_button_border">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_margin"
+            android:fontFamily="@font/metropolis"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:text="@{text}"
+            android:textSize="@dimen/P4_text_size"
+            tools:text="PLACEHOLDER"/>
+
+    </FrameLayout>
+
+</layout>

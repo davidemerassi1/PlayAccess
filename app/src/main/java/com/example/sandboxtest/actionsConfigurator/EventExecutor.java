@@ -13,12 +13,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.unimi.di.ewlab.iss.common.model.actions.Action;
+
 public class EventExecutor {
     private int statusBarHeight;
     private Instrumentation instrumentation;
     private ArrayList<MotionEvent.PointerProperties> pointerProperties;
     private ArrayList<MotionEvent.PointerCoords> pointerCoords;
-    private ArrayList<Integer> actions;
+    private ArrayList<Association> actions;
     private Map<Association, Integer> x2d = new HashMap<>();
     int currentId = 0;
 
@@ -30,7 +32,7 @@ public class EventExecutor {
         actions = new ArrayList<>();
     }
 
-    public void touch(int targetX, int targetY, int action) {
+    public void touch(int targetX, int targetY, Association association) {
         MotionEvent.PointerProperties properties = new MotionEvent.PointerProperties();
         properties.id = currentId;
         currentId++;
@@ -38,7 +40,7 @@ public class EventExecutor {
         pointerProperties.add(properties);
         MotionEvent.PointerCoords coords = createCoords(targetX, targetY + statusBarHeight);
         pointerCoords.add(coords);
-        actions.add(action);
+        actions.add(association);
         Log.d("ActionExecutor", "properties size: " + pointerProperties.size() + "coords size: " + pointerCoords.size() + "events size: " + actions.size());
         MotionEvent.PointerProperties[] propertiesArray = pointerProperties.toArray(new MotionEvent.PointerProperties[0]);
         MotionEvent.PointerCoords[] coordsArray = pointerCoords.toArray(new MotionEvent.PointerCoords[0]);
@@ -58,13 +60,12 @@ public class EventExecutor {
         }
     }
 
-    public void release(int targetX, int targetY, int action) {
+    public void release(Association association) {
         Log.d("EventExecutor", "Releasing event");
-        if (!actions.contains(action)) {
+        if (!actions.contains(association)) {
             Log.d("ActionExecutor", "Event not in progress");
             return;
         }
-        move(targetX, targetY, action);
         long now = SystemClock.uptimeMillis();
         switch (pointerProperties.size()) {
             case 1:
@@ -77,7 +78,7 @@ public class EventExecutor {
                 actions.remove(0);
                 break;
             case 2:
-                if (actions.get(0) == action) {
+                if (actions.get(0) == association) {
                     propertiesArray = pointerProperties.toArray(new MotionEvent.PointerProperties[0]);
                     coordsArray = pointerCoords.toArray(new MotionEvent.PointerCoords[0]);
                     touchEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_UP, 2, propertiesArray, coordsArray, 0, 0, 1, 1, 0, 0, 0, 0);
@@ -102,12 +103,12 @@ public class EventExecutor {
         }
     }
 
-    public void move(int toX, int toY, int action) {
+    public void move(int toX, int toY, Association association) {
         Log.d("EventExecutor", "Moving event");
         long now = SystemClock.uptimeMillis();
-        if (actions.size() > 0 && actions.get(0).equals(action))
+        if (actions.size() > 0 && actions.get(0).equals(association))
             pointerCoords.set(0, createCoords(toX, toY + statusBarHeight));
-        else if (actions.size() > 1 && actions.get(1).equals(action))
+        else if (actions.size() > 1 && actions.get(1).equals(association))
             pointerCoords.set(1, createCoords(toX, toY + statusBarHeight));
         else return;
         MotionEvent.PointerProperties[] propertiesArray = pointerProperties.toArray(new MotionEvent.PointerProperties[0]);
@@ -135,42 +136,42 @@ public class EventExecutor {
         new Thread(() -> {
             switch (association.event) {
                 case TAP:
-                    touch(association.x, association.y, association.action);
+                    touch(association.x, association.y, association);
                     sleep(10);
-                    release(association.x, association.y, association.action);
+                    release(association);
                     break;
                 case SWIPE_UP:
-                    touch(association.x, association.y, association.action);
+                    touch(association.x, association.y, association);
                     sleep(10);
-                    move(association.x, association.y - 100, association.action);
+                    move(association.x, association.y - 100, association);
                     sleep(10);
-                    release(association.x, association.y - 100, association.action);
+                    release(association);
                     break;
                 case SWIPE_DOWN:
-                    touch(association.x, association.y, association.action);
+                    touch(association.x, association.y, association);
                     sleep(10);
-                    move(association.x, association.y + 100, association.action);
+                    move(association.x, association.y + 100, association);
                     sleep(10);
-                    release(association.x, association.y + 100, association.action);
+                    release(association);
                     break;
                 case SWIPE_LEFT:
-                    touch(association.x, association.y, association.action);
+                    touch(association.x, association.y, association);
                     sleep(10);
-                    move(association.x - 100, association.y, association.action);
+                    move(association.x - 100, association.y, association);
                     sleep(10);
-                    release(association.x - 100, association.y, association.action);
+                    release(association);
                     break;
                 case SWIPE_RIGHT:
-                    touch(association.x, association.y, association.action);
+                    touch(association.x, association.y, association);
                     sleep(10);
-                    move(association.x + 100, association.y, association.action);
+                    move(association.x + 100, association.y, association);
                     sleep(10);
-                    release(association.x + 100, association.y, association.action);
+                    release(association);
                     break;
                 case LONG_TAP:
-                    touch(association.x, association.y, association.action);
+                    touch(association.x, association.y, association);
                     sleep(2000);
-                    release(association.x, association.y, association.action);
+                    release(association);
                     break;
             }
         }).start();
@@ -187,14 +188,14 @@ public class EventExecutor {
         new Thread(() -> {
             if (actions.contains(association.action)) {
                 if (Math.abs(x) > 0.2 || Math.abs(y) > 0.2) {
-                    move((int) (x * association.radius) + association.x, (int) (y * association.radius) + association.y, association.action);
+                    move((int) (x * association.radius) + association.x, (int) (y * association.radius) + association.y, association);
                 } else {
-                    release(association.x, association.y, association.action);
+                    release(association);
                 }
             } else {
                 if (Math.abs(x) > 0.2 || Math.abs(y) > 0.2) {
-                    touch(association.x, association.y, association.action);
-                    move((int) (x * association.radius) + association.x, (int) (y * association.radius) + association.y, association.action);
+                    touch(association.x, association.y, association);
+                    move((int) (x * association.radius) + association.x, (int) (y * association.radius) + association.y, association);
                 }
             }
         }).start();
@@ -205,22 +206,24 @@ public class EventExecutor {
             switch (action1d) {
                 case MOVE_LEFT:
                     if (!x2d.containsKey(association)) {
-                        touch(association.x, association.y, association.action);
+                        touch(association.x, association.y, association);
                         x2d.put(association, association.x);
                     }
                     x2d.put(association, Math.max(x2d.get(association) - 100, association.x - association.radius));
-                    move(x2d.get(association), association.y, association.action);
+                    move(x2d.get(association), association.y, association);
                     break;
                 case MOVE_RIGHT:
                     if (!x2d.containsKey(association)) {
-                        touch(association.x, association.y, association.action);
+                        touch(association.x, association.y, association);
                         x2d.put(association, association.x);
                     }
                     x2d.put(association, Math.min(x2d.get(association) + 100, association.x + association.radius));
-                    move(x2d.get(association), association.y, association.action);
+                    move(x2d.get(association), association.y, association);
                     break;
                 case RESET:
-                    release(association.x, association.y, association.action);
+                    if (association.resetToStart)
+                        move(association.x, association.y, association);
+                    release(association);
                     x2d.remove(association);
                     break;
             }
@@ -230,7 +233,7 @@ public class EventExecutor {
     public void releaseAll() {
         while (actions.size() > 0) {
             Log.d("ActionExecutor", "Releasing event");
-            release((int)pointerCoords.get(0).x, (int)pointerCoords.get(0).y, actions.get(0));
+            release(actions.get(0));
         }
         x2d.clear();
     }

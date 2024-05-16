@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewmodel"
+            type="it.unimi.di.ewlab.iss.actionsconfigurator.viewmodel.DirectoriesViewModel" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin_large"
+            android:layout_marginHorizontal="@dimen/default_margin_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/containerBottom"
+            app:layout_constraintVertical_bias="0"
+            android:orientation="vertical" >
+
+            <include
+                layout="@layout/action_directory"
+                android:id="@+id/gesturesDirectory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:text="@{@string/actionmanager_gestures_directory}"
+                app:background="@{@drawable/orange_button_background}"
+                 />
+
+            <include
+                layout="@layout/action_directory"
+                android:id="@+id/externalButtonsDirectory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_margin_medium"
+                app:text="@{@string/actionmanager_buttons_directory}"
+                app:background="@{@drawable/blue_button_background}"
+                />
+
+            <include
+                layout="@layout/action_directory"
+                android:id="@+id/facialExpressionsDirectory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_margin_medium"
+                app:text="@{@string/actionmanager_facial_expressions_directory}"
+                app:background="@{@drawable/red_button_background}"
+                />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/shadow_height"
+            android:background="@drawable/shadow_border"
+            app:layout_constraintBottom_toTopOf="@+id/containerBottom" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/containerBottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/default_margin_small_plus"
+            android:elevation="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Button
+                android:id="@+id/addAction"
+                android:layout_width="@dimen/button_select_action"
+                android:layout_height="@dimen/button_select_action"
+                android:layout_marginEnd="@dimen/default_margin"
+                android:paddingRight="@dimen/default_margin"
+                android:paddingLeft="@dimen/default_margin"
+                android:background="@drawable/green_button_background_circular"
+                android:text="+"
+                android:textSize="@dimen/H2_text_size"
+                android:fontFamily="@font/metropolis"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="@dimen/default_margin_small_plus"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:ignore="HardcodedText" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
