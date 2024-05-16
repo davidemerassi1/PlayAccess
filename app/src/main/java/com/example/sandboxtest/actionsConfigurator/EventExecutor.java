@@ -186,7 +186,7 @@ public class EventExecutor {
      */
     public void execute2d(Association association, float x, float y) {
         new Thread(() -> {
-            if (actions.contains(association.action)) {
+            if (actions.contains(association)) {
                 if (Math.abs(x) > 0.2 || Math.abs(y) > 0.2) {
                     move((int) (x * association.radius) + association.x, (int) (y * association.radius) + association.y, association);
                 } else {

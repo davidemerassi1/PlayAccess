@@ -1,11 +1,16 @@
 package it.unimi.di.ewlab.iss.common.model.actionsmodels;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
+import it.unimi.di.ewlab.iss.common.model.actions.Action;
 import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction;
 
 public class ButtonActionsModel extends ActionsModel {
@@ -17,6 +22,16 @@ public class ButtonActionsModel extends ActionsModel {
         this.buttonActions = new ArrayList<>();
     }
 
+    public ButtonActionsModel(Set<Action> actions) {
+        this.modelName = "ButtonActionModel";
+        this.buttonActions = new ArrayList<>();
+        for (Action action : actions) {
+            if (action instanceof ButtonAction) {
+                Log.d("ButtonActionsModel", "Adding ButtonAction: " + ((ButtonAction) action).getKeyId());
+                this.buttonActions.add((ButtonAction) action);
+            }
+        }
+    }
 
     public List<ButtonAction> getButtonActions() {
         return Collections.unmodifiableList(buttonActions);
@@ -45,7 +60,8 @@ public class ButtonActionsModel extends ActionsModel {
 
     public ButtonAction getButtonActionByIds(String sourceId, String keyID) {
         for (ButtonAction buttonAction : buttonActions) {
-            if (buttonAction.getSourceId().equals(sourceId) && buttonAction.getKeyId().equals(keyID)) return buttonAction;
+            if (buttonAction.getSourceId().equals(sourceId) && buttonAction.getKeyId().equals(keyID))
+                return buttonAction;
         }
         return null;
     }

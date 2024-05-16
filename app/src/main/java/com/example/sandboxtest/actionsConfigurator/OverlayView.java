@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
+import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction;
+import it.unimi.di.ewlab.iss.common.model.actionsmodels.ButtonActionsModel;
 
 public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener, LifecycleOwner {
     private AssociationDao associationsDb;
@@ -43,6 +45,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     private ConfigurationView configurationView;
     private LifecycleRegistry lifecycleRegistry;
     private MutableLiveData<Boolean> needCamera = new MutableLiveData<>(false);
+    private ButtonActionsModel buttonActionsModel;
 
     public OverlayView(Context context) {
         super(context);
@@ -86,6 +89,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
                     map.put(association.additionalAction2, association);
                 }
             }
+            buttonActionsModel = new ButtonActionsModel(map.keySet());
             configurationView.setup(applicationPackage, associationsDb);
         }).start();
 
@@ -109,6 +113,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
                     map.put(association.additionalAction2, association);
                 }
             }
+            buttonActionsModel = new ButtonActionsModel(map.keySet());
             needCamera.postValue(needed);
             configurationOpened = false;
         });
@@ -159,7 +164,6 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         //new InputDeviceChecker(getContext(), this);
 
         needCamera.observeForever(nc -> {
-            Log.d("OverlayView", "init: need camera observer");
             if (nc) {
                 lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
             } else {
@@ -202,7 +206,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
     }
 
-    private void execute2d(Association association, Action action) {
+    private void execute1d(Association association, Action action) {
         if (association.action.equals(action))
             executor.execute1d(association, EventExecutor.Action1D.MOVE_LEFT);
         else if (association.additionalAction1.equals(action))
@@ -223,12 +227,13 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         if ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) {
             if (!configurationOpened) {
                 Log.d("Hai premuto", "" + keyCode);
-                if (map.containsKey(keyCode)) {
-                    Association association = map.get(keyCode);
+                ButtonAction ba = buttonActionsModel.getButtonActionByIds(String.valueOf(event.getSource()), String.valueOf(keyCode));
+                if (ba != null && map.containsKey(ba)) {
+                    Association association = map.get(ba);
                     if (association.event != Event.MONODIMENSIONAL_SLIDING)
                         executor.execute(association);
                     else {
-                        //execute2d(association, keyCode);
+                        execute1d(association, ba);
                     }
                 }
             } else
@@ -256,8 +261,10 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK &&
                 event.getAction() == MotionEvent.ACTION_MOVE) {
             if (!configurationOpened) {
-                if (map.containsKey(0)) {
-                    Association association = map.get(0);
+                //TODO: da verificare il codice: 19 corrisponde a KEYCODE_DPAD_UP
+                ButtonAction ba = buttonActionsModel.getButtonActionByIds(String.valueOf(event.getSource()), String.valueOf(19));
+                if (ba != null && map.containsKey(ba)) {
+                    Association association = map.get(ba);
                     float x = -event.getAxisValue(MotionEvent.AXIS_X);
                     float y = -event.getAxisValue(MotionEvent.AXIS_Y);
                     Log.d("OverlayView", "onGenericMotionEvent: " + x + " " + y);
