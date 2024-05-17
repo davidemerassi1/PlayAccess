@@ -15,6 +15,7 @@ import androidx.lifecycle.LifecycleRegistry
 import it.unimi.di.ewlab.iss.common.model.Configuration
 import it.unimi.di.ewlab.iss.common.model.MainModel
 import it.unimi.di.ewlab.iss.common.model.actions.Action
+import it.unimi.di.ewlab.iss.common.model.actions.FacialExpressionAction
 import it.unimi.di.ewlab.iss.common.model.actions.facialexpressionactions.faceframehandler.CameraFrameListener
 import it.unimi.di.ewlab.iss.common.model.actions.facialexpressionactions.faceframehandler.ClassificationFrameHandler
 import it.unimi.di.ewlab.iss.common.model.actions.facialexpressionactions.faceframehandler.WrongPositioningListener
@@ -23,10 +24,10 @@ import java.util.concurrent.ExecutionException
 
 @ExperimentalGetImage
 class FacialExpressionActionsRecognizer private constructor(
-    selectedConfiguration: Configuration?,
+    actions: List<Action>?,
     actionListeners: List<ActionListener?>?,
 ) :
-    ActionsRecognizer(selectedConfiguration, actionListeners),
+    ActionsRecognizer(actions, actionListeners),
     ActionListener,
     LifecycleOwner {
 
@@ -39,11 +40,7 @@ class FacialExpressionActionsRecognizer private constructor(
     private var isInitialized = false
 
     fun init(
-        context: Context,
-        cameraFrameListener: CameraFrameListener?,
-        wrongPositioningListener: WrongPositioningListener?,
-        showExpressionLandmarks: Boolean,
-        precision: Configuration.Settings.FacialExpressionPrecision,
+        context: Context
     ) {
         cameraLifecycle = LifecycleRegistry(this)
         cameraLifecycle.currentState = Lifecycle.State.INITIALIZED
@@ -51,11 +48,7 @@ class FacialExpressionActionsRecognizer private constructor(
         val feModel = initFeModel()
         initFrameHandler(
             context,
-            cameraFrameListener,
-            wrongPositioningListener,
-            feModel,
-            showExpressionLandmarks,
-            precision
+            feModel
         )
         startCameraCapture(context)
 
@@ -64,31 +57,32 @@ class FacialExpressionActionsRecognizer private constructor(
     }
 
     private fun initFeModel(): FacialExpressionActionsModel {
+        val facialexpressionactions = ArrayList<FacialExpressionAction>()
+        for (action in actions) {
+            if (action is FacialExpressionAction)
+                facialexpressionactions.add(action)
+        }
         val feModel = FacialExpressionActionsModel()
-        feModel.setFacialExpressionActions(selectedConfiguration.facialExpressionActions)
+        feModel.setFacialExpressionActions(facialexpressionactions)
         feModel.addFacialExpressionAction(MainModel.getInstance().neutralFacialExpressionAction!!)
         return feModel
     }
 
     private fun initFrameHandler(
         context: Context,
-        cameraFrameListener: CameraFrameListener?,
-        wrongPositioningListener: WrongPositioningListener?,
         feModel: FacialExpressionActionsModel,
-        showExpressionLandmarks: Boolean,
-        precision: Configuration.Settings.FacialExpressionPrecision,
     ) {
         val fsm = FiniteStateMachine(feModel, this)
-        val filter = ClassificationsFilter(precision, fsm, wrongPositioningListener)
+        val filter = ClassificationsFilter(Configuration.Settings.FacialExpressionPrecision.MEDIUM, fsm)
 
-        frameHandler = ClassificationFrameHandler(cameraFrameListener, filter, filter)
+        frameHandler = ClassificationFrameHandler(null, filter, filter)
 
-        frameHandler.drawLandmarks = showExpressionLandmarks
+        frameHandler.drawLandmarks = false
         frameHandler.init(context)
 
         frameHandler.trainClassifier(feModel.actions)
 
-        frameHandler.setClassifierPrecision(selectedConfiguration.settings.facialExpressionsClassifierRadius)
+        frameHandler.setClassifierPrecision(0.80F)
     }
 
 
@@ -187,10 +181,10 @@ class FacialExpressionActionsRecognizer private constructor(
 
         @Synchronized
         fun getInstance(
-            selectedConfiguration: Configuration?,
+            actions: List<Action>?,
             actionListeners: List<ActionListener?>?,
         ): FacialExpressionActionsRecognizer {
-            instance = FacialExpressionActionsRecognizer(selectedConfiguration, actionListeners)
+            instance = FacialExpressionActionsRecognizer(actions, actionListeners)
             return instance!!
         }
     }

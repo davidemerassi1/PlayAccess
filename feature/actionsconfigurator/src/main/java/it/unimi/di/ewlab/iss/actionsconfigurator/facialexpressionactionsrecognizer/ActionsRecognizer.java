@@ -8,11 +8,11 @@ import it.unimi.di.ewlab.iss.common.model.Configuration;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
 public abstract class ActionsRecognizer {
-    private final Configuration selectedConfiguration;
+    protected final List<Action> actions;
     private final List<ActionListener> actionListeners;
 
-    protected ActionsRecognizer(Configuration selectedConfiguration, List<ActionListener> actionListeners) {
-        this.selectedConfiguration = selectedConfiguration;
+    protected ActionsRecognizer(List<Action> actions, List<ActionListener> actionListeners) {
+        this.actions = actions;
         this.actionListeners = new ArrayList<>(actionListeners);
     }
 
@@ -43,9 +43,5 @@ public abstract class ActionsRecognizer {
 
     public List<ActionListener> getActionListeners() {
         return Collections.unmodifiableList(actionListeners);
-    }
-
-    public Configuration getSelectedConfiguration(){
-        return selectedConfiguration;
     }
 }

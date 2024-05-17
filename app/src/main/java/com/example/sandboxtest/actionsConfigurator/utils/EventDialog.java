@@ -275,10 +275,10 @@ public class EventDialog extends FrameLayout {
 
         Action.ActionType actionType = Action.ActionType.valueOf((String) v.getTag());
         findViewById(R.id.noEventsTextview).setVisibility(GONE);
-        for (Action option : MainModel.getInstance().getActions()) {
+        for (Action option : mainModel.getActions()) {
             /*if ((eventButton instanceof ResizableDraggableButton) != option.isJoystickAction())
                 continue;*/
-            if (option.getActionType() != actionType)
+            if (option.getActionType() != actionType || option.equals(mainModel.getNeutralFacialExpressionAction()))
                 continue;
             RadioButton radioButton = new RadioButton(getContext());
             radioButton.setTag(option);

@@ -7,8 +7,8 @@ import it.unimi.di.ewlab.iss.common.model.actions.facialexpressionactions.facefr
 
 class ClassificationsFilter(
     precision: Configuration.Settings.FacialExpressionPrecision,
-    private val filterListener: FilterListener,
-    private val wrongPositioningListener: WrongPositioningListener?
+    private val filterListener: FilterListener
+    //private val wrongPositioningListener: WrongPositioningListener?
 ) : ClassificationListener, WrongPositioningListener {
 
     private val buffer = ExpressionsBuffer(precision)
@@ -26,10 +26,10 @@ class ClassificationsFilter(
     override fun onWrongPositioning(err: WrongPositioningListener.PositioningError) {
         buffer.update(ExpressionsBuffer.NOT_RECOGNIZED_ID)
         filterListener.onClassification(buffer.expression)
-        wrongPositioningListener?.onWrongPositioning(err)
+        //wrongPositioningListener?.onWrongPositioning(err)
     }
 
     override fun onPositioningRestored() {
-        wrongPositioningListener?.onPositioningRestored()
+        //wrongPositioningListener?.onPositioningRestored()
     }
 }

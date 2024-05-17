@@ -14,6 +14,8 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
+import androidx.camera.core.ExperimentalGetImage;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
@@ -34,11 +36,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.unimi.di.ewlab.iss.actionsconfigurator.facialexpressionactionsrecognizer.ActionListener;
+import it.unimi.di.ewlab.iss.actionsconfigurator.facialexpressionactionsrecognizer.FacialExpressionActionsRecognizer;
+import it.unimi.di.ewlab.iss.common.model.Configuration;
+import it.unimi.di.ewlab.iss.common.model.MainModel;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction;
 import it.unimi.di.ewlab.iss.common.model.actionsmodels.ButtonActionsModel;
 
-public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener, LifecycleOwner {
+public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener, LifecycleOwner, ActionListener {
     private AssociationDao associationsDb;
     private Map<Action, Association> map = new HashMap<>();
     private boolean configurationOpened = false;
@@ -55,6 +61,7 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
         super(context, attrs);
     }
 
+    @OptIn(markerClass = ExperimentalGetImage.class)
     public void init(WindowManager windowManager, String applicationPackage) {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -159,6 +166,12 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             CameraFaceDetector cameraFaceDetector = new CameraFaceDetector(getContext(), this, this);
             cameraFaceDetector.startDetection();
         }).start();
+
+        if (!MainModel.getInstance().getFacialExpressionActions().isEmpty()) {
+            FacialExpressionActionsRecognizer.Companion.getInstance(List.of(), List.of(this)).init(
+                    getContext()
+            );
+        }
 
         lifecycleRegistry = new LifecycleRegistry(this);
         //new InputDeviceChecker(getContext(), this);
@@ -276,5 +289,18 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onActionStarts(@org.checkerframework.checker.nullness.qual.NonNull Action action) {
+        if (map.containsKey(action))
+            executor.execute(map.get(action));
+        else
+            Log.d("OverlayView", "ho rilevato " + action.getName() + " ma non ho nessuna associazione");
+    }
+
+    @Override
+    public void onActionEnds(@org.checkerframework.checker.nullness.qual.NonNull Action action) {
+
     }
 }
