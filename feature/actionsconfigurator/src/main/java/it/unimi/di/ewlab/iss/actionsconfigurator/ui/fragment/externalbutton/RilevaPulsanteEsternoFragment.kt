@@ -17,8 +17,6 @@ import it.unimi.di.ewlab.iss.actionsconfigurator.R
 import it.unimi.di.ewlab.iss.actionsconfigurator.databinding.FragmentRilevaPulsanteEsternoBinding
 import it.unimi.di.ewlab.iss.actionsconfigurator.viewmodel.RilevaPulsanteEsternoViewModel
 import it.unimi.di.ewlab.iss.common.model.MainModel
-import it.unimi.di.ewlab.iss.common.network.AccessibilityServiceAction
-import it.unimi.di.ewlab.iss.common.network.AccessibilityServiceKeys
 
 class RilevaPulsanteEsternoFragment : Fragment() {
 

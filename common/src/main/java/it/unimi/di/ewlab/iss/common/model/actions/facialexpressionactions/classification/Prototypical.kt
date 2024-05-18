@@ -22,6 +22,7 @@ open class Prototypical : Classifier {
     private var selectedFeaturesCnt = 396
 
     override fun classify(features: List<Float>): Classifier.ClassifierResult {
+        Log.d(TAG, "classify: set size ${trainSet.size}")
         if (trainSet.isEmpty())
             return Classifier.NO_CLASSIFICATION
 
@@ -30,7 +31,7 @@ open class Prototypical : Classifier {
 
         for (train in trainSet) {
             val distance = distance(train, features)
-            //Log.d(TAG, "Train \"${train.label}\" distance: $distance")
+            Log.d(TAG, "Train \"${train.label}\" distance: $distance radius: $radius")
             if (minTrainDistance == null || distance < minTrainDistance) {
                 minTrainDistance = distance
                 minTrain = train

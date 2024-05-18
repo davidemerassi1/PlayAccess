@@ -162,14 +162,14 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
             }
         });
 
-        new Thread(() -> {
+        /*new Thread(() -> {
             CameraFaceDetector cameraFaceDetector = new CameraFaceDetector(getContext(), this, this);
             cameraFaceDetector.startDetection();
-        }).start();
+        }).start();*/
 
         if (!MainModel.getInstance().getFacialExpressionActions().isEmpty()) {
-            FacialExpressionActionsRecognizer.Companion.getInstance(List.of(), List.of(this)).init(
-                    getContext()
+            FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(this)).init(
+                    getContext(), this
             );
         }
 

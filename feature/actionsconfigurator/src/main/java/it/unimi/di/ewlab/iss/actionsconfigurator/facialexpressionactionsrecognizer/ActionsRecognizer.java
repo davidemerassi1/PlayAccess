@@ -1,5 +1,7 @@
 package it.unimi.di.ewlab.iss.actionsconfigurator.facialexpressionactionsrecognizer;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +19,7 @@ public abstract class ActionsRecognizer {
     }
 
     protected void startAction(Action action){
+        Log.d("ActionsRecognizer", "startAction: " + action);
         for(ActionListener listener: actionListeners){
             listener.onActionStarts(action);
         }

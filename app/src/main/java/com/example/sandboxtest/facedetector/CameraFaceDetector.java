@@ -26,6 +26,11 @@ import com.google.mlkit.vision.face.FaceDetectorOptions;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import it.unimi.di.ewlab.iss.actionsconfigurator.facialexpressionactionsrecognizer.ClassificationsFilter;
+import it.unimi.di.ewlab.iss.actionsconfigurator.facialexpressionactionsrecognizer.FiniteStateMachine;
+import it.unimi.di.ewlab.iss.common.model.Configuration;
+import it.unimi.di.ewlab.iss.common.model.actions.facialexpressionactions.faceframehandler.ClassificationFrameHandler;
+
 public class CameraFaceDetector {
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private String TAG = "myApp";
@@ -39,8 +44,21 @@ public class CameraFaceDetector {
     private FaceDetector faceDetector = FaceDetection.getClient(options);
     private OnFaceRecognizedListener listener;
 
-    public CameraFaceDetector(Context context, OnFaceRecognizedListener listener, LifecycleOwner lifecycleOwner) {
+    @OptIn(markerClass = ExperimentalGetImage.class) public CameraFaceDetector(Context context, OnFaceRecognizedListener listener, LifecycleOwner lifecycleOwner) {
         this.listener = listener;
+
+        /*FiniteStateMachine fsm = new FiniteStateMachine(feModel, this);
+        ClassificationsFilter filter = new ClassificationsFilter(Configuration.Settings.FacialExpressionPrecision.MEDIUM, fsm);
+
+        ClassificationFrameHandler frameHandler = new ClassificationFrameHandler(null, filter, filter);
+
+        frameHandler.setDrawLandmarks(false);
+        frameHandler.init(context);
+
+        frameHandler.trainClassifier(feModel.actions);
+
+        frameHandler.setClassifierPrecision(0.80F);*/
+
         cameraProviderFuture = ProcessCameraProvider.getInstance(context);
 
         cameraProviderFuture.addListener(() -> {

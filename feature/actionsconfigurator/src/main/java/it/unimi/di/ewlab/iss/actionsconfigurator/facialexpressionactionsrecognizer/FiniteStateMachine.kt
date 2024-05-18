@@ -1,5 +1,6 @@
 package it.unimi.di.ewlab.iss.actionsconfigurator.facialexpressionactionsrecognizer
 
+import android.util.Log
 import it.unimi.di.ewlab.iss.actionsconfigurator.facialexpressionactionsrecognizer.ActionListener
 import it.unimi.di.ewlab.iss.actionsconfigurator.facialexpressionactionsrecognizer.FilterListener
 import it.unimi.di.ewlab.iss.common.model.MainModel
@@ -20,6 +21,7 @@ class FiniteStateMachine(
     }
 
     override fun onClassification(classification: Int) {
+        Log.d("FiniteStateMachine", "Classification: $classification")
         if (classification != currentAction) {
             if (currentAction >= 0 && currentAction != MainModel.NEUTRAL_FACIAL_EXPRESSION_ACTION_ID)
                 actionsListener.onActionEnds(actions[currentAction]!!)

@@ -142,6 +142,7 @@ import it.unimi.di.ewlab.iss.common.utils.Utils
     }
 
     private fun onFaceDetected(faces: FaceLandmarkerResult?, mpImage: MPImage?) {
+        Log.d(TAG, "onFaceDetected")
         mpImage?.close()
 
         if (faces == null || faces.faceLandmarks().isEmpty()) {

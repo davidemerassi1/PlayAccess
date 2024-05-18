@@ -1,5 +1,6 @@
 package it.unimi.di.ewlab.iss.actionsconfigurator.facialexpressionactionsrecognizer
 
+import android.util.Log
 import it.unimi.di.ewlab.iss.common.model.Configuration
 import it.unimi.di.ewlab.iss.common.model.actions.facialexpressionactions.classification.Classifier
 import it.unimi.di.ewlab.iss.common.model.actions.facialexpressionactions.faceframehandler.ClassificationListener
@@ -14,6 +15,7 @@ class ClassificationsFilter(
     private val buffer = ExpressionsBuffer(precision)
 
     override fun onClassification(classification: Classifier.ClassifierResult) {
+        Log.d("ClassificationsFilter", "Classification: $classification")
         if (classification.certain) {
             filterListener.onClassification(classification.label)
             buffer.clear(classification.label)

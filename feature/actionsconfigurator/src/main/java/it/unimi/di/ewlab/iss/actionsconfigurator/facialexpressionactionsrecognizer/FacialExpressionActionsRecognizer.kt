@@ -40,7 +40,8 @@ class FacialExpressionActionsRecognizer private constructor(
     private var isInitialized = false
 
     fun init(
-        context: Context
+        context: Context,
+        lifecycleOwner: LifecycleOwner
     ) {
         cameraLifecycle = LifecycleRegistry(this)
         cameraLifecycle.currentState = Lifecycle.State.INITIALIZED
@@ -50,10 +51,14 @@ class FacialExpressionActionsRecognizer private constructor(
             context,
             feModel
         )
-        startCameraCapture(context)
+        startCameraCapture(context, lifecycleOwner)
+
 
         isInitialized = true
         cameraLifecycle.currentState = Lifecycle.State.CREATED
+
+        startAnalysis()
+
     }
 
     private fun initFeModel(): FacialExpressionActionsModel {
@@ -106,7 +111,7 @@ class FacialExpressionActionsRecognizer private constructor(
         }
     }
 
-    private fun startCameraCapture(context: Context) {
+    private fun startCameraCapture(context: Context, lifecycleOwner: LifecycleOwner) {
         Log.d(TAG, "startCameraCapture")
 
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
@@ -138,7 +143,7 @@ class FacialExpressionActionsRecognizer private constructor(
             }
 
             cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(this, cameraSelector, analysisUseCase)
+            cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, analysisUseCase)
 
         }, ContextCompat.getMainExecutor(context))
     }
