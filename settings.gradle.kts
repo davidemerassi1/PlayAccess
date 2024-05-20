@@ -21,3 +21,5 @@ include(":app")
 include (":feature:actionsconfigurator")
 include (":common")
 
+include(":feature:eventsexecutor")
+include(":feature:actionsrecognizer")

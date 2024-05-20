@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import it.unimi.di.ewlab.common.R;
+import it.unimi.di.ewlab.iss.common.database.AssociationsDb;
 import it.unimi.di.ewlab.iss.common.storage.JsonManager;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction;
@@ -50,6 +51,7 @@ public class MainModel {
     private static PhotosDatabase DB;
     private List<Frame> tempFacialExpressionActionFrames;
     private final MutableLiveData<ButtonAction> tempButtonAction = new MutableLiveData<>(null);
+    private AssociationsDb associationsDb;
 
     public PhotosDatabase getDB(Context context) {
         if (DB == null) {
@@ -65,6 +67,10 @@ public class MainModel {
         jsonManager = new JsonManager(context);
         neutralFacialExpressionName = context.getString(R.string.feraction_neutral_expression_name);
         initScreenGestureActions(context);
+
+        associationsDb = Room.databaseBuilder(context, AssociationsDb.class, "associations")
+                .fallbackToDestructiveMigration()
+                .build();
     }
 
     private void initScreenGestureActions(Context context) {
@@ -614,6 +620,10 @@ public class MainModel {
         }
 
         return false;
+    }
+
+    public AssociationsDb getAssociationsDb() {
+        return associationsDb;
     }
 }
 

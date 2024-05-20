@@ -14,6 +14,8 @@
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/actionsconfigurator" />
+            <option value="$PROJECT_DIR$/feature/actionsrecognizer" />
+            <option value="$PROJECT_DIR$/feature/eventsexecutor" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

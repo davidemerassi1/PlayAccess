@@ -8,9 +8,6 @@ import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity.MainActivityConfAzioni;
 

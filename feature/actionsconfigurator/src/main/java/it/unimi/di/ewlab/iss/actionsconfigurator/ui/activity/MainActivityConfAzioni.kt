@@ -1,7 +1,14 @@
 package it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity
 
+import actionsConfigurator.OverlayManager
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
@@ -11,7 +18,9 @@ import it.unimi.di.ewlab.iss.actionsconfigurator.databinding.ActionConfiguratorA
 import it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment.DirectoriesFragment
 import it.unimi.di.ewlab.iss.common.model.actions.Action.ActionType
 
+
 class MainActivityConfAzioni : AppCompatActivity() {
+    private val overlayRequestCode = 1234
 
     private val binding: ActionConfiguratorActivityMainBinding by lazy {
         ActionConfiguratorActivityMainBinding.inflate(layoutInflater)
@@ -23,6 +32,38 @@ class MainActivityConfAzioni : AppCompatActivity() {
         setContentView(binding.root)
 
         setNavController()
+
+        binding.startService.setOnClickListener {
+            if (!Settings.canDrawOverlays(this)) {
+                // Se il permesso non è concesso, richiedilo
+                Log.d("MainActivityConfAzioni", "Overlay permission not granted")
+                val intent = Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:$packageName")
+                )
+                startActivityForResult(intent, overlayRequestCode)
+            } else {
+                Log.d("MainActivityConfAzioni", "Overlay permission granted")
+                // Il permesso è già concesso
+                val overlayManager = OverlayManager(this)
+                overlayManager.startService()
+            }
+
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == overlayRequestCode) {
+                if (Settings.canDrawOverlays(this)) {
+                    // Il permesso è stato concesso
+
+                } else {
+                    // Il permesso non è stato concesso
+                    Toast.makeText(this, "Overlay permission not granted", Toast.LENGTH_SHORT)
+                        .show()
+                }
+        }
     }
 
     private fun setNavController() {
