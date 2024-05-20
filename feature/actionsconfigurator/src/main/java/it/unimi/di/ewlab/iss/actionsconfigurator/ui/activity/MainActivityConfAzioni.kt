@@ -34,6 +34,7 @@ class MainActivityConfAzioni : AppCompatActivity() {
         setNavController()
 
         binding.startService.setOnClickListener {
+            //sembra che il permesso sia concesso automaticamente...
             if (!Settings.canDrawOverlays(this)) {
                 // Se il permesso non è concesso, richiedilo
                 Log.d("MainActivityConfAzioni", "Overlay permission not granted")
