@@ -26,8 +26,6 @@ import com.example.sandboxtest.R;
 import com.example.sandboxtest.database.Association;
 import com.example.sandboxtest.database.AssociationDao;
 import com.example.sandboxtest.database.Event;
-import com.example.sandboxtest.facedetector.OnFaceRecognizedListener;
-import com.google.mlkit.vision.face.Face;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +39,7 @@ import it.unimi.di.ewlab.iss.common.model.actions.Action;
 import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction;
 import it.unimi.di.ewlab.iss.common.model.actionsmodels.ButtonActionsModel;
 
-public class OverlayView extends RelativeLayout implements OnFaceRecognizedListener, LifecycleOwner, ActionListener {
+public class OverlayView extends RelativeLayout implements LifecycleOwner, ActionListener {
     private AssociationDao associationsDb;
     private Map<Action, Association> map = new HashMap<>();
     private boolean configurationOpened = false;
@@ -183,23 +181,6 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     }
 
     private EventExecutor executor = new EventExecutor(getContext());
-
-    @Override
-    public void onFaceRecognized(Face face) {
-        if (getVisibility() == GONE || configurationOpened)
-            return;
-        /*if (face.getSmilingProbability() > 0.3 && map.containsKey(CameraAction.SMILE.getTag())) {
-            Association association = map.get(CameraAction.SMILE.getTag());
-            if (association.event == Event.MONODIMENSIONAL_SLIDING)
-                execute2d(association, CameraAction.SMILE.getTag());
-            else
-                executor.execute(map.get(CameraAction.SMILE.getTag()));
-        }
-        if (map.containsKey(CameraAction.FACE_MOVEMENT.getTag())) {
-            Association association = map.get(CameraAction.FACE_MOVEMENT.getTag());
-            executor.execute2d(association, -face.getHeadEulerAngleY() / 35, -(face.getHeadEulerAngleX() - 10) / 30);
-        }*/
-    }
 
     public void start() {
         setVisibility(VISIBLE);
