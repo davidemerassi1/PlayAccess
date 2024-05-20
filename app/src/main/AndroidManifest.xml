@@ -2,17 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.INJECT_EVENTS" />
-    <!-- <uses-permission android:name="io.busniess.va.permission.SAFE_ACCESS" /> -->
+    <uses-permission android:name="android.permission.INJECT_EVENTS" /> <!-- <uses-permission android:name="io.busniess.va.permission.SAFE_ACCESS" /> -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
-    <uses-permission android:name="com.example.permission.SEND_BROADCAST_FROM_MAIN_APP" />
-    <!-- <uses-permission android:name="android.permission.CONNECTIVITY_INTERNAL" /> -->
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-permission android:name="com.example.permission.SEND_BROADCAST_FROM_MAIN_APP" /> <!-- <uses-permission android:name="android.permission.CONNECTIVITY_INTERNAL" /> -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:name=".MyApplication"
@@ -23,31 +23,17 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Base.Theme.SandBoxTest"
+        android:theme="@style/Theme.PlayAccess"
         tools:targetApi="31">
-
         <activity
-            android:name=".homeScreen.MainActivity"
+            android:name=".SandboxVerifier"
             android:exported="true"
-            android:label="Sandbox Launcher"
-            android:theme="@style/Base.Theme.SandBoxTest">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity android:name=".installedApps.InstalledAppsActivity" />
-
-        <activity
-            android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity.MainActivityConfAzioni"
             android:label="PlayAccess"
-            android:exported="true"
             android:noHistory="true"
             android:taskAffinity="">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -1,8 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.SandBoxTest" parent="Theme.MaterialComponents.Light">
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="android:colorPrimaryDark">@color/primaryColorDark</item>
+    <style name="Theme.PlayAccess" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/emerald</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>

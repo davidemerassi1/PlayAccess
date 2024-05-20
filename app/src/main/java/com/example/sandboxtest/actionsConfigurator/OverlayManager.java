@@ -63,4 +63,9 @@ public class OverlayManager extends BroadcastReceiver {
         }
         Log.d("MyBroadcastReceiver", "onReceive: " + intent.getAction() + " da " + packageName);
     }
+
+    public void showOverlay() {
+        OverlayView overlay = (OverlayView) LayoutInflater.from(context).inflate(R.layout.overlay_layout, null);
+        overlay.init(windowManager, "prova");
+    }
 }
