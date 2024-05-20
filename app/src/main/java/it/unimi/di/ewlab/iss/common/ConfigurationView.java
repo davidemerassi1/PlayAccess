@@ -1,4 +1,4 @@
-package com.example.sandboxtest.actionsConfigurator;
+package it.unimi.di.ewlab.iss.common;
 
 import android.content.Context;
 import android.content.res.Resources;

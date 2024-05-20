@@ -20,15 +20,12 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import com.example.sandboxtest.MyApplication;
 import com.example.sandboxtest.R;
 import com.example.sandboxtest.database.Association;
 import com.example.sandboxtest.database.AssociationDao;
-import com.example.sandboxtest.database.CameraAction;
 import com.example.sandboxtest.database.Event;
-import com.example.sandboxtest.facedetector.CameraFaceDetector;
 import com.example.sandboxtest.facedetector.OnFaceRecognizedListener;
 import com.google.mlkit.vision.face.Face;
 
@@ -38,7 +35,7 @@ import java.util.Map;
 
 import it.unimi.di.ewlab.iss.actionsconfigurator.facialexpressionactionsrecognizer.ActionListener;
 import it.unimi.di.ewlab.iss.actionsconfigurator.facialexpressionactionsrecognizer.FacialExpressionActionsRecognizer;
-import it.unimi.di.ewlab.iss.common.model.Configuration;
+import it.unimi.di.ewlab.iss.common.ConfigurationView;
 import it.unimi.di.ewlab.iss.common.model.MainModel;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction;
@@ -292,15 +289,16 @@ public class OverlayView extends RelativeLayout implements OnFaceRecognizedListe
     }
 
     @Override
-    public void onActionStarts(@org.checkerframework.checker.nullness.qual.NonNull Action action) {
+    public void onActionStarts(it.unimi.di.ewlab.iss.common.model.actions.@org.checkerframework.checker.nullness.qual.NonNull Action action) {
         if (map.containsKey(action))
             executor.execute(map.get(action));
         else
             Log.d("OverlayView", "ho rilevato " + action.getName() + " ma non ho nessuna associazione");
+
     }
 
     @Override
-    public void onActionEnds(@org.checkerframework.checker.nullness.qual.NonNull Action action) {
+    public void onActionEnds(it.unimi.di.ewlab.iss.common.model.actions.@org.checkerframework.checker.nullness.qual.NonNull Action action) {
 
     }
 }

@@ -23,7 +23,7 @@
     </RelativeLayout>
 
     <!-- this is the expanded layout -->
-    <com.example.sandboxtest.actionsConfigurator.ConfigurationView
+    <it.unimi.di.ewlab.iss.common.ConfigurationView
         android:id="@+id/configurationView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -204,5 +204,5 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </com.example.sandboxtest.actionsConfigurator.ConfigurationView>
+    </it.unimi.di.ewlab.iss.common.ConfigurationView>
 </com.example.sandboxtest.actionsConfigurator.OverlayView>

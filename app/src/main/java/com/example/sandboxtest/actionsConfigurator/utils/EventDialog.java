@@ -4,9 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,10 +19,7 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
 import com.example.sandboxtest.R;
-import com.example.sandboxtest.database.CameraAction;
 import com.example.sandboxtest.database.Event;
-
-import java.util.List;
 
 import it.unimi.di.ewlab.iss.common.model.MainModel;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
