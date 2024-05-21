@@ -11,15 +11,21 @@
     <!-- this is the collapsed layout -->
     <RelativeLayout
         android:id="@+id/layoutCollapsed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:visibility="visible">
 
         <ImageView
             android:id="@+id/collapsed_iv"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:src="@android:drawable/btn_star_big_on" />
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/playaccess_logo_large" />
+
+        <ImageView
+            android:id="@+id/gameIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"/>
     </RelativeLayout>
 
     <!-- this is the expanded layout -->

@@ -77,8 +77,7 @@ public class ConfigurationView extends RelativeLayout {
         }
     }
 
-    public void setup(String applicationPackage, AssociationDao associationsDb) {
-        this.applicationPackage = applicationPackage;
+    public void setup(AssociationDao associationsDb) {
         this.associationsDb = associationsDb;
         fab = findViewById(R.id.fab);
         optionsLayout = findViewById(R.id.optionsLayout);
@@ -120,8 +119,13 @@ public class ConfigurationView extends RelativeLayout {
             closeFABMenu();
             showDialog(new ResizableSlidingDraggableButton(context, null, null, null), true);
         });
+    }
 
-        for (Association association : associationsDb.getAssociations(applicationPackage)) {
+    public void changeGame(String applicationPackage, Association[] associations) {
+        this.applicationPackage = applicationPackage;
+        events.removeAllViews();
+
+        for (Association association : associations) {
             if (association.event == Event.JOYSTICK) {
                 ResizableDraggableButton button = new ResizableDraggableButton(context, association.action);
                 button.setOnClickListener(updateListener);

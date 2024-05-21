@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.example.eventsexecutor.R;
 
@@ -65,6 +66,7 @@ public class OverlayManager {
     public void startService() {
         OverlayView overlay = (OverlayView) LayoutInflater.from(context).inflate(R.layout.overlay_layout, null);
         overlay.init(windowManager, "prova");
-        overlay.start();
+        ProcessUtils.startMonitoring(overlay);
+        Toast.makeText(context, "Servizio attivo", Toast.LENGTH_SHORT).show();
     }
 }

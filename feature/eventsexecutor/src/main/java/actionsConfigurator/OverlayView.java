@@ -1,7 +1,10 @@
 package actionsConfigurator;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -11,6 +14,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -72,26 +76,11 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
         View collapsedView = this.findViewById(R.id.layoutCollapsed);
         View expandedView = this.findViewById(R.id.configurationView);
 
-        configurationView = findViewById(R.id.configurationView);
-
         associationsDb = MainModel.getInstance().getAssociationsDb().getDao();
 
-        new Thread(() -> {
-            needCamera.postValue(false);
-            for (Association association : associationsDb.getAssociations(applicationPackage)) {
-                if (association.action.getActionType() == Action.ActionType.FACIAL_EXPRESSION) {
-                    Log.d("OverlayView", "init: need camera");
-                    needCamera.postValue(true);
-                }
-                map.put(association.action, association);
-                if (association.event == Event.MONODIMENSIONAL_SLIDING) {
-                    map.put(association.additionalAction1, association);
-                    map.put(association.additionalAction2, association);
-                }
-            }
-            buttonActionsModel = new ButtonActionsModel(map.keySet());
-            configurationView.setup(applicationPackage, associationsDb);
-        }).start();
+        configurationView = findViewById(R.id.configurationView);
+        configurationView.setup(associationsDb);
+        changeGame(applicationPackage);
 
         expandedView.findViewById(R.id.closeConfigurationBtn).setOnClickListener(v -> {
             new Thread(() -> executor.releaseAll()).start();
@@ -180,6 +169,41 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
 
     private EventExecutor executor = new EventExecutor(getContext());
 
+    public void changeGame(String applicationPackage) {
+        new Thread(() -> {
+            needCamera.postValue(false);
+            Association[] associations = associationsDb.getAssociations(applicationPackage);
+            for (Association association : associations) {
+                if (association.action.getActionType() == Action.ActionType.FACIAL_EXPRESSION) {
+                    Log.d("OverlayView", "init: need camera");
+                    needCamera.postValue(true);
+                }
+                map.put(association.action, association);
+                if (association.event == Event.MONODIMENSIONAL_SLIDING) {
+                    map.put(association.additionalAction1, association);
+                    map.put(association.additionalAction2, association);
+                }
+            }
+            buttonActionsModel = new ButtonActionsModel(map.keySet());
+            configurationView.changeGame(applicationPackage, associations);
+        }).start();
+
+        Drawable appIcon = getAppIconFromPackageName(getContext(), applicationPackage);
+        if (appIcon != null)
+            ((ImageView) findViewById(R.id.gameIcon)).setImageDrawable(appIcon);
+    }
+
+    private Drawable getAppIconFromPackageName(Context context, String packageName) {
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
+            return applicationInfo.loadIcon(packageManager);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d("OverlayView", "package not found: " + packageName);
+        }
+        return null;
+    }
+
     public void start() {
         setVisibility(VISIBLE);
         if (needCamera.getValue())
@@ -189,10 +213,6 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
     public void stop() {
         setVisibility(GONE);
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
-    }
-
-    public void destroy() {
-        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
     }
 
     private void execute1d(Association association, Action action) {
@@ -213,6 +233,7 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        Log.d("OverlayView", "onKeyUp: " + KeyEvent.keyCodeToString(keyCode) + "source: " + event.getSource());
         if ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) {
             if (!configurationOpened) {
                 Log.d("Hai premuto", "" + keyCode);
@@ -234,6 +255,7 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d("OverlayView", "onKeyDown: " + KeyEvent.keyCodeToString(keyCode) + "source: " + event.getSource());
         if ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) {
             if (!configurationOpened)
                 Log.d("OverlayView", "onKeyDown: " + KeyEvent.keyCodeToString(keyCode));
@@ -246,6 +268,7 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
 
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
+        Log.d("OverlayView", "onGenericMotionEvent: " + event.getSource() + " " + event.getAction() + " " + event.getAxisValue(MotionEvent.AXIS_X) + " " + event.getAxisValue(MotionEvent.AXIS_Y));
         // Verifica se l'evento proviene da un joystick
         if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK &&
                 event.getAction() == MotionEvent.ACTION_MOVE) {

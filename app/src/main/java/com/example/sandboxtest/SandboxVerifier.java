@@ -20,9 +20,9 @@ public class SandboxVerifier extends AppCompatActivity {
 
         ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
         ActivityManager.RecentTaskInfo taskInfo = activityManager.getAppTasks().get(0).getTaskInfo();
-        String taskName = taskInfo.baseIntent.getComponent().getClassName();
-        if (!taskName.startsWith(getPackageName())) {
-            Log.d("SandboxVerifier", "Task name: " + taskName);
+        String packageName = taskInfo.baseIntent.getComponent().getPackageName();
+        if (!packageName.equals(getPackageName())) {
+            Log.d("SandboxVerifier", "Package name: " + packageName);
             Intent intent = new Intent(this, MainActivityConfAzioni.class);
             startActivity(intent);
         }
