@@ -102,7 +102,7 @@ public class ConfigurationView extends RelativeLayout {
 
         fabLayouts.get(1).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(new ResizableDraggableButton(context, (Action) null), true);
+            showDialog(new ResizableDraggableButton(context), true);
         });
 
         fabLayouts.get(2).getChildAt(1).setOnClickListener(view -> {
@@ -127,7 +127,8 @@ public class ConfigurationView extends RelativeLayout {
 
         for (Association association : associations) {
             if (association.event == Event.JOYSTICK) {
-                ResizableDraggableButton button = new ResizableDraggableButton(context, association.action);
+                ResizableDraggableButton button = new ResizableDraggableButton(context);
+                button.setAction(association.action);
                 button.setOnClickListener(updateListener);
                 button.setX(positionStart(association.x, association.radius));
                 button.setY(positionStart(association.y, association.radius));

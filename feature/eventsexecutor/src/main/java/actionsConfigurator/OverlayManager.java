@@ -10,7 +10,9 @@ import android.widget.Toast;
 import com.example.eventsexecutor.R;
 
 public class OverlayManager {
-    public OverlayManager(Context context) {
+    public static OverlayManager instance;
+
+    private OverlayManager(Context context) {
         WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
         try {
             OverlayView overlay = (OverlayView) LayoutInflater.from(context).inflate(R.layout.overlay_layout, null);
@@ -20,5 +22,12 @@ public class OverlayManager {
         } catch (Exception e) {
             Toast.makeText(context, "Impossibile avviare il servizio", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public static OverlayManager getInstance(Context context) {
+        if (instance == null) {
+            instance = new OverlayManager(context);
+        }
+        return instance;
     }
 }

@@ -13,6 +13,7 @@ import androidx.navigation.findNavController
 import it.unimi.di.ewlab.iss.actionsconfigurator.R
 import it.unimi.di.ewlab.iss.actionsconfigurator.databinding.ActivityPulsanteEsternoBinding
 import it.unimi.di.ewlab.iss.common.model.MainModel
+import it.unimi.di.ewlab.iss.common.model.actions.Action
 import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction
 import it.unimi.di.ewlab.iss.common.utils.PermissionsHandler
 
@@ -113,7 +114,13 @@ class PulsanteEsternoActivity: AppCompatActivity() {
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        val action = ButtonAction(mainModel.nextActionId, KeyEvent.keyCodeToString(keyCode), event!!.source.toString(), keyCode.toString())
+        val action: ButtonAction
+        if (KeyEvent.keyCodeToString(keyCode).startsWith("KEYCODE_DPAD")) {
+            //TODO: da verificare il codice: 19 corrisponde a KEYCODE_DPAD_UP
+            action = ButtonAction(mainModel.nextActionId, KeyEvent.keyCodeToString(keyCode), event!!.source.toString(), 19.toString())
+            action.setIs2d(true)
+        } else
+            action = ButtonAction(mainModel.nextActionId, KeyEvent.keyCodeToString(keyCode), event!!.source.toString(), keyCode.toString())
         mainModel.setTempButtonAction(action)
         return true
     }

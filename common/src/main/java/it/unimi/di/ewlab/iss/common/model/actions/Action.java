@@ -24,6 +24,7 @@ public abstract class Action implements Serializable {
     private final String actionType;
     private String name;
     private final int actionId;
+    private boolean is2d = false;
 
 
     protected Action(@NonNull ActionType actionType) {
@@ -38,6 +39,13 @@ public abstract class Action implements Serializable {
         this.actionType = actionType.name();
     }
 
+    public void setIs2d(boolean is2d) {
+        this.is2d = is2d;
+    }
+
+    public boolean is2d() {
+        return is2d;
+    }
 
     public ActionType getActionType() {
         return ActionType.valueOf(actionType);

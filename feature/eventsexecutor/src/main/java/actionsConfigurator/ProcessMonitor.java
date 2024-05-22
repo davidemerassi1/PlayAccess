@@ -19,34 +19,38 @@ import java.util.List;
 import java.util.Map;
 
 public class ProcessMonitor {
-    private final Handler handler;
-    private final Runnable runnable;
-    private final ActivityManager activityManager;
     private final UsageStatsManager usageStatsManager;
     private final String sandboxName;
     private String activePackage;
 
     public ProcessMonitor(OverlayView overlayView) {
-        activityManager = (ActivityManager) overlayView.getContext().getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager activityManager = (ActivityManager) overlayView.getContext().getSystemService(Context.ACTIVITY_SERVICE);
         usageStatsManager = (UsageStatsManager) overlayView.getContext().getSystemService(Context.USAGE_STATS_SERVICE);
         sandboxName = getForegroundApp();
         if (sandboxName == null) {
             throw new IllegalStateException("No foreground app");
         }
 
-        handler = new Handler(Looper.getMainLooper());
-        runnable = new Runnable() {
+        Handler handler = new Handler(Looper.getMainLooper());
+        //Log.d("ProcessMonitor", "Process: " + processInfo.processName + ", PID: " + processInfo.pid + ", importance: " + processInfo.importance);
+        // Esegui di nuovo dopo 1 secondo (1000 ms)
+        Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = activityManager.getRunningAppProcesses();
+                boolean areThereActiveApps = false;
 
                 if (runningAppProcesses != null) {
                     for (ActivityManager.RunningAppProcessInfo processInfo : runningAppProcesses) {
-                        //Log.d("ProcessMonitor", "Process: " + processInfo.processName + ", PID: " + processInfo.pid + ", importance: " + processInfo.importance);
                         int pid = processInfo.pid;
                         String processName = processInfo.processName;
-                        if (processName != null && !processName.startsWith("com.google.android.gms") && !processName.startsWith("com.google.process") && !processName.startsWith("com.android") && !processName.equals("com.example.sandboxtest")) {
+                        if (processName != null && processName.equals("com.example.sandboxtest")) {
+                            activePackage = null;
+                            break;
+                        }
+                        if (processName != null && !processName.startsWith("com.google.android.gms") && !processName.startsWith("com.google.process") && !processName.startsWith("com.android")) {
                             Log.d("ProcessMonitor", "Current process : " + processName + ", PID: " + pid);
+                            areThereActiveApps = true;
                             if (activePackage == null || !activePackage.equals(processName)) {
                                 Log.d("ProcessMonitor", "Process changed: " + activePackage + " -> " + processName);
                                 overlayView.changeGame(processName);
@@ -57,7 +61,7 @@ public class ProcessMonitor {
                     }
                 }
 
-                if (sandboxName.equals(getForegroundApp()))
+                if (sandboxName.equals(getForegroundApp()) && activePackage != null && areThereActiveApps)
                     overlayView.start();
                 else
                     overlayView.stop();

@@ -47,13 +47,6 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
         init();
     }
 
-    public ResizableDraggableButton(Context context, Action action) {
-        super(context);
-        this.context = context;
-        this.action = action;
-        init();
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     public void init() {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
