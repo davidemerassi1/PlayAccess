@@ -2,71 +2,23 @@ package actionsConfigurator;
 
 import static android.content.Context.WINDOW_SERVICE;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.eventsexecutor.R;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class OverlayManager {
-    //private Map<String, OverlayView> overlays = new HashMap<>();
-    private WindowManager windowManager;
-    private Context context;
-
     public OverlayManager(Context context) {
-        this.context = context;
-        windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
-    }
-
-    /*@Override
-    public void onReceive(Context context, Intent intent) {
-        Intent i = intent.getParcelableExtra("_B_|_target_");
-        String packageName = i.getPackage();
-        switch (intent.getAction()) {
-            case "com.example.sandboxtest.ACTION_CREATE_OVERLAY":
-                if (!overlays.containsKey(packageName)) {
-                    OverlayView overlay = (OverlayView) LayoutInflater.from(context).inflate(R.layout.overlay_layout, null);
-                    overlay.init(windowManager, packageName);
-                    overlays.put(packageName, overlay);
-                }
-                break;
-            case "com.example.sandboxtest.ACTION_HIDE_OVERLAY":
-                if (overlays.containsKey(packageName)) {
-                    overlays.get(packageName).stop();
-                }
-                break;
-            case "com.example.sandboxtest.ACTION_SHOW_OVERLAY":
-                if (!overlays.containsKey(packageName)) {
-                    OverlayView overlayView = (OverlayView) LayoutInflater.from(context).inflate(R.layout.overlay_layout, null);
-                    overlayView.init(windowManager, packageName);
-                    overlays.put(packageName, overlayView);
-                }
-                overlays.get(packageName).start();
-                break;
-            case "com.example.sandboxtest.ACTION_DESTROY_OVERLAY":
-                if (overlays.containsKey(packageName)) {
-                    if (overlays.containsKey(packageName)) {
-                        overlays.get(packageName).destroy();
-                        windowManager.removeView(overlays.get(packageName));
-                        overlays.remove(packageName);
-                    }
-                }
-                break;
+        WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
+        try {
+            OverlayView overlay = (OverlayView) LayoutInflater.from(context).inflate(R.layout.overlay_layout, null);
+            overlay.init(windowManager, "prova");
+            new ProcessMonitor(overlay);
+            Toast.makeText(context, "Servizio attivo", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(context, "Impossibile avviare il servizio", Toast.LENGTH_SHORT).show();
         }
-        Log.d("MyBroadcastReceiver", "onReceive: " + intent.getAction() + " da " + packageName);
-    }*/
-
-    public void startService() {
-        OverlayView overlay = (OverlayView) LayoutInflater.from(context).inflate(R.layout.overlay_layout, null);
-        overlay.init(windowManager, "prova");
-        ProcessUtils.startMonitoring(overlay);
-        Toast.makeText(context, "Servizio attivo", Toast.LENGTH_SHORT).show();
     }
 }

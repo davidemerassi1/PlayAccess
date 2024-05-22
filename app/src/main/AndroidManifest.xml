@@ -27,6 +27,9 @@
         android:theme="@style/Theme.PlayAccess"
         tools:targetApi="31">
         <activity
+            android:name=".PermissionCheckerActivity"
+            android:exported="false" />
+        <activity
             android:name=".SandboxVerifier"
             android:exported="true"
             android:label="PlayAccess"

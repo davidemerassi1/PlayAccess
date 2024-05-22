@@ -12,46 +12,52 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.Map;
 
-public class ProcessUtils {
-    private static Handler handler;
-    private static Runnable runnable;
-    public static ArrayList<String> packages = new ArrayList<>();
+public class ProcessMonitor {
+    private final Handler handler;
+    private final Runnable runnable;
+    private final ActivityManager activityManager;
+    private final UsageStatsManager usageStatsManager;
+    private final String sandboxName;
+    private String activePackage;
 
-    public static void startMonitoring(OverlayView overlayView) {
+    public ProcessMonitor(OverlayView overlayView) {
+        activityManager = (ActivityManager) overlayView.getContext().getSystemService(Context.ACTIVITY_SERVICE);
+        usageStatsManager = (UsageStatsManager) overlayView.getContext().getSystemService(Context.USAGE_STATS_SERVICE);
+        sandboxName = getForegroundApp();
+        if (sandboxName == null) {
+            throw new IllegalStateException("No foreground app");
+        }
+
         handler = new Handler(Looper.getMainLooper());
         runnable = new Runnable() {
             @Override
             public void run() {
-                ActivityManager activityManager = (ActivityManager) overlayView.getContext().getSystemService(Context.ACTIVITY_SERVICE);
                 List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = activityManager.getRunningAppProcesses();
-                ActivityManager.RecentTaskInfo taskInfo = activityManager.getAppTasks().get(0).getTaskInfo();
-                String sandboxName = taskInfo.baseIntent.getComponent().getPackageName();
 
                 if (runningAppProcesses != null) {
                     for (ActivityManager.RunningAppProcessInfo processInfo : runningAppProcesses) {
+                        //Log.d("ProcessMonitor", "Process: " + processInfo.processName + ", PID: " + processInfo.pid + ", importance: " + processInfo.importance);
                         int pid = processInfo.pid;
                         String processName = processInfo.processName;
-                        if (processName != null && !processName.startsWith("com.google.android") && !processName.startsWith("com.google.process") && !processName.startsWith("com.android") && !processName.equals("com.example.sandboxtest") && !packages.contains(processName)) {
-                            Log.d("ProcessUtils", "New process : " + processName + ", PID: " + pid);
-                            packages.add(processName);
-                            overlayView.changeGame(processName);
+                        if (processName != null && !processName.startsWith("com.google.android.gms") && !processName.startsWith("com.google.process") && !processName.startsWith("com.android") && !processName.equals("com.example.sandboxtest")) {
+                            Log.d("ProcessMonitor", "Current process : " + processName + ", PID: " + pid);
+                            if (activePackage == null || !activePackage.equals(processName)) {
+                                Log.d("ProcessMonitor", "Process changed: " + activePackage + " -> " + processName);
+                                overlayView.changeGame(processName);
+                                activePackage = processName;
+                            }
+                            break;
                         }
                     }
                 }
 
-                if (sandboxName.equals(getForegroundApp(overlayView.getContext())))
+                if (sandboxName.equals(getForegroundApp()))
                     overlayView.start();
                 else
                     overlayView.stop();
@@ -62,8 +68,7 @@ public class ProcessUtils {
         handler.post(runnable);
     }
 
-    private static String getForegroundApp(Context context) {
-        UsageStatsManager usageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
+    private String getForegroundApp() {
         long currentTime = System.currentTimeMillis();
 
         // Query for events in the last minute
