@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -57,10 +58,11 @@ public class PermissionCheckerActivity extends AppCompatActivity {
             textView.setText("secondo permesso");
             button.setOnClickListener(v -> {
                 Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra(Settings.EXTRA_APP_PACKAGE, getIntent().getStringExtra("sandboxName"));
-                }
+                }*/
+                intent.setData(Uri.fromParts("package", getIntent().getStringExtra("sandboxName"), null));
                 startActivityForResult(intent, usageStatsRequestCode);
             });
         } else {

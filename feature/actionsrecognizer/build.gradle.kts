@@ -52,4 +52,6 @@ dependencies {
 
     implementation("org.checkerframework:checker-qual:3.18.0")
     implementation ("com.google.guava:guava:31.0.1-android")
+    //ML Kit
+    implementation ("com.google.mlkit:face-detection:16.1.6")
 }

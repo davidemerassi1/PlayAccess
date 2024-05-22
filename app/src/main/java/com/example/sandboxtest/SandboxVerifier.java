@@ -24,46 +24,25 @@ public class SandboxVerifier extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sandbox_verifier);
 
-        //qui dovrei cercare di farlo senza permesso
-        String foregroundApp = getForegroundApp();
-        if (!getPackageName().equals(foregroundApp)) {
-            Log.d("SandboxVerifier", "Package name: " + foregroundApp);
+        String sandboxName = getSandboxName();
+        if (sandboxName != null) {
+            Log.d("SandboxVerifier", "Package name: " + sandboxName);
             Intent intent = new Intent(this, PermissionCheckerActivity.class);
-            intent.putExtra("sandboxName", foregroundApp);
+            intent.putExtra("sandboxName", sandboxName);
             startActivity(intent);
         }
     }
 
-    private String getForegroundApp() {
-        /*UsageStatsManager usageStatsManager = (UsageStatsManager) getApplicationContext().getSystemService(Context.USAGE_STATS_SERVICE);
-        long currentTime = System.currentTimeMillis();
-
-        // Query for events in the last minute
-        List<UsageStats> usageStatsList = usageStatsManager.queryUsageStats(
-                UsageStatsManager.INTERVAL_DAILY,
-                currentTime - 1000 * 60,
-                currentTime
-        );
-
-        if (usageStatsList == null || usageStatsList.isEmpty()) {
-            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-            startActivity(intent);
-        }
-
-        // Sort the stats by the last time used
-        Collections.sort(usageStatsList, (o1, o2) -> Long.compare(o2.getLastTimeUsed(), o1.getLastTimeUsed()));
-
-        // The first one is the most recent used app
-        return usageStatsList.get(0).getPackageName();*/
-
+    private String getSandboxName() {
         ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
         if (activityManager != null) {
             List<ActivityManager.AppTask> appTasks = activityManager.getAppTasks();
-            if (appTasks != null && !appTasks.isEmpty()) {
-                ActivityManager.RecentTaskInfo taskInfo = appTasks.get(0).getTaskInfo();
-                if (taskInfo != null && taskInfo.baseIntent != null) {
+            for (ActivityManager.AppTask task : appTasks) {
+                ActivityManager.RecentTaskInfo taskInfo = task.getTaskInfo();
+                if (taskInfo != null && taskInfo.baseIntent.getComponent() != null) {
                     String packageName = taskInfo.baseIntent.getComponent().getPackageName();
-                    return packageName;
+                    if (!packageName.equals(getPackageName()))
+                        return packageName;
                 }
             }
         }

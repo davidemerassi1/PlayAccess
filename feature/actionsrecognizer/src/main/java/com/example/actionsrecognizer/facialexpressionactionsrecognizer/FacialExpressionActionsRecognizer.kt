@@ -12,6 +12,10 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.FaceDetector
+import com.google.mlkit.vision.face.FaceDetectorOptions
 import it.unimi.di.ewlab.iss.common.model.Configuration
 import it.unimi.di.ewlab.iss.common.model.MainModel
 import it.unimi.di.ewlab.iss.common.model.actions.Action
@@ -33,6 +37,8 @@ class FacialExpressionActionsRecognizer private constructor(
 
     private var isInitialized = false
 
+    private lateinit var faceDetector: FaceDetector
+
     fun init(
         context: Context,
         lifecycleOwner: LifecycleOwner
@@ -45,6 +51,11 @@ class FacialExpressionActionsRecognizer private constructor(
         )
         startCameraCapture(context, lifecycleOwner)
 
+        val options = FaceDetectorOptions.Builder()
+            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+            .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+            .build()
+        faceDetector = FaceDetection.getClient(options)
 
         isInitialized = true
 
@@ -70,7 +81,8 @@ class FacialExpressionActionsRecognizer private constructor(
         feModel: FacialExpressionActionsModel,
     ) {
         val fsm = FiniteStateMachine(feModel, this)
-        val filter = ClassificationsFilter(Configuration.Settings.FacialExpressionPrecision.MEDIUM, fsm)
+        val filter =
+            ClassificationsFilter(Configuration.Settings.FacialExpressionPrecision.MEDIUM, fsm)
 
         frameHandler = ClassificationFrameHandler(null, filter, filter)
 
@@ -124,7 +136,31 @@ class FacialExpressionActionsRecognizer private constructor(
         //Log.d(TAG, "processFrame")
         if (imageProxy.image == null)
             imageProxy.close()
-        else frameHandler.onImageProxy(imageProxy)
+        else {
+            frameHandler.onImageProxy(imageProxy)
+            getAngle(imageProxy)
+        }
+    }
+
+    private fun getAngle(imageProxy: ImageProxy) {
+        val mediaImage = imageProxy.image ?: return
+
+        val inputImage = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+
+        faceDetector.process(inputImage)
+            .addOnSuccessListener { faces ->
+                if (faces.isEmpty()) {
+                    return@addOnSuccessListener
+                }
+                val face = faces[0]
+                Log.d(TAG, "Face angle: ${face.headEulerAngleY}, ${face.headEulerAngleX}")
+            }
+            .addOnFailureListener { e ->
+                // Gestisci eventuali errori durante il rilevamento dei volti
+            }
+            .addOnCompleteListener {
+                imageProxy.close()
+            }
     }
 
     override fun onActionStarts(action: Action) {
