@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="it.unimi.di.ewlab.iss.common.ui.intro.fragments.IntroAccessibilityServiceFragment">
+    tools:context="it.unimi.di.ewlab.iss.common.ui.intro.fragments.IntroOverlayPermissionFragment">
 
     <TextView
         android:id="@+id/text"
@@ -13,7 +13,7 @@
         android:layout_marginBottom="@dimen/default_margin"
         android:elevation="10dp"
         android:gravity="center"
-        android:text="@string/intro_enable_accessibility_service"
+        android:text="Per continuare, concedi a ... il permesso di sovrapporsi ad altre app"
         android:textAlignment="center"
         android:textSize="@dimen/H4_text_size"
         app:layout_constraintBottom_toTopOf="@+id/playAccessLogo"

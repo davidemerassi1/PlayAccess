@@ -1,23 +1,19 @@
 package com.example.sandboxtest;
 
 import android.app.ActivityManager;
-import android.app.usage.UsageStats;
-import android.app.usage.UsageStatsManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.Collections;
 import java.util.List;
 
-import it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity.MainActivityConfAzioni;
 import it.unimi.di.ewlab.iss.common.ui.intro.PlayAccessIntroActivity;
 
 public class SandboxVerifier extends AppCompatActivity {
@@ -38,17 +34,18 @@ public class SandboxVerifier extends AppCompatActivity {
             }
         });
 
-        String sandboxName = getSandboxName();
-        if (sandboxName != null) {
-            Log.d("SandboxVerifier", "Package name: " + sandboxName);
+        String sandboxPackageName = getSandboxPackageName();
+        if (sandboxPackageName != null) {
+            Log.d("SandboxVerifier", "Package name: " + sandboxPackageName);
             Intent intent = new Intent(this, PlayAccessIntroActivity.class);
-            intent.putExtra("sandboxName", sandboxName);
+            intent.putExtra("sandboxPackageName", sandboxPackageName);
+            intent.putExtra("sandboxName", getSandboxName(sandboxPackageName));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
     }
 
-    private String getSandboxName() {
+    private String getSandboxPackageName() {
         ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
         if (activityManager != null) {
             List<ActivityManager.AppTask> appTasks = activityManager.getAppTasks();
@@ -62,5 +59,17 @@ public class SandboxVerifier extends AppCompatActivity {
             }
         }
         return null;
+    }
+
+    private String getSandboxName(String packageName) {
+        PackageManager packageManager = getPackageManager();
+        String appName = "your sandbox";
+        try {
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(packageName, 0);
+            appName = packageManager.getApplicationLabel(applicationInfo).toString();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return appName;
     }
 }

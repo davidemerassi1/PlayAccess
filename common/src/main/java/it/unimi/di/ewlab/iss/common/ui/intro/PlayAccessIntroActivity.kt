@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import dagger.hilt.android.AndroidEntryPoint
 import it.unimi.di.ewlab.common.R
 import it.unimi.di.ewlab.common.databinding.ActivityPlayAccessIntroBinding
 import it.unimi.di.ewlab.iss.common.utils.PermissionsHandler
@@ -34,7 +33,7 @@ class PlayAccessIntroActivity : AppCompatActivity() {
     private val viewModel: IntroViewModel by viewModels()
 
     private lateinit var navController: NavController
-    private var skipAction = R.id.action_introWelcomeFragment_to_introAccessibilityServiceFragment
+    private var skipAction = R.id.action_introWelcomeFragment_to_introOverlayPermissionFragment
     private var nextAction = R.id.action_introWelcomeFragment_to_introActionConfiguratorFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,14 +50,14 @@ class PlayAccessIntroActivity : AppCompatActivity() {
 
         val persistenceManager = PersistenceManager(this)
         if (!(persistenceManager.getValue(INTRO_REQUIRED, true) as Boolean)) {
-            navController.navigate(R.id.introAccessibilityServiceFragment)
+            navController.navigate(R.id.introOverlayPermissionFragment)
         }
     }
 
     private fun setUi() {
         binding.skipButton.setOnClickListener {
             if (skipAction > 0)
-                navController.navigate(R.id.introAccessibilityServiceFragment)
+                navController.navigate(R.id.introOverlayPermissionFragment)
         }
 
         binding.nextButton.setOnClickListener {
@@ -84,21 +83,21 @@ class PlayAccessIntroActivity : AppCompatActivity() {
                 R.id.introWelcomeFragment -> {
                     nextAction = R.id.action_introWelcomeFragment_to_introActionConfiguratorFragment
                     skipAction =
-                        R.id.action_introWelcomeFragment_to_introAccessibilityServiceFragment
+                        R.id.action_introWelcomeFragment_to_introOverlayPermissionFragment
                 }
                 R.id.introActionConfiguratorFragment -> {
                     nextAction =
                         R.id.action_introActionConfiguratorFragment_to_introGamesConfiguratorFragment
                     skipAction =
-                        R.id.action_introActionConfiguratorFragment_to_introAccessibilityServiceFragment
+                        R.id.action_introActionConfiguratorFragment_to_introOverlayPermissionFragment
                 }
                 R.id.introGamesConfiguratorFragment -> {
                     nextAction =
-                        R.id.action_introGamesConfiguratorFragment_to_introAccessibilityServiceFragment
+                        R.id.action_introGamesConfiguratorFragment_to_introOverlayPermissionFragment
                     skipAction =
-                        R.id.action_introGamesConfiguratorFragment_to_introAccessibilityServiceFragment
+                        R.id.action_introGamesConfiguratorFragment_to_introOverlayPermissionFragment
                 }
-                R.id.introAccessibilityServiceFragment,
+                R.id.introOverlayPermissionFragment,
                 R.id.introPermissionsFragment,
                 -> {
                     nextAction = -1

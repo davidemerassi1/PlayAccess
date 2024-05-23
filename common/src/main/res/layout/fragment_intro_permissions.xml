@@ -9,7 +9,7 @@
         android:id="@+id/permissions_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_margin_large"
+        android:layout_marginTop="@dimen/default_margin"
         android:text="@string/permissions_title"
         android:textColor="@color/black"
         android:textSize="@dimen/H3_text_size"
@@ -21,8 +21,8 @@
         android:id="@+id/titleBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_margin_small_plus"
         android:layout_marginHorizontal="@dimen/default_margin_large"
+        android:layout_marginTop="@dimen/default_margin_small_plus"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,114 +46,119 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="0dp"
+    <ScrollView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/default_margin"
-        android:backgroundTint="@color/white"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingHorizontal="@dimen/default_margin_small"
         app:layout_constraintBottom_toTopOf="@+id/buttonsBox"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleBox"
         app:layout_constraintVertical_bias="0.33">
 
-        <LinearLayout
-            android:id="@+id/bluetoothPermission"
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/default_margin"
+            android:backgroundTint="@color/white"
             android:gravity="center"
             android:orientation="vertical"
-            tools:ignore="UseCompoundDrawables">
+            android:paddingHorizontal="@dimen/default_margin_small">
 
-            <ImageView
-                android:layout_width="@dimen/image_icon_medium_height"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                app:srcCompat="@drawable/bluetooth_black"
-                app:tint="@color/han_purple"
-                tools:ignore="contentDescription" />
-
-            <TextView
+            <LinearLayout
+                android:id="@+id/bluetoothPermission"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/default_margin_small"
+                android:layout_gravity="center"
                 android:gravity="center"
-                android:text="@string/permissions_bluetooth"
-                android:textAlignment="center"
-                android:textSize="@dimen/H9_text_size" />
+                android:orientation="vertical"
+                tools:ignore="UseCompoundDrawables">
 
-        </LinearLayout>
+                <ImageView
+                    android:layout_width="@dimen/image_icon_medium_height"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    app:srcCompat="@drawable/bluetooth_black"
+                    app:tint="@color/han_purple"
+                    tools:ignore="contentDescription" />
 
-        <LinearLayout
-            android:id="@+id/cameraPermission"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/default_margin_small_plus"
-            android:gravity="center"
-            android:orientation="vertical"
-            tools:ignore="UseCompoundDrawables">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/default_margin_small"
+                    android:gravity="center"
+                    android:text="@string/permissions_bluetooth"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/H9_text_size" />
 
-            <ImageView
-                android:layout_width="@dimen/image_icon_medium_height"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                app:srcCompat="@drawable/camera_black"
-                app:tint="@color/han_purple"
-                tools:ignore="contentDescription" />
+            </LinearLayout>
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/cameraPermission"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/default_margin_small"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/default_margin_small_plus"
                 android:gravity="center"
-                android:text="@string/permissions_camera"
-                android:textAlignment="center"
-                android:textSize="@dimen/H9_text_size" />
+                android:orientation="vertical"
+                tools:ignore="UseCompoundDrawables">
 
-        </LinearLayout>
+                <ImageView
+                    android:layout_width="@dimen/image_icon_medium_height"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    app:srcCompat="@drawable/camera_black"
+                    app:tint="@color/han_purple"
+                    tools:ignore="contentDescription" />
 
-        <LinearLayout
-            android:id="@+id/notificationsPermission"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/default_margin_small_plus"
-            android:gravity="center"
-            android:orientation="vertical"
-            tools:ignore="UseCompoundDrawables">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/default_margin_small"
+                    android:gravity="center"
+                    android:text="@string/permissions_camera"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/H9_text_size" />
 
-            <ImageView
-                android:layout_width="@dimen/image_icon_medium_height"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                app:srcCompat="@drawable/notifications_active_black"
-                app:tint="@color/han_purple"
-                tools:ignore="contentDescription" />
+            </LinearLayout>
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/notificationsPermission"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/default_margin_small"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/default_margin_small_plus"
                 android:gravity="center"
-                android:text="@string/permissions_notifications"
-                android:textAlignment="center"
-                android:textSize="@dimen/H9_text_size" />
+                android:orientation="vertical"
+                tools:ignore="UseCompoundDrawables">
 
-        </LinearLayout>
+                <ImageView
+                    android:layout_width="@dimen/image_icon_medium_height"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    app:srcCompat="@drawable/notifications_active_black"
+                    app:tint="@color/han_purple"
+                    tools:ignore="contentDescription" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/default_margin_small"
+                    android:gravity="center"
+                    android:text="@string/permissions_notifications"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/H9_text_size" />
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </ScrollView>
 
     <LinearLayout
         android:id="@+id/buttonsBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/default_margin_large_plus"
-        android:layout_marginBottom="@dimen/default_margin_large_plus"
+        android:layout_marginBottom="@dimen/default_margin"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

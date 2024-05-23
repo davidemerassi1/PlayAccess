@@ -1011,4 +1011,6 @@
     <string name="intro_go_to_settings">Go to settings</string>
     <string name="intro_grant_permissions">Grant permissions</string>
     <string name="intro_deny">Deny</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
