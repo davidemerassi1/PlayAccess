@@ -1,14 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView"
+    <LinearLayout
+        android:id="@+id/logo_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="non sei in sandbox"
-        tools:layout_editor_absoluteX="151dp"
-        tools:layout_editor_absoluteY="319dp" />
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="50dp">
+
+        <ImageView
+            android:id="@+id/image_logo"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/playaccess_logo_large"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/metropolis"
+            android:text="@string/app_name"
+            android:textSize="@dimen/H1_text_size"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin_medium"
+        android:layout_marginTop="@dimen/default_margin_large"
+        android:gravity="center"
+        android:text="Questa app deve essere eseguita in un ambiente virtuale.\nTocca il pulsante qui sotto per installare Parallel Space"
+        android:textAlignment="center"
+        android:textSize="@dimen/H4_text_size"
+        app:layout_constraintTop_toBottomOf="@+id/logo_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/googlePlayButton"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:backgroundTint="@color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/google_play_badge"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text"
+        android:layout_marginTop="@dimen/default_margin"/>
+
+    <TextView
+        android:id="@+id/text2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin_medium"
+        android:gravity="center"
+        android:text="Una volta installata, apri Parallel Space, aggiungi PlayAccess allo spazio virtuale e avviala da lì"
+        android:textAlignment="center"
+        android:textSize="@dimen/H4_text_size"
+        app:layout_constraintTop_toBottomOf="@+id/googlePlayButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/default_margin" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
