@@ -153,7 +153,10 @@ class FacialExpressionActionsRecognizer private constructor(
                     return@addOnSuccessListener
                 }
                 val face = faces[0]
-                Log.d(TAG, "Face angle: ${face.headEulerAngleY}, ${face.headEulerAngleX}")
+
+                val x = -face.headEulerAngleY / 30
+                val y = -(face.headEulerAngleX - 10) / 30
+                send2dMovement(x, y)
             }
             .addOnFailureListener { e ->
                 // Gestisci eventuali errori durante il rilevamento dei volti
@@ -169,6 +172,10 @@ class FacialExpressionActionsRecognizer private constructor(
 
     override fun onActionEnds(action: Action) {
         endAction(action)
+    }
+
+    override fun on2dMovement(x: Float, y: Float) {
+        send2dMovement(x, y)
     }
 
     companion object {

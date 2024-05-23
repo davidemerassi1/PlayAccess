@@ -20,6 +20,9 @@ import androidx.core.content.ContextCompat;
 
 import com.example.eventsexecutor.R;
 
+import java.util.ArrayList;
+
+import actionsConfigurator.OverlayView;
 import it.unimi.di.ewlab.iss.common.database.Event;
 
 import it.unimi.di.ewlab.iss.common.model.MainModel;
@@ -271,7 +274,9 @@ public class EventDialog extends FrameLayout {
 
         Action.ActionType actionType = Action.ActionType.valueOf((String) v.getTag());
         findViewById(R.id.noEventsTextview).setVisibility(GONE);
-        for (Action option : mainModel.getActions()) {
+        ArrayList<Action> availableActions = new ArrayList<>(mainModel.getActions());
+        availableActions.add(OverlayView.FACE_MOVEMENT_ACTION);
+        for (Action option : availableActions) {
             if ((event == Event.JOYSTICK) != option.is2d())
                 continue;
             if (option.getActionType() != actionType || option.equals(mainModel.getNeutralFacialExpressionAction()))

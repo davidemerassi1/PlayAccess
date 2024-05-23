@@ -50,6 +50,18 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
     private LifecycleRegistry lifecycleRegistry;
     private MutableLiveData<Boolean> needCamera = new MutableLiveData<>(false);
     private ButtonActionsModel buttonActionsModel;
+    public static final Action FACE_MOVEMENT_ACTION;
+
+    static {
+        FACE_MOVEMENT_ACTION = new Action(0, "Face Movement", Action.ActionType.FACIAL_EXPRESSION) {
+            @Override
+            public boolean equals(Object obj) {
+                return this == obj;
+            }
+        };
+
+        FACE_MOVEMENT_ACTION.setIs2d(true);
+    }
 
     public OverlayView(Context context) {
         super(context);
@@ -302,5 +314,11 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
     @Override
     public void onActionEnds(@NonNull Action action) {
 
+    }
+
+    @Override
+    public void on2dMovement(float x, float y) {
+        if (map.containsKey(FACE_MOVEMENT_ACTION))
+            executor.execute2d(map.get(FACE_MOVEMENT_ACTION), x, y);
     }
 }

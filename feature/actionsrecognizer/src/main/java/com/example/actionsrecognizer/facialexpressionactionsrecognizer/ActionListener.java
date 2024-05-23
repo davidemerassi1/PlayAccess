@@ -8,4 +8,6 @@ public interface ActionListener {
     void onActionStarts(@NonNull Action action);
 
     void onActionEnds(@NonNull Action action);
+
+    void on2dMovement(float x, float y);
 }
