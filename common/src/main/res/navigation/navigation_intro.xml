@@ -18,8 +18,8 @@
             app:popEnterAnim="@anim/slide_in_left_animation"
             app:popExitAnim="@anim/slide_out_right_animation" />
         <action
-            android:id="@+id/action_introWelcomeFragment_to_introOverlayPermissionFragment"
-            app:destination="@id/introOverlayPermissionFragment"
+            android:id="@+id/action_introWelcomeFragment_to_introPermissionsFragment"
+            app:destination="@id/introPermissionsFragment"
             app:enterAnim="@anim/slide_in_right_animation"
             app:exitAnim="@anim/slide_out_left_animation"
             app:popEnterAnim="@anim/slide_in_left_animation"
@@ -39,8 +39,8 @@
             app:popEnterAnim="@anim/slide_in_left_animation"
             app:popExitAnim="@anim/slide_out_right_animation" />
         <action
-            android:id="@+id/action_introActionConfiguratorFragment_to_introOverlayPermissionFragment"
-            app:destination="@id/introOverlayPermissionFragment"
+            android:id="@+id/action_introActionConfiguratorFragment_to_introPermissionsFragment"
+            app:destination="@id/introPermissionsFragment"
             app:enterAnim="@anim/slide_in_right_animation"
             app:exitAnim="@anim/slide_out_left_animation"
             app:popEnterAnim="@anim/slide_in_left_animation"
@@ -53,7 +53,21 @@
         android:label="fragment_intro_games_configurator"
         tools:layout="@layout/fragment_intro_games_configurator">
         <action
-            android:id="@+id/action_introGamesConfiguratorFragment_to_introOverlayPermissionFragment"
+            android:id="@+id/action_introGamesConfiguratorFragment_to_introPermissionsFragment"
+            app:destination="@id/introPermissionsFragment"
+            app:enterAnim="@anim/slide_in_right_animation"
+            app:exitAnim="@anim/slide_out_left_animation"
+            app:popEnterAnim="@anim/slide_in_left_animation"
+            app:popExitAnim="@anim/slide_out_right_animation" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/introPermissionsFragment"
+        android:name="it.unimi.di.ewlab.iss.common.ui.intro.fragments.IntroPermissionsFragment"
+        android:label="fragment_intro_permissions"
+        tools:layout="@layout/fragment_intro_permissions" >
+        <action
+            android:id="@+id/action_introPermissionsFragment_to_introOverlayPermissionFragment"
             app:destination="@id/introOverlayPermissionFragment"
             app:enterAnim="@anim/slide_in_right_animation"
             app:exitAnim="@anim/slide_out_left_animation"
@@ -66,19 +80,15 @@
         android:name="it.unimi.di.ewlab.iss.common.ui.intro.fragments.IntroOverlayPermissionFragment"
         android:label="fragment_intro_overlay_permission"
         tools:layout="@layout/fragment_intro_overlay_permission">
-        <action
-            android:id="@+id/action_introOverlayPermissionFragment_to_introPermissionsFragment"
-            app:destination="@id/introPermissionsFragment"
-            app:enterAnim="@anim/slide_in_right_animation"
-            app:exitAnim="@anim/slide_out_left_animation"
-            app:popEnterAnim="@anim/slide_in_left_animation"
-            app:popExitAnim="@anim/slide_out_right_animation" />
-    </fragment>
 
+        <action
+            android:id="@+id/action_introOverlayPermissionFragment_to_introUsageStatsPermissionFragment"
+            app:destination="@id/introUsageStatsPermissionFragment" />
+    </fragment>
     <fragment
-        android:id="@+id/introPermissionsFragment"
-        android:name="it.unimi.di.ewlab.iss.common.ui.intro.fragments.IntroPermissionsFragment"
-        android:label="fragment_intro_permissions"
-        tools:layout="@layout/fragment_intro_permissions" />
+        android:id="@+id/introUsageStatsPermissionFragment"
+        android:name="it.unimi.di.ewlab.iss.common.ui.intro.fragments.IntroUsageStatsPermissionFragment"
+        android:label="fragment_intro_usage_stats_permission"
+        tools:layout="@layout/fragment_intro_usage_stats_permission" />
 
 </navigation>

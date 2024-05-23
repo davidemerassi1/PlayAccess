@@ -21,14 +21,11 @@ class IntroOverlayPermissionFragment : Fragment() {
     private val binding: FragmentIntroOverlayPermissionBinding by lazy {
         FragmentIntroOverlayPermissionBinding.inflate(layoutInflater)
     }
-    private lateinit var persistenceManager: PersistenceManager
     private var settingsOpened = false
     private lateinit var alertDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        persistenceManager = PersistenceManager(requireContext())
-        persistenceManager.setValue(INTRO_REQUIRED, false)
 
         alertDialog = AlertDialog.Builder(requireContext())
             .setTitle("Permission required")
@@ -97,17 +94,17 @@ class IntroOverlayPermissionFragment : Fragment() {
         super.onResume()
 
         if (checkOverlayPermission()) {
-            navigateToIntroPermissionsFragment()
+            navigateToIntroUsageStatsPermission()
         } else if (settingsOpened) {
             alertDialog.show()
             settingsOpened = false
         }
     }
 
-    private fun navigateToIntroPermissionsFragment() {
+    private fun navigateToIntroUsageStatsPermission() {
         Navigation.findNavController(requireView())
             .navigate(
-                R.id.action_introOverlayPermissionFragment_to_introPermissionsFragment
+                R.id.action_introOverlayPermissionFragment_to_introUsageStatsPermissionFragment
             )
     }
 }

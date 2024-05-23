@@ -12,17 +12,21 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.Navigation
 import it.unimi.di.ewlab.common.R
 import it.unimi.di.ewlab.common.databinding.AlertDialogPermissionsNeededBinding
 import it.unimi.di.ewlab.common.databinding.FragmentIntroPermissionsBinding
 import it.unimi.di.ewlab.iss.common.model.Configuration
 import it.unimi.di.ewlab.iss.common.model.MainModel
+import it.unimi.di.ewlab.iss.common.storage.INTRO_REQUIRED
 import it.unimi.di.ewlab.iss.common.storage.ModuleDestination
+import it.unimi.di.ewlab.iss.common.storage.PersistenceManager
 import it.unimi.di.ewlab.iss.common.ui.intro.IntroViewModel
 import it.unimi.di.ewlab.iss.common.ui.intro.PlayAccessIntroActivity
 import it.unimi.di.ewlab.iss.common.utils.PermissionsHandler
 
 class IntroPermissionsFragment : Fragment() {
+    private lateinit var persistenceManager: PersistenceManager
 
     private val binding: FragmentIntroPermissionsBinding by lazy {
         FragmentIntroPermissionsBinding.inflate(layoutInflater)
@@ -30,23 +34,10 @@ class IntroPermissionsFragment : Fragment() {
 
     private val viewModel: IntroViewModel by activityViewModels()
 
-    private val destination: String?
-        get() = requireActivity().intent.extras?.getString(
-            PlayAccessIntroActivity.DESTINATION_KEY,
-            ""
-        )
-    private var conf: Configuration? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val gameBundleId =
-            requireActivity().intent.extras?.getString(PlayAccessIntroActivity.GAME_KEY, "")
-        val game = MainModel.getInstance().getGameByBundleId(gameBundleId)
-        val configurationName = requireActivity().intent.extras?.getString(
-            PlayAccessIntroActivity.CONFIGURATION_KEY,
-            ""
-        )
-        conf = game?.getConfiguration(configurationName)
+        persistenceManager = PersistenceManager(requireContext())
+        persistenceManager.setValue(INTRO_REQUIRED, false)
     }
 
     override fun onCreateView(
@@ -75,10 +66,7 @@ class IntroPermissionsFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        if (
-            (conf == null && PermissionsHandler.checkAllPermissions(requireContext())) ||
-            (conf != null && PermissionsHandler.checkConfigPermissions(conf!!, requireContext()))
-        )
+        if (PermissionsHandler.checkAllPermissions(requireContext()))
             navigateToDestination()
     }
 
@@ -92,33 +80,13 @@ class IntroPermissionsFragment : Fragment() {
     }
 
     private fun setUi() {
-        if (destination == ModuleDestination.ACCESSIBILITYSERVICE.name) {
-            conf?.let {
-                if (it.facialExpressionActions.isEmpty())
-                    binding.cameraPermission.visibility = View.GONE
-                if (it.buttonActions.isEmpty())
-                    binding.bluetoothPermission.visibility = View.GONE
-                binding.grantButton.setOnClickListener { _ ->
-                    askConfigurationPermissions(it)
-                }
-            }
-        } else {
-            binding.grantButton.setOnClickListener {
-                askAllPermissions()
-            }
+        binding.grantButton.setOnClickListener {
+            askAllPermissions()
         }
 
         binding.denyButton.setOnClickListener {
             openDenyDialog()
         }
-    }
-
-    private fun askConfigurationPermissions(configuration: Configuration) {
-        PermissionsHandler.askConfigurationPermissions(
-            configuration,
-            requireActivity(),
-            PlayAccessIntroActivity.PERMISSIONS_REQUEST_CODE
-        )
     }
 
     private fun askAllPermissions() {
@@ -129,58 +97,11 @@ class IntroPermissionsFragment : Fragment() {
     }
 
     private fun navigateToDestination() {
-        when (destination) {
-            ModuleDestination.ACTIONSCONFIGURATOR.name -> navigateToActionConfigurator()
-            ModuleDestination.GAMESCONFIGURATOR.name -> navigateToGamesConfigurator()
-            //ModuleDestination.ACCESSIBILITYSERVICE.name -> navigateToGame()
-            else -> navigateToActionConfigurator()
-        }
-    }
-
-    /*
-    private fun navigateToGame() {
-        val configurationSelected = Intent(AccessibilityServiceAction)
-        configurationSelected.putExtra(AccessibilityServiceKeys.StartRecognizers.name, "")
-        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(configurationSelected)
-        requireActivity().finishAndRemoveTask()
-    }
-    */
-
-    private fun navigateToActionConfigurator() {
-        try {
-            val intent = Intent(
-                context,
-                Class.forName("it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity.MainActivityConfAzioni")
+        Navigation.findNavController(requireView())
+            .navigate(
+                R.id.action_introPermissionsFragment_to_introOverlayPermissionFragment
             )
-            startActivity(intent)
-        } catch (e: ClassNotFoundException) {
-            e.printStackTrace()
-        }
     }
-
-    private fun navigateToGamesConfigurator() {
-        try {
-            val intent = Intent(
-                context,
-                Class.forName("it.unimi.di.ewlab.iss.gamesconfigurator.ui.LoginSSO")
-            )
-            startActivity(intent)
-        } catch (e: ClassNotFoundException) {
-            e.printStackTrace()
-        }
-    }
-
-    /*
-    private fun broadcastNotifications() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&    // Nelle versioni precedenti non è necessario il permesso e le notifiche si attivano all'avvio dell'accessibility service
-            PermissionsHandler.checkPostNotifications(requireContext())
-        ) {
-            val intent = Intent(AccessibilityServiceAction)
-            intent.putExtra(AccessibilityServiceKeys.EnableNotifications.name, "")
-            LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
-        }
-    }
-    */
 
     private fun openDenyDialog() {
         val dialogBinding = AlertDialogPermissionsNeededBinding.inflate(layoutInflater)
