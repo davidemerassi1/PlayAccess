@@ -1,4 +1,4 @@
-package it.unimi.di.ewlab.iss.common.ui.utils
+package it.unimi.di.ewlab.iss.common.utils
 
 import android.animation.*
 import android.content.res.ColorStateList

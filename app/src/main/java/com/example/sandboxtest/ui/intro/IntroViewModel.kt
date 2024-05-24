@@ -1,4 +1,4 @@
-package it.unimi.di.ewlab.iss.common.ui.intro
+package com.example.sandboxtest.ui.intro
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

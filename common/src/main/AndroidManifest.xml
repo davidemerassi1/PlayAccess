@@ -23,7 +23,7 @@
     <application android:requestLegacyExternalStorage="true">
 
         <activity
-            android:name="it.unimi.di.ewlab.iss.common.ui.intro.PlayAccessIntroActivity"
+            android:name="com.example.sandboxtest.ui.intro.PlayAccessIntroActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 

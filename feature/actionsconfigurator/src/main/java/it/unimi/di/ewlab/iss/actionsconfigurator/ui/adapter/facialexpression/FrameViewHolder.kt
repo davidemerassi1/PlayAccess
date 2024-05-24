@@ -5,7 +5,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import it.unimi.di.ewlab.iss.actionsconfigurator.databinding.FacialExpressionFrameBinding
 import it.unimi.di.ewlab.iss.common.model.actions.facialexpressionactions.Frame
-import it.unimi.di.ewlab.iss.common.ui.utils.ViewAnimator
+import it.unimi.di.ewlab.iss.common.utils.ViewAnimator
 
 
 class FrameViewHolder(view: View, private val zoomView: ImageView?) : ViewHolder(view) {

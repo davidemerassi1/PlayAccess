@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="it.unimi.di.ewlab.iss.common.ui.intro.fragments.IntroWelcomeFragment">
+    tools:context="com.example.sandboxtest.ui.intro.fragments.IntroOverlayPermissionFragment">
 
     <TextView
         android:id="@+id/text"
@@ -13,7 +13,7 @@
         android:layout_marginBottom="@dimen/default_margin"
         android:elevation="10dp"
         android:gravity="center"
-        android:text="@string/intro_welcome_message"
+        android:text="@string/intro_enable_accessibility_service"
         android:textAlignment="center"
         android:textSize="@dimen/H4_text_size"
         app:layout_constraintBottom_toTopOf="@+id/playAccessLogo"
@@ -34,5 +34,29 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.55"
         tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:id="@+id/optionsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin_large_plus"
+        android:background="@drawable/han_purple_button_border"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_margin"
+            android:fontFamily="@font/metropolis"
+            android:gravity="center"
+            android:text='@string/intro_go_to_settings'
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/P4_text_size" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

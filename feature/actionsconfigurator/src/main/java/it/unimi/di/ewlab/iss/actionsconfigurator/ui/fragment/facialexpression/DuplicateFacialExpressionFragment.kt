@@ -17,7 +17,7 @@ import it.unimi.di.ewlab.iss.actionsconfigurator.databinding.FragmentDuplicateFa
 import it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment.info.InfoFacialExpressionActionFragment
 import it.unimi.di.ewlab.iss.actionsconfigurator.viewmodel.FacialExpressionViewModel
 import it.unimi.di.ewlab.iss.common.model.MainModel
-import it.unimi.di.ewlab.iss.common.ui.utils.ViewAnimator
+import it.unimi.di.ewlab.iss.common.utils.ViewAnimator
 
 class DuplicateFacialExpressionFragment : Fragment() {
 
