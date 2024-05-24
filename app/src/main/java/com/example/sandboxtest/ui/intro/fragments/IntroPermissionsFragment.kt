@@ -75,17 +75,14 @@ class IntroPermissionsFragment : Fragment() {
             if (it) {
                 //broadcastNotifications()
                 navigateToDestination()
-            }
+            } else
+                openDenyDialog()
         }
     }
 
     private fun setUi() {
         binding.grantButton.setOnClickListener {
             askAllPermissions()
-        }
-
-        binding.denyButton.setOnClickListener {
-            openDenyDialog()
         }
     }
 
@@ -111,17 +108,11 @@ class IntroPermissionsFragment : Fragment() {
 
         dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
 
+        dialogBinding.msg.text = "Questa app non può funzionare senza i permessi richiesti"
+
         dialogBinding.okButton.setOnClickListener {
             dialog.dismiss()
-            showPermissionsRequiredToast()
-            requireActivity().finishAndRemoveTask()
         }
-        dialogBinding.cancelButton.setOnClickListener { dialog.dismiss() }
-
         dialog.show()
-    }
-
-    private fun showPermissionsRequiredToast() {
-        Toast.makeText(requireContext(), R.string.permission_denied, Toast.LENGTH_LONG).show()
     }
 }

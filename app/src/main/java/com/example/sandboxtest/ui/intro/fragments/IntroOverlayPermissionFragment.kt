@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.sandboxtest.R
+import com.example.sandboxtest.databinding.AlertDialogPermissionsNeededBinding
 import com.example.sandboxtest.databinding.FragmentIntroOverlayPermissionBinding
 import it.unimi.di.ewlab.iss.common.storage.INTRO_REQUIRED
 import it.unimi.di.ewlab.iss.common.storage.PersistenceManager
@@ -22,18 +23,9 @@ class IntroOverlayPermissionFragment : Fragment() {
         FragmentIntroOverlayPermissionBinding.inflate(layoutInflater)
     }
     private var settingsOpened = false
-    private lateinit var alertDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        alertDialog = AlertDialog.Builder(requireContext())
-            .setTitle("Permission required")
-            .setMessage("Please grant the permission to continue")
-            .setPositiveButton(
-                "OK"
-            ) { dialog: DialogInterface, which: Int -> dialog.dismiss() }
-            .create()
     }
 
     override fun onCreateView(
@@ -97,9 +89,25 @@ class IntroOverlayPermissionFragment : Fragment() {
         if (checkOverlayPermission()) {
             navigateToIntroUsageStatsPermission()
         } else if (settingsOpened) {
-            alertDialog.show()
+            openDenyDialog()
             settingsOpened = false
         }
+    }
+
+    private fun openDenyDialog() {
+        val dialogBinding = AlertDialogPermissionsNeededBinding.inflate(layoutInflater)
+        val dialog = android.app.AlertDialog.Builder(requireContext())
+            .setView(dialogBinding.root)
+            .create()
+
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogBinding.msg.text = "Questa app non può funzionare senza il permesso richiesto. Assicurati di aver concesso il permesso a ${requireActivity().intent.getStringExtra("sandboxName")} e non a PlayAccess"
+
+        dialogBinding.okButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 
     private fun navigateToIntroUsageStatsPermission() {

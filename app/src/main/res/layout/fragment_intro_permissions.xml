@@ -164,27 +164,6 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
-            android:id="@+id/denyButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/default_margin_small"
-            android:background="@drawable/han_purple_button_border"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/default_margin"
-                android:fontFamily="@font/metropolis"
-                android:gravity="center"
-                android:text='@string/intro_deny'
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="@dimen/P4_text_size" />
-
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/grantButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
