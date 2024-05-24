@@ -1,8 +1,11 @@
-package it.unimi.di.ewlab.iss.common.ui.intro.fragments
+package com.example.sandboxtest.ui.intro.fragments
 
+import android.app.usage.UsageStatsManager
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -11,15 +14,12 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
-import it.unimi.di.ewlab.common.R
-import it.unimi.di.ewlab.common.databinding.FragmentIntroOverlayPermissionBinding
-import it.unimi.di.ewlab.iss.common.storage.INTRO_REQUIRED
-import it.unimi.di.ewlab.iss.common.storage.PersistenceManager
+import com.example.sandboxtest.databinding.FragmentIntroUsageStatsPermissionBinding
+import it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity.MainActivityConfAzioni
 
-class IntroOverlayPermissionFragment : Fragment() {
-    private val binding: FragmentIntroOverlayPermissionBinding by lazy {
-        FragmentIntroOverlayPermissionBinding.inflate(layoutInflater)
+class IntroUsageStatsPermissionFragment : Fragment() {
+    private val binding: FragmentIntroUsageStatsPermissionBinding by lazy {
+        FragmentIntroUsageStatsPermissionBinding.inflate(layoutInflater)
     }
     private var settingsOpened = false
     private lateinit var alertDialog: AlertDialog
@@ -60,51 +60,48 @@ class IntroOverlayPermissionFragment : Fragment() {
 
     private fun setUi() {
         binding.optionsButton.setOnClickListener {
-            openOverlaySettings()
+            openUsageStatsSettings()
+            settingsOpened = true
         }
 
-        binding.text.text = "Per continuare, concedi a ${requireActivity().intent.getStringExtra("sandboxName")} il permesso di sovrapporsi ad altre app"
+        binding.text.text = "Ci siamo quasi! Per ultimo concedi a ${requireActivity().intent.getStringExtra("sandboxName")} il permesso di conoscere quale processo è in esecuzione"
     }
 
-    private fun openOverlaySettings() {
-        val settingsIntent = Intent(
-            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            Uri.parse("package:" + requireActivity().intent.getStringExtra("sandboxPackageName"))
-        )
+    private fun openUsageStatsSettings() {
+        val settingsIntent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            settingsIntent.setData(Uri.fromParts("package", requireActivity().intent.getStringExtra("sandboxPackageName"), null));
+        }
         settingsIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(settingsIntent)
     }
 
-    private fun checkOverlayPermission(): Boolean {
-        //TODO: da verificare
-        return Settings.canDrawOverlays(context) /* {
-            button.setOnClickListener(View.OnClickListener { v: View? ->
-                val intent = Intent(
-                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:" + getPackageName())
-                )
-                startActivityForResult(intent, PermissionCheckerActivity.overlayRequestCode)
-            })
-        } else {
-            checkUsageStatsPermission()
-        }*/
+    private fun checkUsageStatsPermission(): Boolean {
+        val usageStatsManager =
+            requireContext().getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+        val currentTime = System.currentTimeMillis()
+        val usageStatsList = usageStatsManager.queryUsageStats(
+            UsageStatsManager.INTERVAL_DAILY,
+            currentTime - 1000 * 60,
+            currentTime
+        )
+
+        return usageStatsList != null && !usageStatsList.isEmpty()
     }
 
     override fun onResume() {
         super.onResume()
 
-        if (checkOverlayPermission()) {
-            navigateToIntroUsageStatsPermission()
+        if (checkUsageStatsPermission()) {
+            openActionConfigurator()
         } else if (settingsOpened) {
             alertDialog.show()
             settingsOpened = false
         }
     }
 
-    private fun navigateToIntroUsageStatsPermission() {
-        Navigation.findNavController(requireView())
-            .navigate(
-                R.id.action_introOverlayPermissionFragment_to_introUsageStatsPermissionFragment
-            )
+    private fun openActionConfigurator() {
+        val intent = Intent(requireContext(), MainActivityConfAzioni::class.java)
+        startActivity(intent)
     }
 }

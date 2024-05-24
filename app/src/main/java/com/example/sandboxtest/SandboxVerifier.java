@@ -12,9 +12,9 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.List;
+import com.example.sandboxtest.ui.intro.PlayAccessIntroActivity;
 
-import it.unimi.di.ewlab.iss.common.ui.intro.PlayAccessIntroActivity;
+import java.util.List;
 
 public class SandboxVerifier extends AppCompatActivity {
 

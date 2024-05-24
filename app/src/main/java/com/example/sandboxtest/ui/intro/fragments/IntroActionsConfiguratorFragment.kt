@@ -1,11 +1,11 @@
-package it.unimi.di.ewlab.iss.common.ui.intro.fragments
+package com.example.sandboxtest.ui.intro.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import it.unimi.di.ewlab.common.databinding.FragmentIntroActionsConfiguratorBinding
+import com.example.sandboxtest.databinding.FragmentIntroActionsConfiguratorBinding
 
 class IntroActionsConfiguratorFragment : Fragment() {
 

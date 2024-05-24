@@ -1,4 +1,4 @@
-package it.unimi.di.ewlab.iss.common.ui.intro
+package com.example.sandboxtest.ui.intro
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -11,8 +11,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import it.unimi.di.ewlab.common.R
-import it.unimi.di.ewlab.common.databinding.ActivityPlayAccessIntroBinding
+import com.example.sandboxtest.R
+import com.example.sandboxtest.databinding.ActivityPlayAccessIntroBinding
 import it.unimi.di.ewlab.iss.common.utils.PermissionsHandler
 import it.unimi.di.ewlab.iss.common.storage.INTRO_REQUIRED
 import it.unimi.di.ewlab.iss.common.storage.PersistenceManager
@@ -50,14 +50,14 @@ class PlayAccessIntroActivity : AppCompatActivity() {
 
         val persistenceManager = PersistenceManager(this)
         if (!(persistenceManager.getValue(INTRO_REQUIRED, true) as Boolean)) {
-            navController.navigate(R.id.introOverlayPermissionFragment)
+            navController.navigate(skipAction)
         }
     }
 
     private fun setUi() {
         binding.skipButton.setOnClickListener {
             if (skipAction > 0)
-                navController.navigate(R.id.introOverlayPermissionFragment)
+                navController.navigate(skipAction)
         }
 
         binding.nextButton.setOnClickListener {

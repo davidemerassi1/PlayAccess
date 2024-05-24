@@ -20,7 +20,7 @@ import it.unimi.di.ewlab.iss.common.model.MainModel
 import it.unimi.di.ewlab.iss.common.model.actions.Action
 import it.unimi.di.ewlab.iss.common.model.actions.FacialExpressionAction
 import it.unimi.di.ewlab.iss.common.model.actions.facialexpressionactions.Frame
-import it.unimi.di.ewlab.iss.common.ui.utils.ViewAnimator
+import it.unimi.di.ewlab.iss.common.utils.ViewAnimator
 
 class InfoFacialExpressionActionFragment : Fragment() {
     companion object {

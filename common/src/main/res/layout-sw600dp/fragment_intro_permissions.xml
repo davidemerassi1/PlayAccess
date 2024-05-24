@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="it.unimi.di.ewlab.iss.common.ui.intro.fragments.IntroPermissionsFragment">
+    tools:context="com.example.sandboxtest.ui.intro.fragments.IntroPermissionsFragment">
 
     <TextView
         android:id="@+id/permissions_title"
