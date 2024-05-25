@@ -53,6 +53,9 @@ public class MainModel {
     private final MutableLiveData<ButtonAction> tempButtonAction = new MutableLiveData<>(null);
     private AssociationsDb associationsDb;
 
+    private String sandboxName;
+    private String sandboxPackageName;
+
     public PhotosDatabase getDB(Context context) {
         if (DB == null) {
             DB = Room.databaseBuilder(context, PhotosDatabase.class, "pose-photos-db")
@@ -624,6 +627,22 @@ public class MainModel {
 
     public AssociationsDb getAssociationsDb() {
         return associationsDb;
+    }
+
+    public String getSandboxName() {
+        return sandboxName;
+    }
+
+    public void setSandboxName(String sandboxName) {
+        this.sandboxName = sandboxName;
+    }
+
+    public String getSandboxPackageName() {
+        return sandboxPackageName;
+    }
+
+    public void setSandboxPackageName(String sandboxPackageName) {
+        this.sandboxPackageName = sandboxPackageName;
     }
 }
 

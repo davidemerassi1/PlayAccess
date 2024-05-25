@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import com.example.sandboxtest.databinding.AlertDialogPermissionsNeededBinding
 import com.example.sandboxtest.databinding.FragmentIntroUsageStatsPermissionBinding
 import it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity.MainActivityConfAzioni
+import it.unimi.di.ewlab.iss.common.model.MainModel
 
 class IntroUsageStatsPermissionFragment : Fragment() {
     private val binding: FragmentIntroUsageStatsPermissionBinding by lazy {
@@ -52,13 +53,13 @@ class IntroUsageStatsPermissionFragment : Fragment() {
             settingsOpened = true
         }
 
-        binding.text.text = "Ci siamo quasi! Per ultimo concedi a ${requireActivity().intent.getStringExtra("sandboxName")} il permesso di conoscere quale processo è in esecuzione"
+        binding.text.text = "Ci siamo quasi! Per ultimo concedi a ${MainModel.getInstance().sandboxName} il permesso di conoscere quale processo è in esecuzione"
     }
 
     private fun openUsageStatsSettings() {
         val settingsIntent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            settingsIntent.setData(Uri.fromParts("package", requireActivity().intent.getStringExtra("sandboxPackageName"), null));
+            settingsIntent.setData(Uri.fromParts("package", MainModel.getInstance().sandboxPackageName, null));
         }
         settingsIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(settingsIntent)
@@ -96,7 +97,7 @@ class IntroUsageStatsPermissionFragment : Fragment() {
 
         dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
 
-        dialogBinding.msg.text = "Questa app non può funzionare senza il permesso richiesto. Assicurati di aver concesso il permesso a ${requireActivity().intent.getStringExtra("sandboxName")} e non a PlayAccess"
+        dialogBinding.msg.text = "Questa app non può funzionare senza il permesso richiesto. Assicurati di aver concesso il permesso a ${MainModel.getInstance().sandboxName} e non a PlayAccess"
 
         dialogBinding.okButton.setOnClickListener {
             dialog.dismiss()

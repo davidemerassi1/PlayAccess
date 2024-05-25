@@ -16,6 +16,8 @@ import com.example.sandboxtest.ui.intro.PlayAccessIntroActivity;
 
 import java.util.List;
 
+import it.unimi.di.ewlab.iss.common.model.MainModel;
+
 public class SandboxVerifier extends AppCompatActivity {
 
     @Override
@@ -38,8 +40,8 @@ public class SandboxVerifier extends AppCompatActivity {
         if (sandboxPackageName != null) {
             Log.d("SandboxVerifier", "Package name: " + sandboxPackageName);
             Intent intent = new Intent(this, PlayAccessIntroActivity.class);
-            intent.putExtra("sandboxPackageName", sandboxPackageName);
-            intent.putExtra("sandboxName", getSandboxName(sandboxPackageName));
+            MainModel.getInstance().setSandboxName(getSandboxName(sandboxPackageName));
+            MainModel.getInstance().setSandboxPackageName(sandboxPackageName);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }

@@ -318,7 +318,7 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
 
     @Override
     public void on2dMovement(float x, float y) {
-        if (map.containsKey(FACE_MOVEMENT_ACTION))
+        if (!configurationOpened && map.containsKey(FACE_MOVEMENT_ACTION))
             executor.execute2d(map.get(FACE_MOVEMENT_ACTION), x, y);
     }
 }
