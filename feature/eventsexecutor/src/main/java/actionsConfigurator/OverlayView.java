@@ -53,8 +53,8 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
     private ConfigurationView configurationView;
     private LifecycleRegistry lifecycleRegistry;
     private MutableLiveData<Boolean> needCamera = new MutableLiveData<>(false);
-    private ButtonActionsModel buttonActionsModel;
     public static final Action FACE_MOVEMENT_ACTION;
+    private ButtonActionsModel buttonActionsModel;
 
     static {
         FACE_MOVEMENT_ACTION = new Action(0, "Face Movement", Action.ActionType.FACIAL_EXPRESSION) {
@@ -246,42 +246,6 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
         return lifecycleRegistry;
     }
 
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        Log.d("OverlayView", "onKeyUp: " + KeyEvent.keyCodeToString(keyCode) + "source: " + event.getSource());
-        if ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) {
-            if (!configurationOpened) {
-                Log.d("Hai premuto", "" + keyCode);
-                ButtonAction ba = buttonActionsModel.getButtonActionByIds(String.valueOf(event.getSource()), String.valueOf(keyCode));
-                if (ba != null && map.containsKey(ba)) {
-                    Association association = map.get(ba);
-                    if (association.event != Event.MONODIMENSIONAL_SLIDING)
-                        executor.execute(association);
-                    else {
-                        execute1d(association, ba);
-                    }
-                }
-            } else
-                configurationView.onKeyUp(keyCode, event);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Log.d("OverlayView", "onKeyDown: " + KeyEvent.keyCodeToString(keyCode) + "source: " + event.getSource());
-        if ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) {
-            if (!configurationOpened)
-                Log.d("OverlayView", "onKeyDown: " + KeyEvent.keyCodeToString(keyCode));
-            else
-                configurationView.onKeyDown(keyCode, event);
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         Log.d("OverlayView", "onGenericMotionEvent: " + event.getSource() + " " + event.getAction() + " " + event.getAxisValue(MotionEvent.AXIS_X) + " " + event.getAxisValue(MotionEvent.AXIS_Y));
@@ -314,11 +278,17 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
 
     @Override
     public void onActionStarts(@NonNull Action action) {
-        if (map.containsKey(action))
-            executor.execute(map.get(action));
-        else
-            Log.d("OverlayView", "ho rilevato " + action.getName() + " ma non ho nessuna associazione");
-
+        if (!configurationOpened) {
+            if (map.containsKey(action)) {
+                Association association = map.get(action);
+                if (association.event != Event.MONODIMENSIONAL_SLIDING)
+                    executor.execute(association);
+                else {
+                    execute1d(association, action);
+                }
+            } else
+                Log.d("OverlayView", "ho rilevato " + action.getName() + " ma non ho nessuna associazione");
+        }
     }
 
     @Override

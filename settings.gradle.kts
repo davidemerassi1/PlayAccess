@@ -23,3 +23,4 @@ include (":common")
 
 include(":feature:eventsexecutor")
 include(":feature:actionsrecognizer")
+include(":feature:accessibilityservice")
