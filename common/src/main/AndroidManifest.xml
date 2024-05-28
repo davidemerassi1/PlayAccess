@@ -20,13 +20,6 @@
     <uses-sdk tools:overrideLibrary="com.google.mediapipe.tasks.vision, com.google.mediapipe.tasks.core" />
 
 
-    <application android:requestLegacyExternalStorage="true">
-
-        <activity
-            android:name="com.example.sandboxtest.ui.intro.PlayAccessIntroActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-
-    </application>
+    <application android:requestLegacyExternalStorage="true" />
 
 </manifest>

@@ -2,27 +2,22 @@ package com.example.sandboxtest.ui.intro.fragments
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
 import com.example.sandboxtest.R
 import com.example.sandboxtest.databinding.AlertDialogPermissionsNeededBinding
 import com.example.sandboxtest.databinding.FragmentIntroPermissionsBinding
-import it.unimi.di.ewlab.iss.common.model.Configuration
-import it.unimi.di.ewlab.iss.common.model.MainModel
 import it.unimi.di.ewlab.iss.common.storage.INTRO_REQUIRED
-import it.unimi.di.ewlab.iss.common.storage.ModuleDestination
 import it.unimi.di.ewlab.iss.common.storage.PersistenceManager
 import com.example.sandboxtest.ui.intro.IntroViewModel
 import com.example.sandboxtest.ui.intro.PlayAccessIntroActivity
+import it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity.MainActivityConfAzioni
 import it.unimi.di.ewlab.iss.common.utils.PermissionsHandler
 
 class IntroPermissionsFragment : Fragment() {
@@ -67,14 +62,14 @@ class IntroPermissionsFragment : Fragment() {
         super.onResume()
 
         if (PermissionsHandler.checkAllPermissions(requireContext()))
-            navigateToDestination()
+            openConfiguration()
     }
 
     private fun setObservers() {
         viewModel.permissions.observe(requireActivity()) {
             if (it) {
                 //broadcastNotifications()
-                navigateToDestination()
+                openConfiguration()
             } else
                 openDenyDialog()
         }
@@ -93,11 +88,9 @@ class IntroPermissionsFragment : Fragment() {
         )
     }
 
-    private fun navigateToDestination() {
-        Navigation.findNavController(requireView())
-            .navigate(
-                R.id.introOverlayPermissionFragment
-            )
+    private fun openConfiguration() {
+        val intent = Intent(requireContext(), MainActivityConfAzioni::class.java)
+        startActivity(intent)
     }
 
     private fun openDenyDialog() {

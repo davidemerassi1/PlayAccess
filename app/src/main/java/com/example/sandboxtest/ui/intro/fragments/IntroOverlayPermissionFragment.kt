@@ -63,7 +63,7 @@ class IntroOverlayPermissionFragment : Fragment() {
     private fun openOverlaySettings() {
         val settingsIntent = Intent(
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            Uri.parse("package:" + MainModel.getInstance().sandboxPackageName)
+            Uri.parse("package:" + requireActivity().packageName)
         )
         settingsIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         //startActivity(settingsIntent)
@@ -88,7 +88,7 @@ class IntroOverlayPermissionFragment : Fragment() {
         super.onResume()
 
         if (checkOverlayPermission()) {
-            navigateToIntroUsageStatsPermission()
+            //navigateToIntroUsageStatsPermission()
         } else if (settingsOpened) {
             openDenyDialog()
             settingsOpened = false
@@ -109,12 +109,5 @@ class IntroOverlayPermissionFragment : Fragment() {
             dialog.dismiss()
         }
         dialog.show()
-    }
-
-    private fun navigateToIntroUsageStatsPermission() {
-        Navigation.findNavController(requireView())
-            .navigate(
-                R.id.introUsageStatsPermissionFragment
-            )
     }
 }

@@ -246,7 +246,7 @@ object PermissionsHandler {
     fun isAccessibilityServiceEnabled(context: Context): Boolean {
         val expectedComponentName = ComponentName(
             context,
-            "it.unimi.di.ewlab.iss.accessibilityservice.AccessibilityServiceManager"
+            "com.example.accessibilityservice.MyAccessibilityService"
         )
 
         val enabledServicesSetting = Settings.Secure.getString(
