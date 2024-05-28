@@ -113,6 +113,7 @@ class PulsanteEsternoActivity: AppCompatActivity() {
         }
     }
 
+    /*
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         val action: ButtonAction
         if (KeyEvent.keyCodeToString(keyCode).startsWith("KEYCODE_DPAD")) {
@@ -124,4 +125,5 @@ class PulsanteEsternoActivity: AppCompatActivity() {
         mainModel.setTempButtonAction(action)
         return true
     }
+    */
 }

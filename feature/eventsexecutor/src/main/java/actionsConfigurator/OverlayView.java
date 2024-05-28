@@ -14,7 +14,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -83,7 +82,7 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
                         WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
                         WindowManager.LayoutParams.TYPE_PHONE,
-                FLAG_ALT_FOCUSABLE_IM | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | FLAG_NOT_TOUCH_MODAL,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 PixelFormat.TRANSLUCENT);
         params.gravity = Gravity.TOP | Gravity.START;
         params.x = 10;
@@ -165,11 +164,11 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
             cameraFaceDetector.startDetection();
         }).start();*/
 
-        if (!MainModel.getInstance().getFacialExpressionActions().isEmpty()) {
+        /*if (!MainModel.getInstance().getFacialExpressionActions().isEmpty()) {
             FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(this)).init(
                     getContext(), this
             );
-        }
+        }*/
 
         lifecycleRegistry = new LifecycleRegistry(this);
         //new InputDeviceChecker(getContext(), this);
@@ -268,12 +267,6 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
             return true;
         }
         return false;
-    }
-
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        Log.d("OverlayView", "dispatchKeyEvent: " + event.getKeyCode());
-        return super.dispatchKeyEvent(event);
     }
 
     @Override

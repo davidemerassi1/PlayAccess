@@ -66,7 +66,7 @@ class IntroOverlayPermissionFragment : Fragment() {
             Uri.parse("package:" + MainModel.getInstance().sandboxPackageName)
         )
         settingsIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(settingsIntent)
+        //startActivity(settingsIntent)
     }
 
     private fun checkOverlayPermission(): Boolean {

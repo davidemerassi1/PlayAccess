@@ -256,25 +256,4 @@ public class ConfigurationView extends RelativeLayout {
     private static int toPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (eventDialog != null)
-            eventDialog.onKeyUp(keyCode, event);
-        return true;
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (eventDialog != null)
-            eventDialog.onKeyDown(keyCode, event);
-        return true;
-    }
-
-    @Override
-    public boolean onGenericMotionEvent(MotionEvent event) {
-        if (eventDialog != null)
-            eventDialog.onGenericMotionEvent(event);
-        return true;
-    }
 }

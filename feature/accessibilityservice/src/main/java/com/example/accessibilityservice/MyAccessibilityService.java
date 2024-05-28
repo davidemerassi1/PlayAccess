@@ -15,28 +15,55 @@ import android.view.MotionEvent;
 import android.view.accessibility.AccessibilityEvent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleRegistry;
+
+import com.example.actionsrecognizer.facialexpressionactionsrecognizer.FacialExpressionActionsRecognizer;
+
+import java.util.List;
+
+import it.unimi.di.ewlab.iss.common.model.MainModel;
 
 public class MyAccessibilityService extends AccessibilityService {
     private final String TAG = "MyAccessibilityService";
     private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "my_accessibility_channel";
+    private BroadcastManager broadcastManager;
+    private LifecycleOwner lifecycleOwner = new LifecycleOwner() {
+        @NonNull
+        @Override
+        public androidx.lifecycle.Lifecycle getLifecycle() {
+            return new LifecycleRegistry(this);
+        }
+    };
 
+    @OptIn(markerClass = androidx.camera.core.ExperimentalGetImage.class)
     @Override
     public void onServiceConnected() {
         Log.d(TAG, "onServiceConnected");
+        broadcastManager = new BroadcastManager(this);
+
         AccessibilityServiceInfo info = getServiceInfo();
         if (info != null && Build.VERSION.SDK_INT >= 34) {
             // Imposta le sorgenti degli eventi di input generico
             info.setMotionEventSources(SOURCE_JOYSTICK);
             // Aggiorna le informazioni del servizio
             setServiceInfo(info);
-            // Mostra la notifica
-            showNotification();
         }
+
+        if (!MainModel.getInstance().getFacialExpressionActions().isEmpty()) {
+            FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(broadcastManager)).init(
+                    this, lifecycleOwner
+            );
+        }
+
+        // Mostra la notifica
+        showNotification();
     }
 
     @Override
@@ -56,16 +83,10 @@ public class MyAccessibilityService extends AccessibilityService {
             return super.onKeyEvent(event);
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             Log.d(TAG, "Key down: " + event.getKeyCode());
-            Intent intent = new Intent("com.example.accessibilityservice.ACTION_START");
-            intent.putExtra("key_code", event.getKeyCode());
-            intent.putExtra("source", event.getSource());
-            sendBroadcast(intent);
+            broadcastManager.sendKeyEvent(BroadcastManager.ActionType.ACTION_START, event.getKeyCode(), event.getSource());
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
             Log.d(TAG, "Key up: " + event.getKeyCode());
-            Intent intent = new Intent("com.example.accessibilityservice.ACTION_END");
-            intent.putExtra("key_code", event.getKeyCode());
-            intent.putExtra("source", event.getSource());
-            sendBroadcast(intent);
+            broadcastManager.sendKeyEvent(BroadcastManager.ActionType.ACTION_END, event.getKeyCode(), event.getSource());
         }
         return true;
     }

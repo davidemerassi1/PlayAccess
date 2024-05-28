@@ -37,14 +37,14 @@ public class SandboxVerifier extends AppCompatActivity {
         });
 
         String sandboxPackageName = getSandboxPackageName();
-        if (sandboxPackageName != null) {
+        //if (sandboxPackageName != null) {
             Log.d("SandboxVerifier", "Package name: " + sandboxPackageName);
             Intent intent = new Intent(this, PlayAccessIntroActivity.class);
             MainModel.getInstance().setSandboxName(getSandboxName(sandboxPackageName));
             MainModel.getInstance().setSandboxPackageName(sandboxPackageName);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-        }
+        //}
     }
 
     private String getSandboxPackageName() {
