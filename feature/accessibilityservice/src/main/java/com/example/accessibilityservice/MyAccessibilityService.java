@@ -52,6 +52,8 @@ public class MyAccessibilityService extends AccessibilityService {
 
     @Override
     protected boolean onKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK || event.getKeyCode() == KeyEvent.KEYCODE_HOME || event.getKeyCode() == KeyEvent.KEYCODE_MENU || event.getKeyCode() == KeyEvent.KEYCODE_APP_SWITCH || event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)
+            return super.onKeyEvent(event);
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             Log.d(TAG, "Key down: " + event.getKeyCode());
             Intent intent = new Intent("com.example.accessibilityservice.ACTION_START");
