@@ -30,7 +30,6 @@ class MainActivityConfAzioni : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setNavController()
-        OverlayManager.getInstance(this)
     }
 
     private fun setNavController() {

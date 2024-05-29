@@ -1,5 +1,7 @@
 package it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity
 
+import actionsConfigurator.KeyBroadcastReceiver
+import actionsConfigurator.KeyEventListener
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -17,7 +19,7 @@ import it.unimi.di.ewlab.iss.common.model.actions.Action
 import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction
 import it.unimi.di.ewlab.iss.common.utils.PermissionsHandler
 
-class PulsanteEsternoActivity: AppCompatActivity() {
+class PulsanteEsternoActivity: AppCompatActivity(), KeyEventListener {
 
     companion object {
         const val BLUETOOTH_PERMISSION_REQUEST_CODE = 10
@@ -26,6 +28,7 @@ class PulsanteEsternoActivity: AppCompatActivity() {
     private var baseActivityBinding: ActivityPulsanteEsternoBinding? = null
     private lateinit var binding: ActivityPulsanteEsternoBinding
     private lateinit var navController: NavController
+    //private val keyBroadcastReceiver = KeyBroadcastReceiver(this)
     private val mainModel = MainModel.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,19 +46,19 @@ class PulsanteEsternoActivity: AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        /*if (!PermissionsHandler.isAccessibilityServiceEnabled(this)) {
+        if (!PermissionsHandler.isAccessibilityServiceEnabled(this)) {
             showAccessibilityServiceRequiredToast()
             startActivity(Intent(this, MainActivityConfAzioni::class.java))
-        }*/
+        }
     }
 
-    /*private fun showAccessibilityServiceRequiredToast() {
+    private fun showAccessibilityServiceRequiredToast() {
         Toast.makeText(
             this,
             R.string.externalbutton_accessibility_service_required,
             Toast.LENGTH_SHORT
         ).show()
-    }*/
+    }
 
     private fun setNavController() {
         navController = findNavController(R.id.nav_host_fragment_pulsante_esterno)
@@ -113,17 +116,18 @@ class PulsanteEsternoActivity: AppCompatActivity() {
         }
     }
 
-    /*
-    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+    override fun onKeyUp(keyCode: Int, source: Int) {
         val action: ButtonAction
         if (KeyEvent.keyCodeToString(keyCode).startsWith("KEYCODE_DPAD")) {
             //TODO: da verificare il codice: 19 corrisponde a KEYCODE_DPAD_UP
-            action = ButtonAction(mainModel.nextActionId, KeyEvent.keyCodeToString(keyCode), event!!.source.toString(), 19.toString())
+            action = ButtonAction(mainModel.nextActionId, KeyEvent.keyCodeToString(keyCode), source.toString(), 19.toString())
             action.setIs2d(true)
         } else
-            action = ButtonAction(mainModel.nextActionId, KeyEvent.keyCodeToString(keyCode), event!!.source.toString(), keyCode.toString())
+            action = ButtonAction(mainModel.nextActionId, KeyEvent.keyCodeToString(keyCode), source.toString(), keyCode.toString())
         mainModel.setTempButtonAction(action)
-        return true
     }
-    */
+
+    override fun onKeyDown(keyCode: Int, source: Int) {
+        TODO("Not yet implemented")
+    }
 }

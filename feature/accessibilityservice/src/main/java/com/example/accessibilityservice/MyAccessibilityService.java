@@ -28,6 +28,7 @@ import com.example.actionsrecognizer.facialexpressionactionsrecognizer.FacialExp
 import java.util.List;
 
 import it.unimi.di.ewlab.iss.common.model.MainModel;
+import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction;
 
 public class MyAccessibilityService extends AccessibilityService {
     private final String TAG = "MyAccessibilityService";
@@ -41,6 +42,7 @@ public class MyAccessibilityService extends AccessibilityService {
             return new LifecycleRegistry(this);
         }
     };
+    private MainModel mainModel = MainModel.getInstance();
 
     @OptIn(markerClass = androidx.camera.core.ExperimentalGetImage.class)
     @Override
@@ -87,6 +89,7 @@ public class MyAccessibilityService extends AccessibilityService {
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
             Log.d(TAG, "Key up: " + event.getKeyCode());
             broadcastManager.sendKeyEvent(BroadcastManager.ActionType.ACTION_END, event.getKeyCode(), event.getSource());
+            MainModel.getInstance().setTempButtonAction(new ButtonAction(mainModel.getNextActionId(), KeyEvent.keyCodeToString(event.getKeyCode()), String.valueOf(event.getSource()), String.valueOf(event.getKeyCode())));
         }
         return true;
     }

@@ -21,19 +21,12 @@ import it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity.MainActivityConfAzi
 import it.unimi.di.ewlab.iss.common.utils.PermissionsHandler
 
 class IntroPermissionsFragment : Fragment() {
-    private lateinit var persistenceManager: PersistenceManager
 
     private val binding: FragmentIntroPermissionsBinding by lazy {
         FragmentIntroPermissionsBinding.inflate(layoutInflater)
     }
 
     private val viewModel: IntroViewModel by activityViewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        persistenceManager = PersistenceManager(requireContext())
-        persistenceManager.setValue(INTRO_REQUIRED, false)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

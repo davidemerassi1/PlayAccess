@@ -1,9 +1,11 @@
 package com.example.sandboxtest.ui.intro.fragments
 
+import actionsConfigurator.OverlayManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -66,7 +68,7 @@ class IntroOverlayPermissionFragment : Fragment() {
             Uri.parse("package:" + requireActivity().packageName)
         )
         settingsIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        //startActivity(settingsIntent)
+        startActivity(settingsIntent)
     }
 
     private fun checkOverlayPermission(): Boolean {
@@ -88,7 +90,8 @@ class IntroOverlayPermissionFragment : Fragment() {
         super.onResume()
 
         if (checkOverlayPermission()) {
-            //navigateToIntroUsageStatsPermission()
+            OverlayManager.getInstance(requireContext())
+            requireActivity().finish()
         } else if (settingsOpened) {
             openDenyDialog()
             settingsOpened = false

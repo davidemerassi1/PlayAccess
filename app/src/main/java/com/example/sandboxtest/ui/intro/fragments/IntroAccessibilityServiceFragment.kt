@@ -13,6 +13,8 @@ import com.example.sandboxtest.R
 import com.example.sandboxtest.SandboxVerifier
 import com.example.sandboxtest.databinding.AlertDialogPermissionsNeededBinding
 import com.example.sandboxtest.databinding.FragmentIntroAccessibilityServiceBinding
+import it.unimi.di.ewlab.iss.common.storage.INTRO_REQUIRED
+import it.unimi.di.ewlab.iss.common.storage.PersistenceManager
 import it.unimi.di.ewlab.iss.common.utils.PermissionsHandler
 
 class IntroAccessibilityServiceFragment : Fragment() {
@@ -20,6 +22,13 @@ class IntroAccessibilityServiceFragment : Fragment() {
         FragmentIntroAccessibilityServiceBinding.inflate(layoutInflater)
     }
     private var settingsOpened = false
+    private lateinit var persistenceManager: PersistenceManager
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        persistenceManager = PersistenceManager(requireContext())
+        persistenceManager.setValue(INTRO_REQUIRED, false)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

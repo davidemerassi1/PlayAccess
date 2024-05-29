@@ -13,16 +13,8 @@ import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
-
 import com.example.eventsexecutor.R;
-
-import java.util.Set;
-
-import it.unimi.di.ewlab.iss.common.model.MainModel;
-import it.unimi.di.ewlab.iss.common.model.actions.Action;
 import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction;
-import it.unimi.di.ewlab.iss.common.model.actionsmodels.ButtonActionsModel;
 
 public class OverlayManager extends BroadcastReceiver {
     public static OverlayManager instance;
@@ -71,10 +63,6 @@ public class OverlayManager extends BroadcastReceiver {
                     ButtonAction ba = new ButtonAction(0, /*KeyEvent.keyCodeToString(keyCode)*/ "centro", String.valueOf(source), String.valueOf(keyCode));
                     Log.d("OverlayManager", "onReceive: " + intent.getAction() + " " + keyCode);
                     overlay.onActionStarts(ba);
-
-                    //da rimuovere
-                    MainModel.getInstance().setTempButtonAction(ba);
-                    MainModel.getInstance().setTempButtonAction(null);
                 }
                 break;
             default:
