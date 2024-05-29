@@ -280,6 +280,18 @@ public class MainModel {
         return actions.get(actionId);
     }
 
+    public @Nullable ButtonAction getButtonActionByKeyCode(int keyCode) {
+        for (Action action : actions.values()) {
+            if (action instanceof ButtonAction) {
+                ButtonAction buttonAction = (ButtonAction) action;
+                if (buttonAction.getKeyId().equals(String.valueOf(keyCode))) {
+                    return buttonAction;
+                }
+            }
+        }
+        return null;
+    }
+
     public void setNeutralFacialExpressionAction(@NonNull FacialExpressionAction action) {
         if (getActionById(NEUTRAL_FACIAL_EXPRESSION_ACTION_ID) != null)
             throw new IllegalStateException("Action with id " + NEUTRAL_FACIAL_EXPRESSION_ACTION_ID + " already defined");

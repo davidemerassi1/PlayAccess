@@ -1,7 +1,5 @@
 package it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity
 
-import actionsConfigurator.KeyBroadcastReceiver
-import actionsConfigurator.KeyEventListener
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -15,11 +13,10 @@ import androidx.navigation.findNavController
 import it.unimi.di.ewlab.iss.actionsconfigurator.R
 import it.unimi.di.ewlab.iss.actionsconfigurator.databinding.ActivityPulsanteEsternoBinding
 import it.unimi.di.ewlab.iss.common.model.MainModel
-import it.unimi.di.ewlab.iss.common.model.actions.Action
 import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction
 import it.unimi.di.ewlab.iss.common.utils.PermissionsHandler
 
-class PulsanteEsternoActivity: AppCompatActivity(), KeyEventListener {
+class PulsanteEsternoActivity: AppCompatActivity() {
 
     companion object {
         const val BLUETOOTH_PERMISSION_REQUEST_CODE = 10
@@ -114,20 +111,5 @@ class PulsanteEsternoActivity: AppCompatActivity(), KeyEventListener {
                 finish()
             }
         }
-    }
-
-    override fun onKeyUp(keyCode: Int, source: Int) {
-        val action: ButtonAction
-        if (KeyEvent.keyCodeToString(keyCode).startsWith("KEYCODE_DPAD")) {
-            //TODO: da verificare il codice: 19 corrisponde a KEYCODE_DPAD_UP
-            action = ButtonAction(mainModel.nextActionId, KeyEvent.keyCodeToString(keyCode), source.toString(), 19.toString())
-            action.setIs2d(true)
-        } else
-            action = ButtonAction(mainModel.nextActionId, KeyEvent.keyCodeToString(keyCode), source.toString(), keyCode.toString())
-        mainModel.setTempButtonAction(action)
-    }
-
-    override fun onKeyDown(keyCode: Int, source: Int) {
-        TODO("Not yet implemented")
     }
 }

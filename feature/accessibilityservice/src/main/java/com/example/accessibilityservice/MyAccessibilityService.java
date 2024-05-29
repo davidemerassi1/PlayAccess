@@ -85,10 +85,16 @@ public class MyAccessibilityService extends AccessibilityService {
             return super.onKeyEvent(event);
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             Log.d(TAG, "Key down: " + event.getKeyCode());
-            broadcastManager.sendKeyEvent(BroadcastManager.ActionType.ACTION_START, event.getKeyCode(), event.getSource());
+            ButtonAction buttonAction = mainModel.getButtonActionByKeyCode(event.getKeyCode());
+            if (buttonAction != null) {
+                broadcastManager.sendAction(buttonAction, BroadcastManager.ActionType.ACTION_START);
+            }
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
             Log.d(TAG, "Key up: " + event.getKeyCode());
-            broadcastManager.sendKeyEvent(BroadcastManager.ActionType.ACTION_END, event.getKeyCode(), event.getSource());
+            ButtonAction buttonAction = mainModel.getButtonActionByKeyCode(event.getKeyCode());
+            if (buttonAction != null) {
+                broadcastManager.sendAction(buttonAction, BroadcastManager.ActionType.ACTION_START);
+            }
             MainModel.getInstance().setTempButtonAction(new ButtonAction(mainModel.getNextActionId(), KeyEvent.keyCodeToString(event.getKeyCode()), String.valueOf(event.getSource()), String.valueOf(event.getKeyCode())));
         }
         return true;
@@ -98,6 +104,16 @@ public class MyAccessibilityService extends AccessibilityService {
     @Override
     public void onMotionEvent(@NonNull MotionEvent event) {
         Log.d(TAG, "MotionEvent: " + event + " x: " + event.getX() + " y: " + event.getY());
+
+        /*val action:ButtonAction
+        if (KeyEvent.keyCodeToString(keyCode).startsWith("KEYCODE_DPAD")) {
+            //TODO: da verificare il codice: 19 corrisponde a KEYCODE_DPAD_UP
+            action = ButtonAction(mainModel.nextActionId, KeyEvent.keyCodeToString(keyCode), source.toString(), 19.toString())
+            action.setIs2d(true)
+        } else
+            action = ButtonAction(mainModel.nextActionId, KeyEvent.keyCodeToString(keyCode), source.toString(), keyCode.toString())
+        mainModel.setTempButtonAction(action)*/
+
         super.onMotionEvent(event);
     }
 

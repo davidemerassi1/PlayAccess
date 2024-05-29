@@ -2,6 +2,8 @@ package actionsConfigurator.utils;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,15 +19,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.eventsexecutor.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import actionsConfigurator.OverlayManager;
 import actionsConfigurator.OverlayView;
 import it.unimi.di.ewlab.iss.common.database.Event;
 
-import it.unimi.di.ewlab.iss.common.model.MainModel;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
 public class EventDialog extends FrameLayout {
@@ -38,7 +42,8 @@ public class EventDialog extends FrameLayout {
     private TextView touchOptionText;
     private TextView faceOptionText;
     private TextView controllerOptionText;
-    private MainModel mainModel = MainModel.getInstance();
+    private MutableLiveData<List<Action>> availableActions = new MutableLiveData<>();
+
 
     public EventDialog(Context context) {
         super(context);
@@ -205,7 +210,6 @@ public class EventDialog extends FrameLayout {
         faceOptionText.setOnClickListener(selectListener);
         controllerOptionText.setOnClickListener(selectListener);
         touchOptionText.setOnClickListener(selectListener);
-        touchOptionText.performClick();
 
         findViewById(R.id.okButton).setOnClickListener(okListener);
         findViewById(R.id.cancelButton).setOnClickListener(cancelListener);
@@ -235,6 +239,31 @@ public class EventDialog extends FrameLayout {
                 controllerOptionText.performClick();*/
             }
         }
+
+        availableActions.observeForever(actions -> {
+            if (actions != null) {
+                findViewById(R.id.progressBar).setVisibility(GONE);
+                findViewById(R.id.availableActionsLayout).setVisibility(VISIBLE);
+                touchOptionText.performClick();
+            }
+        });
+        requestAvailableActions();
+    }
+
+    private void requestAvailableActions() {
+        Handler handler = new Handler(Looper.getMainLooper());
+        Runnable runnable = () -> {
+            if (!availableActions.isInitialized()) {
+                findViewById(R.id.progressBar).setVisibility(GONE);
+                findViewById(R.id.errorRetrievingActions).setVisibility(VISIBLE);
+            }
+        };
+        handler.postDelayed(runnable, 10000);
+
+        OverlayManager.getInstance(getContext()).requestActions(availableActions);
+
+        /*availableActions = new ArrayList<>(mainModel.getActions());
+        availableActions.add(OverlayView.FACE_MOVEMENT_ACTION);*/
     }
 
     private void initSecondaryAction(OnClickListener okListener, OnClickListener cancelListener) {
@@ -274,12 +303,10 @@ public class EventDialog extends FrameLayout {
 
         Action.ActionType actionType = Action.ActionType.valueOf((String) v.getTag());
         findViewById(R.id.noEventsTextview).setVisibility(GONE);
-        ArrayList<Action> availableActions = new ArrayList<>(mainModel.getActions());
-        availableActions.add(OverlayView.FACE_MOVEMENT_ACTION);
-        for (Action option : availableActions) {
+        for (Action option : availableActions.getValue()) {
             if ((event == Event.JOYSTICK) != option.is2d())
                 continue;
-            if (option.getActionType() != actionType || option.equals(mainModel.getNeutralFacialExpressionAction()))
+            if (option.getActionType() != actionType)
                 continue;
             RadioButton radioButton = new RadioButton(getContext());
             radioButton.setTag(option);
