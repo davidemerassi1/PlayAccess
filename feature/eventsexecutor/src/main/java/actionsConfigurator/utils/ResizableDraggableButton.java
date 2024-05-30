@@ -1,13 +1,18 @@
 package actionsConfigurator.utils;
 
+import static android.content.Context.WINDOW_SERVICE;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Point;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -55,9 +60,8 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
         fab = findViewById(R.id.fab);
         resizeButton = findViewById(R.id.resize_button);
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int width = displayMetrics.widthPixels;
+
+        int width = getDisplayWidth();
 
         resizeButton.setOnTouchListener(new OnTouchListener() {
             private int initialWidth, initialX, initialY;
@@ -130,6 +134,14 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
             }
             return true;
         });
+    }
+
+    private int getDisplayWidth() {
+        WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size.x;
     }
 
     public void setPadding(int newDim) {

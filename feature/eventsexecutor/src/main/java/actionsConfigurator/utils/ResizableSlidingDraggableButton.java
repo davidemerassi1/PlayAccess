@@ -1,13 +1,18 @@
 package actionsConfigurator.utils;
 
+import static android.content.Context.WINDOW_SERVICE;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Point;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -69,9 +74,7 @@ public class ResizableSlidingDraggableButton extends FrameLayout implements Even
         layout = findViewById(R.id.resizable_sliding_button_layout);
         resizeButton = findViewById(R.id.resize_button);
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int width = displayMetrics.widthPixels;
+        int width = getDisplayWidth();
 
         resizeButton.setOnTouchListener(new OnTouchListener() {
             private int initialWidth, initialX;
@@ -184,5 +187,13 @@ public class ResizableSlidingDraggableButton extends FrameLayout implements Even
 
     public boolean getResetToStart() {
         return resetToStart;
+    }
+
+    private int getDisplayWidth() {
+        WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size.x;
     }
 }

@@ -1,6 +1,7 @@
 package actionsConfigurator.utils;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Looper;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import actionsConfigurator.OverlayManager;
+import actionsConfigurator.OverlayService;
 import actionsConfigurator.OverlayView;
 import it.unimi.di.ewlab.iss.common.database.Event;
 
@@ -260,7 +262,7 @@ public class EventDialog extends FrameLayout {
         };
         handler.postDelayed(runnable, 10000);
 
-        OverlayManager.getInstance(getContext()).requestActions(availableActions);
+        OverlayService.getInstance().requestActions(availableActions);
 
         /*availableActions = new ArrayList<>(mainModel.getActions());
         availableActions.add(OverlayView.FACE_MOVEMENT_ACTION);*/
@@ -311,6 +313,7 @@ public class EventDialog extends FrameLayout {
             RadioButton radioButton = new RadioButton(getContext());
             radioButton.setTag(option);
             radioButton.setText(option.getName());
+            radioButton.setTextColor(Color.BLACK);
             if (selectedAction != null && selectedAction.equals(option))
                 radioButton.setChecked(true);
             radioGroup.addView(radioButton);

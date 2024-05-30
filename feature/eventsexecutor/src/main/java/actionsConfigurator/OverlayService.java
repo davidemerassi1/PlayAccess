@@ -7,21 +7,40 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
+import android.view.LayoutInflater;
+import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.eventsexecutor.R;
 
+import java.util.List;
+
 import it.unimi.di.ewlab.iss.common.model.MainModel;
+import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
 public class OverlayService extends Service {
     private static final String CHANNEL_ID = "ForegroundServiceChannel";
+    private OverlayView overlay;
+    private static OverlayService instance;
+    private ActionsBroadcastReceiver actionsBroadcastReceiver;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
+        WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        overlay = (OverlayView) LayoutInflater.from(this).inflate(R.layout.overlay_layout, null);
+        overlay.init(windowManager, "prova");
+        new ProcessMonitor(overlay);
+        actionsBroadcastReceiver = new ActionsBroadcastReceiver(overlay, this);
         showNotification();
+    }
+
+    public static OverlayService getInstance() {
+        return instance;
     }
 
     private void showNotification() {
@@ -51,5 +70,9 @@ public class OverlayService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public void requestActions(MutableLiveData<List<Action>> actionsLiveData) {
+        actionsBroadcastReceiver.requestActions(actionsLiveData);
     }
 }

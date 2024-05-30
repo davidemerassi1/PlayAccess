@@ -20,16 +20,16 @@ import java.util.Map;
 
 public class ProcessMonitor {
     private final UsageStatsManager usageStatsManager;
-    private final String sandboxName;
+    //private final String sandboxName;
     private String activePackage;
 
     public ProcessMonitor(OverlayView overlayView) {
         ActivityManager activityManager = (ActivityManager) overlayView.getContext().getSystemService(Context.ACTIVITY_SERVICE);
         usageStatsManager = (UsageStatsManager) overlayView.getContext().getSystemService(Context.USAGE_STATS_SERVICE);
-        sandboxName = getForegroundApp();
+        /*sandboxName = getForegroundApp();
         if (sandboxName == null) {
             throw new IllegalStateException("No foreground app");
-        }
+        }*/
 
         Handler handler = new Handler(Looper.getMainLooper());
         //Log.d("ProcessMonitor", "Process: " + processInfo.processName + ", PID: " + processInfo.pid + ", importance: " + processInfo.importance);
@@ -61,10 +61,11 @@ public class ProcessMonitor {
                     }
                 }
 
-                if (sandboxName.equals(getForegroundApp()) && activePackage != null && areThereActiveApps)
+                overlayView.start();
+                /*if (sandboxName.equals(getForegroundApp()) && activePackage != null && areThereActiveApps)
                     overlayView.start();
                 else
-                    overlayView.stop();
+                    overlayView.stop();*/
 
                 handler.postDelayed(this, 1000); // Esegui di nuovo dopo 1 secondo (1000 ms)
             }
@@ -72,7 +73,7 @@ public class ProcessMonitor {
         handler.post(runnable);
     }
 
-    private String getForegroundApp() {
+    /*private String getForegroundApp() {
         long currentTime = System.currentTimeMillis();
 
         // Query for events in the last minute
@@ -91,5 +92,5 @@ public class ProcessMonitor {
 
         // The first one is the most recent used app
         return usageStatsList.get(0).getPackageName();
-    }
+    }*/
 }

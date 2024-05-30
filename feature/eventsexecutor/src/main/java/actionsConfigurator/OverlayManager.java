@@ -23,17 +23,11 @@ import java.util.List;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction;
 
-public class OverlayManager extends BroadcastReceiver {
+public class OverlayManager {
     public static OverlayManager instance;
-    private OverlayView overlay;
-    private MutableLiveData<List<Action>> actionsLiveData;
 
-    private OverlayManager(Context context) {
-        WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
+    public OverlayManager(Context context) {
         try {
-            overlay = (OverlayView) LayoutInflater.from(context).inflate(R.layout.overlay_layout, null);
-            overlay.init(windowManager, "prova");
-            new ProcessMonitor(overlay);
             Intent serviceIntent = new Intent(context, OverlayService.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(serviceIntent);
@@ -44,50 +38,12 @@ public class OverlayManager extends BroadcastReceiver {
         } catch (Exception e) {
             Toast.makeText(context, "Impossibile avviare il servizio", Toast.LENGTH_SHORT).show();
         }
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.example.accessibilityservice.ACTION_START");
-        filter.addAction("com.example.accessibilityservice.ACTION_END");
-        filter.addAction("com.example.accessibilityservice.ACTION_REPLY");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.registerReceiver(this, filter, Context.RECEIVER_EXPORTED);
-        } else
-            context.registerReceiver(this, filter);
     }
 
     public static OverlayManager getInstance(Context context) {
         if (instance == null) {
             instance = new OverlayManager(context);
-        } else
-            Toast.makeText(context, "Servizio già attivo: avvia il tuo gioco preferito!", Toast.LENGTH_SHORT).show();
-        return instance;
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        switch (intent.getAction()) {
-            case "com.example.accessibilityservice.ACTION_START":
-                Action action = (Action) intent.getSerializableExtra("action");
-                overlay.onActionStarts(action);
-                break;
-            case "com.example.accessibilityservice.ACTION_REPLY":
-                if (actionsLiveData != null) {
-                    Object[] actionsArray = (Object[]) intent.getSerializableExtra("actions");
-                    ArrayList<Action> actionList = new ArrayList<>();
-                    for (Object a : actionsArray) {
-                        actionList.add((Action) a);
-                    }
-                    actionList.add(OverlayView.FACE_MOVEMENT_ACTION);
-                    actionsLiveData.setValue(actionList);
-                }
-                actionsLiveData = null;
-                break;
         }
-    }
-
-    public void requestActions(MutableLiveData<List<Action>> actionsLiveData) {
-        Intent intent = new Intent("com.example.accessibilityservice.ACTION_REQUEST");
-        overlay.getContext().sendBroadcast(intent);
-        this.actionsLiveData = actionsLiveData;
+        return instance;
     }
 }

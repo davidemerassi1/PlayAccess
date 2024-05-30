@@ -90,7 +90,7 @@ class IntroOverlayPermissionFragment : Fragment() {
         super.onResume()
 
         if (checkOverlayPermission()) {
-            OverlayManager.getInstance(requireContext())
+            OverlayManager(requireContext())
             requireActivity().finish()
         } else if (settingsOpened) {
             openDenyDialog()

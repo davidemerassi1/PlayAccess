@@ -11,14 +11,13 @@
     <!-- this is the collapsed layout -->
     <RelativeLayout
         android:id="@+id/layoutCollapsed"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:visibility="visible">
+        android:layout_width="50dp"
+        android:layout_height="50dp">
 
         <ImageView
             android:id="@+id/collapsed_iv"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:src="@drawable/playaccess_logo_large" />
 
         <ImageView
@@ -71,21 +70,20 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="center_vertical"
                     android:text="Tap"
                     android:textColor="@color/white"
                     android:visibility="gone" />
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:backgroundTint="@color/primaryColor"
-                    app:borderWidth="0dp"
-                    app:elevation="10dp"
-                    app:fabCustomSize="45dp"
-                    app:srcCompat="@drawable/tap_icon"
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/circle_background_primary"
+                    android:scaleType="fitXY"
+                    android:padding="10dp"
+                    android:src="@drawable/tap_icon_white"
                     app:tint="@color/white" />
             </LinearLayout>
 
@@ -96,21 +94,20 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="center_vertical"
                     android:text="Joystick"
                     android:textColor="@color/white"
                     android:visibility="gone" />
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:backgroundTint="@color/primaryColor"
-                    app:borderWidth="0dp"
-                    app:elevation="5dp"
-                    app:fabCustomSize="45dp"
-                    app:srcCompat="@drawable/joystick_icon"
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/circle_background_primary"
+                    android:scaleType="fitXY"
+                    android:padding="10dp"
+                    android:src="@drawable/joystick_icon_white"
                     app:tint="@color/white" />
             </LinearLayout>
 
@@ -121,21 +118,20 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="center_vertical"
                     android:text="Swipe"
                     android:textColor="@color/white"
                     android:visibility="gone" />
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:backgroundTint="@color/primaryColor"
-                    app:borderWidth="0dp"
-                    app:elevation="5dp"
-                    app:fabCustomSize="45dp"
-                    app:srcCompat="@drawable/swipe_icon"
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/circle_background_primary"
+                    android:scaleType="fitXY"
+                    android:padding="10dp"
+                    android:src="@drawable/swipe_icon_white"
                     app:tint="@color/white" />
             </LinearLayout>
 
@@ -146,21 +142,20 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="center_vertical"
                     android:text="Long tap"
                     android:textColor="@color/white"
                     android:visibility="gone" />
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:backgroundTint="@color/primaryColor"
-                    app:borderWidth="0dp"
-                    app:elevation="10dp"
-                    app:fabCustomSize="45dp"
-                    app:srcCompat="@drawable/long_tap_icon"
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/circle_background_primary"
+                    android:scaleType="fitXY"
+                    android:padding="10dp"
+                    android:src="@drawable/long_tap_icon_white"
                     app:tint="@color/white" />
             </LinearLayout>
 
@@ -171,38 +166,35 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="45dp"
+                    android:layout_height="50dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="center_vertical"
                     android:text="Monodimensional sliding"
                     android:textColor="@color/white"
                     android:visibility="gone" />
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:backgroundTint="@color/primaryColor"
-                    app:borderWidth="0dp"
-                    app:elevation="10dp"
-                    app:fabCustomSize="45dp"
-                    app:srcCompat="@drawable/monodimensional_sliding_icon"
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/circle_background_primary"
+                    android:scaleType="fitXY"
+                    android:padding="10dp"
+                    android:src="@drawable/monodimensional_sliding_icon_white"
                     app:tint="@color/white" />
             </LinearLayout>
         </RelativeLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <ImageButton
             android:id="@+id/fab"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
-            android:backgroundTint="@color/primaryColor"
-            app:borderWidth="0dp"
-            app:fabCustomSize="55dp"
-            app:srcCompat="@drawable/add_icon"
-            app:elevation="10dp"
+            android:background="@drawable/circle_background_primary"
+            android:src="@drawable/add_icon"
+            android:elevation="10dp"
             app:tint="@color/white" />
 
         <RelativeLayout
