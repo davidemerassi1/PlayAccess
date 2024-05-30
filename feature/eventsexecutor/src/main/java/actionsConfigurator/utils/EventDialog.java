@@ -129,7 +129,8 @@ public class EventDialog extends FrameLayout {
                         v1 -> {
                             removeView(secondaryEventDialog);
                             secondaryEventDialog = null;
-                        });
+                        },
+                        availableActions.getValue());
             });
 
             actionRightTextView.setOnClickListener(v -> {
@@ -162,7 +163,8 @@ public class EventDialog extends FrameLayout {
                         v1 -> {
                             removeView(secondaryEventDialog);
                             secondaryEventDialog = null;
-                        });
+                        },
+                        availableActions.getValue());
             });
 
             actionResetTextView.setOnClickListener(v -> {
@@ -195,7 +197,8 @@ public class EventDialog extends FrameLayout {
                         v1 -> {
                             removeView(secondaryEventDialog);
                             secondaryEventDialog = null;
-                        });
+                        },
+                        availableActions.getValue());
             });
         }
 
@@ -268,8 +271,13 @@ public class EventDialog extends FrameLayout {
         availableActions.add(OverlayView.FACE_MOVEMENT_ACTION);*/
     }
 
-    private void initSecondaryAction(OnClickListener okListener, OnClickListener cancelListener) {
+    private void initSecondaryAction(OnClickListener okListener, OnClickListener cancelListener, List<Action> availableActions) {
         setElevation(30);
+        this.availableActions.setValue(availableActions);
+
+        findViewById(R.id.progressBar).setVisibility(GONE);
+        findViewById(R.id.availableActionsLayout).setVisibility(VISIBLE);
+
         radioGroup = findViewById(R.id.radioGroup);
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId != -1) {
@@ -285,16 +293,18 @@ public class EventDialog extends FrameLayout {
         controllerOptionText.setOnClickListener(selectListener);
         touchOptionText.setOnClickListener(selectListener);
 
+        touchOptionText.performClick();
+
         findViewById(R.id.okButton).setOnClickListener(okListener);
         findViewById(R.id.cancelButton).setOnClickListener(cancelListener);
     }
 
     private OnClickListener selectListener = v -> {
-        faceOptionText.setTextColor(ContextCompat.getColor(getContext(),android.R.color.darker_gray));
+        faceOptionText.setTextColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
         faceOptionText.setTypeface(Typeface.DEFAULT);
-        controllerOptionText.setTextColor(ContextCompat.getColor(getContext(),android.R.color.darker_gray));
+        controllerOptionText.setTextColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
         controllerOptionText.setTypeface(Typeface.DEFAULT);
-        touchOptionText.setTextColor(ContextCompat.getColor(getContext(),android.R.color.darker_gray));
+        touchOptionText.setTextColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
         touchOptionText.setTypeface(Typeface.DEFAULT);
         ((TextView) v).setTextColor(ContextCompat.getColor(getContext(), R.color.primaryColor));
         ((TextView) v).setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));

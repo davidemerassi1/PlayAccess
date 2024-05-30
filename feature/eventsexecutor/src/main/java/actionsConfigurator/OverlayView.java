@@ -54,6 +54,7 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
     private MutableLiveData<Boolean> needCamera = new MutableLiveData<>(false);
     public static final Action FACE_MOVEMENT_ACTION;
     private ButtonActionsModel buttonActionsModel;
+    MutableLiveData<Association[]> associations = new MutableLiveData<>();
 
     static {
         FACE_MOVEMENT_ACTION = new Action(0, "Face Movement", Action.ActionType.FACIAL_EXPRESSION) {
@@ -65,6 +66,8 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
 
         FACE_MOVEMENT_ACTION.setIs2d(true);
     }
+
+    private String applicationPackage;
 
     public OverlayView(Context context) {
         super(context);
@@ -180,18 +183,12 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
                 lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
             }
         });
-    }
 
-    private EventExecutor executor = new EventExecutor(getContext());
-
-    public void changeGame(String applicationPackage) {
-        new Thread(() -> {
-            needCamera.postValue(false);
-            Association[] associations = associationsDb.getAssociations(applicationPackage);
+        associations.observeForever(associations -> {
             for (Association association : associations) {
                 if (association.action.getActionType() == Action.ActionType.FACIAL_EXPRESSION) {
                     Log.d("OverlayView", "init: need camera");
-                    needCamera.postValue(true);
+                    needCamera.setValue(true);
                 }
                 map.put(association.action, association);
                 if (association.event == Event.MONODIMENSIONAL_SLIDING) {
@@ -201,6 +198,16 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
             }
             buttonActionsModel = new ButtonActionsModel(map.keySet());
             configurationView.changeGame(applicationPackage, associations);
+        });
+    }
+
+    private EventExecutor executor = new EventExecutor(getContext());
+
+    public void changeGame(String applicationPackage) {
+        this.applicationPackage = applicationPackage;
+        new Thread(() -> {
+            needCamera.postValue(false);
+            associations.postValue(associationsDb.getAssociations(applicationPackage));
         }).start();
 
         Drawable appIcon = getAppIconFromPackageName(getContext(), applicationPackage);

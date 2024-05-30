@@ -127,7 +127,7 @@ public class EventExecutor {
     }
 
     public void execute(Association association) {
-        if (actions.contains(association.action)) {
+        if (actions.contains(association)) {
             Log.d("ActionExecutor", "Event already in progress");
             return;
         }
@@ -141,29 +141,37 @@ public class EventExecutor {
                 case SWIPE_UP:
                     touch(association.x, association.y, association);
                     sleep(10);
-                    move(association.x, association.y - 100, association);
-                    sleep(10);
+                    for (int i = 20; i<=100; i+=20) {
+                        move(association.x, association.y - 100, association);
+                        sleep(10);
+                    }
                     release(association);
                     break;
                 case SWIPE_DOWN:
                     touch(association.x, association.y, association);
                     sleep(10);
-                    move(association.x, association.y + 100, association);
-                    sleep(10);
+                    for (int i = 20; i<=100; i+=20) {
+                        move(association.x, association.y + 100, association);
+                        sleep(10);
+                    }
                     release(association);
                     break;
                 case SWIPE_LEFT:
                     touch(association.x, association.y, association);
                     sleep(10);
-                    move(association.x - 100, association.y, association);
-                    sleep(10);
+                    for (int i = 20; i<=100; i+=20) {
+                        move(association.x - i, association.y, association);
+                        sleep(10);
+                    }
                     release(association);
                     break;
                 case SWIPE_RIGHT:
                     touch(association.x, association.y, association);
                     sleep(10);
-                    move(association.x + 100, association.y, association);
-                    sleep(10);
+                    for (int i = 20; i<=100; i+=20) {
+                        move(association.x + i, association.y, association);
+                        sleep(10);
+                    }
                     release(association);
                     break;
                 case LONG_TAP:
@@ -206,23 +214,39 @@ public class EventExecutor {
                     if (!x2d.containsKey(association)) {
                         touch(association.x, association.y, association);
                         x2d.put(association, association.x);
+                    } else if (!actions.contains(association)) {
+                        touch(x2d.get(association), association.y, association);
                     }
-                    x2d.put(association, Math.max(x2d.get(association) - 100, association.x - association.radius));
-                    move(x2d.get(association), association.y, association);
+                    int startX = x2d.get(association);
+                    for (int i = 10; i<=50; i+=10) {
+                        move(Math.max(startX-i, association.x - association.radius), association.y, association);
+                        sleep(5);
+                    }
+                    Log.d("ActionExecutor", "Move LEFT: StartX: " + startX + " x: " + association.x + " radius: " + association.radius);
+                    x2d.put(association, Math.max(startX - 50, association.x - association.radius));
                     break;
                 case MOVE_RIGHT:
                     if (!x2d.containsKey(association)) {
                         touch(association.x, association.y, association);
                         x2d.put(association, association.x);
+                    } else if (!actions.contains(association)) {
+                        touch(x2d.get(association), association.y, association);
                     }
-                    x2d.put(association, Math.min(x2d.get(association) + 100, association.x + association.radius));
-                    move(x2d.get(association), association.y, association);
+                    startX = x2d.get(association);
+                    for (int i = 10; i<=50; i+=10) {
+                        move(Math.min(startX+i, association.x + association.radius), association.y, association);
+                        sleep(5);
+                    }
+                    Log.d("ActionExecutor", "Move right: StartX: " + startX + " x: " + association.x + " radius: " + association.radius);
+                    x2d.put(association, Math.min(startX + 50, association.x + association.radius));
                     break;
                 case RESET:
-                    if (association.resetToStart)
+                    if (association.resetToStart) {
                         move(association.x, association.y, association);
+                        x2d.remove(association);
+                    }
+                    sleep(10);
                     release(association);
-                    x2d.remove(association);
                     break;
             }
         }).start();
@@ -230,6 +254,8 @@ public class EventExecutor {
 
     public void releaseAll() {
         while (actions.size() > 0) {
+            if (actions.get(0).resetToStart)
+                x2d.remove(actions.get(0));
             Log.d("ActionExecutor", "Releasing event");
             release(actions.get(0));
         }

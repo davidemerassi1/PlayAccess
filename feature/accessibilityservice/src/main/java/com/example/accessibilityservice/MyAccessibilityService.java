@@ -72,7 +72,7 @@ public class MyAccessibilityService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            if (!event.getPackageName().toString().equals(activePackage)) {
+            if (event.getPackageName() != null && !event.getPackageName().toString().equals(activePackage)) {
                 activePackage = event.getPackageName().toString();
                 Log.d(TAG, "Package changed: " + activePackage);
                 Intent intent = new Intent("com.example.accessibilityservice.PACKAGE_CHANGED");
@@ -101,7 +101,7 @@ public class MyAccessibilityService extends AccessibilityService {
             Log.d(TAG, "Key up: " + event.getKeyCode());
             ButtonAction buttonAction = mainModel.getButtonActionByKeyCode(event.getKeyCode());
             if (buttonAction != null) {
-                broadcastManager.sendAction(buttonAction, BroadcastManager.ActionType.ACTION_START);
+                broadcastManager.sendAction(buttonAction, BroadcastManager.ActionType.ACTION_END);
             }
             MainModel.getInstance().setTempButtonAction(new ButtonAction(mainModel.getNextActionId(), KeyEvent.keyCodeToString(event.getKeyCode()), String.valueOf(event.getSource()), String.valueOf(event.getKeyCode())));
         }

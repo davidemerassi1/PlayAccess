@@ -54,7 +54,7 @@ public class ProcessMonitor {
                             break;
                         }
                         if (processName != null && !processName.startsWith("com.google.android.gms") && !processName.startsWith("com.google.process") && !processName.startsWith("com.android")) {
-                            Log.d("ProcessMonitor", "Current process : " + processName + ", PID: " + pid);
+                            //Log.d("ProcessMonitor", "Current process : " + processName + ", PID: " + pid);
                             areThereActiveApps = true;
                             if (activePackage == null || !activePackage.equals(processName)) {
                                 Log.d("ProcessMonitor", "Process changed: " + activePackage + " -> " + processName);
