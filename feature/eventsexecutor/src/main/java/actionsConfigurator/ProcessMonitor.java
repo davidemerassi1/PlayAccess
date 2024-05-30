@@ -12,33 +12,38 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 
+import androidx.lifecycle.MutableLiveData;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.unimi.di.ewlab.iss.common.model.MainModel;
+
 public class ProcessMonitor {
-    private final UsageStatsManager usageStatsManager;
-    //private final String sandboxName;
+    private final String sandboxName;
     private String activePackage;
+    private MutableLiveData<String> activeProcess;
+    private boolean areThereActiveApps;
+    private OverlayView overlayView;
 
     public ProcessMonitor(OverlayView overlayView) {
+        this.overlayView = overlayView;
         ActivityManager activityManager = (ActivityManager) overlayView.getContext().getSystemService(Context.ACTIVITY_SERVICE);
-        usageStatsManager = (UsageStatsManager) overlayView.getContext().getSystemService(Context.USAGE_STATS_SERVICE);
-        /*sandboxName = getForegroundApp();
+        sandboxName = MainModel.getInstance().getSandboxPackageName();
         if (sandboxName == null) {
             throw new IllegalStateException("No foreground app");
-        }*/
+        }
+        activeProcess = MainModel.getInstance().getActivePackage();
 
         Handler handler = new Handler(Looper.getMainLooper());
-        //Log.d("ProcessMonitor", "Process: " + processInfo.processName + ", PID: " + processInfo.pid + ", importance: " + processInfo.importance);
-        // Esegui di nuovo dopo 1 secondo (1000 ms)
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = activityManager.getRunningAppProcesses();
-                boolean areThereActiveApps = false;
+                areThereActiveApps = false;
 
                 if (runningAppProcesses != null) {
                     for (ActivityManager.RunningAppProcessInfo processInfo : runningAppProcesses) {
@@ -60,37 +65,22 @@ public class ProcessMonitor {
                         }
                     }
                 }
-
-                overlayView.start();
-                /*if (sandboxName.equals(getForegroundApp()) && activePackage != null && areThereActiveApps)
-                    overlayView.start();
-                else
-                    overlayView.stop();*/
+                showOverlay();
 
                 handler.postDelayed(this, 1000); // Esegui di nuovo dopo 1 secondo (1000 ms)
             }
         };
         handler.post(runnable);
+
+        activeProcess.observeForever((activeProcess) -> {
+            showOverlay();
+        });
     }
 
-    /*private String getForegroundApp() {
-        long currentTime = System.currentTimeMillis();
-
-        // Query for events in the last minute
-        List<UsageStats> usageStatsList = usageStatsManager.queryUsageStats(
-                UsageStatsManager.INTERVAL_DAILY,
-                currentTime - 1000 * 60,
-                currentTime
-        );
-
-        if (usageStatsList == null || usageStatsList.isEmpty()) {
-            return null;
-        }
-
-        // Sort the stats by the last time used
-        Collections.sort(usageStatsList, (o1, o2) -> Long.compare(o2.getLastTimeUsed(), o1.getLastTimeUsed()));
-
-        // The first one is the most recent used app
-        return usageStatsList.get(0).getPackageName();
-    }*/
+    private void showOverlay() {
+        if (activeProcess.getValue().equals(sandboxName) && areThereActiveApps) {
+            overlayView.start();
+        } else
+            overlayView.stop();
+    }
 }

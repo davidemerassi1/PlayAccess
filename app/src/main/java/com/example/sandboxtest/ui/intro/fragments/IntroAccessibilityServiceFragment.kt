@@ -13,6 +13,7 @@ import com.example.sandboxtest.R
 import com.example.sandboxtest.SandboxVerifier
 import com.example.sandboxtest.databinding.AlertDialogPermissionsNeededBinding
 import com.example.sandboxtest.databinding.FragmentIntroAccessibilityServiceBinding
+import it.unimi.di.ewlab.iss.common.model.MainModel
 import it.unimi.di.ewlab.iss.common.storage.INTRO_REQUIRED
 import it.unimi.di.ewlab.iss.common.storage.PersistenceManager
 import it.unimi.di.ewlab.iss.common.utils.PermissionsHandler
@@ -99,7 +100,7 @@ class IntroAccessibilityServiceFragment : Fragment() {
     }
 
     private fun navigateToNext() {
-        if (SandboxVerifier.getSandboxPackageName(requireContext()) == null)
+        if (MainModel.getInstance().sandboxPackageName == null)
             Navigation.findNavController(requireView())
                 .navigate(
                     R.id.introPermissionsFragment

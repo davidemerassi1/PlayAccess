@@ -31,6 +31,7 @@ import it.unimi.di.ewlab.iss.common.model.MainModel;
 import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction;
 
 public class MyAccessibilityService extends AccessibilityService {
+    private String activePackage;
     private final String TAG = "MyAccessibilityService";
     private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "my_accessibility_channel";
@@ -70,8 +71,15 @@ public class MyAccessibilityService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        if (event.getAction() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
-            Log.d(TAG, "Window state changed: " + event.getPackageName());
+        if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+            if (!event.getPackageName().toString().equals(activePackage)) {
+                activePackage = event.getPackageName().toString();
+                Log.d(TAG, "Package changed: " + activePackage);
+                Intent intent = new Intent("com.example.accessibilityservice.PACKAGE_CHANGED");
+                intent.putExtra("packageName", activePackage);
+                sendBroadcast(intent);
+            }
+        }
     }
 
     @Override

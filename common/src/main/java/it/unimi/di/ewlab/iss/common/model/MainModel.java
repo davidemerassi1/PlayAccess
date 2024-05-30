@@ -55,6 +55,7 @@ public class MainModel {
 
     private String sandboxName;
     private String sandboxPackageName;
+    private MutableLiveData<String> activePackage = new MutableLiveData<>("");
 
     public PhotosDatabase getDB(Context context) {
         if (DB == null) {
@@ -655,6 +656,14 @@ public class MainModel {
 
     public void setSandboxPackageName(String sandboxPackageName) {
         this.sandboxPackageName = sandboxPackageName;
+    }
+
+    public MutableLiveData<String> getActivePackage() {
+        return activePackage;
+    }
+
+    public void setActivePackage(String activePackage) {
+        this.activePackage.setValue(activePackage);
     }
 }
 

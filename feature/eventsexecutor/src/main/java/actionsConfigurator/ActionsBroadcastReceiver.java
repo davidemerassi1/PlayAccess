@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import it.unimi.di.ewlab.iss.common.model.MainModel;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
 public class ActionsBroadcastReceiver extends BroadcastReceiver {
@@ -24,6 +26,7 @@ public class ActionsBroadcastReceiver extends BroadcastReceiver {
         filter.addAction("com.example.accessibilityservice.ACTION_START");
         filter.addAction("com.example.accessibilityservice.ACTION_END");
         filter.addAction("com.example.accessibilityservice.ACTION_REPLY");
+        filter.addAction("com.example.accessibilityservice.PACKAGE_CHANGED");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.registerReceiver(this, filter, Context.RECEIVER_EXPORTED);
         } else
@@ -48,6 +51,9 @@ public class ActionsBroadcastReceiver extends BroadcastReceiver {
                     actionsLiveData.setValue(actionList);
                 }
                 actionsLiveData = null;
+                break;
+            case "com.example.accessibilityservice.PACKAGE_CHANGED":
+                MainModel.getInstance().setActivePackage(intent.getStringExtra("packageName"));
                 break;
         }
     }
