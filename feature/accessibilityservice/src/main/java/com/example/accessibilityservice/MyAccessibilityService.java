@@ -103,13 +103,13 @@ public class MyAccessibilityService extends AccessibilityService {
             Log.d(TAG, "Key down: " + event.getKeyCode());
             ButtonAction buttonAction = mainModel.getButtonActionByKeyCode(event.getKeyCode());
             if (buttonAction != null) {
-                broadcastManager.sendAction(buttonAction, BroadcastManager.ActionType.ACTION_START);
+                broadcastManager.onActionStarts(buttonAction);
             }
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
             Log.d(TAG, "Key up: " + event.getKeyCode());
             ButtonAction buttonAction = mainModel.getButtonActionByKeyCode(event.getKeyCode());
             if (buttonAction != null) {
-                broadcastManager.sendAction(buttonAction, BroadcastManager.ActionType.ACTION_END);
+                broadcastManager.onActionEnds(buttonAction);
             }
             MainModel.getInstance().setTempButtonAction(new ButtonAction(mainModel.getNextActionId(), KeyEvent.keyCodeToString(event.getKeyCode()), String.valueOf(event.getSource()), String.valueOf(event.getKeyCode())));
         }

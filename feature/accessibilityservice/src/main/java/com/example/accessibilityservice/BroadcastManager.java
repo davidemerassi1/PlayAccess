@@ -36,14 +36,16 @@ public class BroadcastManager extends BroadcastReceiver implements ActionListene
 
     @Override
     public void onActionStarts(@NonNull Action action) {
-        Log.d("BroadcastManager", "onActionStarts: " + action.getName());
-        sendAction(action, ActionType.ACTION_START);
+        Intent intent = new Intent("com.example.accessibilityservice.ACTION_START");
+        intent.putExtra("action", action.lighten());
+        context.sendBroadcast(intent);
     }
 
     @Override
     public void onActionEnds(@NonNull Action action) {
-        Log.d("BroadcastManager", "onActionEnds: " + action.getName());
-        sendAction(action, ActionType.ACTION_END);
+        Intent intent = new Intent("com.example.accessibilityservice.ACTION_END");
+        intent.putExtra("action", action.lighten());
+        context.sendBroadcast(intent);
     }
 
     @Override
@@ -51,39 +53,6 @@ public class BroadcastManager extends BroadcastReceiver implements ActionListene
         Intent intent = new Intent("com.example.accessibilityservice.ACTION_2D_MOVEMENT");
         intent.putExtra("x", x);
         intent.putExtra("y", y);
-        context.sendBroadcast(intent);
-    }
-
-    public void sendKeyEvent(ActionType actionType, int keyCode, int source) {
-        Intent intent;
-        switch (actionType) {
-            case ACTION_START:
-                intent = new Intent("com.example.accessibilityservice.ACTION_START");
-                break;
-            case ACTION_END:
-                intent = new Intent("com.example.accessibilityservice.ACTION_END");
-                break;
-            default:
-                return;
-        }
-        intent.putExtra("key_code", keyCode);
-        intent.putExtra("source", source);
-        context.sendBroadcast(intent);
-    }
-
-    public void sendAction(Action action, ActionType actionType) {
-        Intent intent;
-        switch (actionType) {
-            case ACTION_START:
-                intent = new Intent("com.example.accessibilityservice.ACTION_START");
-                break;
-            case ACTION_END:
-                intent = new Intent("com.example.accessibilityservice.ACTION_END");
-                break;
-            default:
-                return;
-        }
-        intent.putExtra("action", action.lighten());
         context.sendBroadcast(intent);
     }
 
@@ -108,10 +77,5 @@ public class BroadcastManager extends BroadcastReceiver implements ActionListene
                 cameraLifecycle.pause();
                 break;
         }
-    }
-
-    public enum ActionType {
-        ACTION_START,
-        ACTION_END
     }
 }

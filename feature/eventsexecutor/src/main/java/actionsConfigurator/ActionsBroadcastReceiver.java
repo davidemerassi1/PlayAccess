@@ -41,6 +41,11 @@ public class ActionsBroadcastReceiver extends BroadcastReceiver {
                 Action action = (Action) intent.getSerializableExtra("action");
                 overlay.onActionStarts(action);
                 break;
+            case "com.example.accessibilityservice.ACTION_END":
+                Log.d("ActionsBroadcastReceiver", "Action end");
+                Action actionEnd = (Action) intent.getSerializableExtra("action");
+                overlay.onActionEnds(actionEnd);
+                break;
             case "com.example.accessibilityservice.ACTION_REPLY":
                 if (actionsLiveData != null) {
                     Object[] actionsArray = (Object[]) intent.getSerializableExtra("actions");

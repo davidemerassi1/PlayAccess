@@ -244,12 +244,14 @@ public class OverlayView extends RelativeLayout implements ActionListener {
     }
 
     private void execute1d(Association association, Action action) {
-        if (association.action.equals(action))
-            executor.execute1d(association, EventExecutor.Action1D.MOVE_LEFT);
-        else if (association.additionalAction1.equals(action))
-            executor.execute1d(association, EventExecutor.Action1D.MOVE_RIGHT);
-        else
-            executor.execute1d(association, EventExecutor.Action1D.RESET);
+        if (!configurationOpened && getVisibility()==VISIBLE) {
+            if (association.action.equals(action))
+                executor.execute1d(association, EventExecutor.Action1D.MOVE_LEFT);
+            else if (association.additionalAction1.equals(action))
+                executor.execute1d(association, EventExecutor.Action1D.MOVE_RIGHT);
+            else
+                executor.execute1d(association, EventExecutor.Action1D.RESET);
+        }
     }
 
     /*
@@ -280,7 +282,7 @@ public class OverlayView extends RelativeLayout implements ActionListener {
 
     @Override
     public void onActionStarts(@NonNull Action action) {
-        if (!configurationOpened) {
+        if (!configurationOpened && getVisibility()==VISIBLE) {
             if (map.containsKey(action)) {
                 Association association = map.get(action);
                 if (association.event != Event.MONODIMENSIONAL_SLIDING)
@@ -295,12 +297,18 @@ public class OverlayView extends RelativeLayout implements ActionListener {
 
     @Override
     public void onActionEnds(@NonNull Action action) {
-
+        if (!configurationOpened && getVisibility()==VISIBLE) {
+            if (map.containsKey(action)) {
+                Association association = map.get(action);
+                executor.stopExecuting(association);
+            } else
+                Log.d("OverlayView", "ho rilevato " + action.getName() + " ma non ho nessuna associazione");
+        }
     }
 
     @Override
     public void on2dMovement(float x, float y) {
-        if (!configurationOpened && map.containsKey(FACE_MOVEMENT_ACTION))
+        if (!configurationOpened && getVisibility()==VISIBLE && map.containsKey(FACE_MOVEMENT_ACTION))
             executor.execute2d(map.get(FACE_MOVEMENT_ACTION), x, y);
     }
 }
