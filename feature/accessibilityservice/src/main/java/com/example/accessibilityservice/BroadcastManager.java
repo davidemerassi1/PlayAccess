@@ -19,11 +19,15 @@ import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
 public class BroadcastManager extends BroadcastReceiver implements ActionListener {
     private Context context;
+    private CameraLifecycle cameraLifecycle;
 
-    public BroadcastManager(Context context) {
+    public BroadcastManager(Context context, CameraLifecycle cameraLifecycle) {
         this.context = context;
+        this.cameraLifecycle = cameraLifecycle;
         IntentFilter filter = new IntentFilter();
         filter.addAction("com.example.accessibilityservice.ACTION_REQUEST");
+        filter.addAction("com.example.accessibilityservice.NEED_CAMERA");
+        filter.addAction("com.example.accessibilityservice.NO_CAMERA");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.registerReceiver(this, filter, Context.RECEIVER_EXPORTED);
         } else
@@ -85,16 +89,24 @@ public class BroadcastManager extends BroadcastReceiver implements ActionListene
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals("com.example.accessibilityservice.ACTION_REQUEST")) {
-            List<Action> actions = MainModel.getInstance().getActions();
-            List<Action> lightenedActions = new ArrayList<>();
-            for (Action action : actions) {
-                if (!action.getName().equals("Espressione neutrale"))
-                    lightenedActions.add(action.lighten());
-            }
-            Intent intent1 = new Intent("com.example.accessibilityservice.ACTION_REPLY");
-            intent1.putExtra("actions", lightenedActions.toArray());
-            context.sendBroadcast(intent1);
+        switch (intent.getAction()) {
+            case "com.example.accessibilityservice.ACTION_REQUEST":
+                List<Action> actions = MainModel.getInstance().getActions();
+                List<Action> lightenedActions = new ArrayList<>();
+                for (Action action : actions) {
+                    if (!action.getName().equals("Espressione neutrale"))
+                        lightenedActions.add(action.lighten());
+                }
+                Intent intent1 = new Intent("com.example.accessibilityservice.ACTION_REPLY");
+                intent1.putExtra("actions", lightenedActions.toArray());
+                context.sendBroadcast(intent1);
+                break;
+            case "com.example.accessibilityservice.NEED_CAMERA":
+                cameraLifecycle.resume();
+                break;
+            case "com.example.accessibilityservice.NO_CAMERA":
+                cameraLifecycle.pause();
+                break;
         }
     }
 

@@ -38,36 +38,14 @@ public class MyAccessibilityService extends AccessibilityService {
     private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "my_accessibility_channel";
     private BroadcastManager broadcastManager;
-    private LifecycleOwner lifecycleOwner = new LifecycleOwner() {
-        @NonNull
-        @Override
-        public androidx.lifecycle.Lifecycle getLifecycle() {
-            return new Lifecycle() {
-                @Override
-                public void addObserver(@NonNull LifecycleObserver lifecycleObserver) {
-
-                }
-
-                @Override
-                public void removeObserver(@NonNull LifecycleObserver lifecycleObserver) {
-
-                }
-
-                @NonNull
-                @Override
-                public State getCurrentState() {
-                    return State.STARTED;
-                }
-            };
-        }
-    };
+    private CameraLifecycle cameraLifecycle = new CameraLifecycle();
     private MainModel mainModel = MainModel.getInstance();
 
     @OptIn(markerClass = androidx.camera.core.ExperimentalGetImage.class)
     @Override
     public void onServiceConnected() {
         Log.d(TAG, "onServiceConnected");
-        broadcastManager = new BroadcastManager(this);
+        broadcastManager = new BroadcastManager(this, cameraLifecycle);
 
         AccessibilityServiceInfo info = getServiceInfo();
         if (info != null && Build.VERSION.SDK_INT >= 34) {
@@ -79,7 +57,7 @@ public class MyAccessibilityService extends AccessibilityService {
 
         if (!MainModel.getInstance().getFacialExpressionActions().isEmpty()) {
             FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(broadcastManager)).init(
-                    this, lifecycleOwner
+                    this, cameraLifecycle
             );
         }
 
@@ -89,14 +67,26 @@ public class MyAccessibilityService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            if (event.getPackageName() != null && !event.getPackageName().toString().equals(activePackage)) {
-                activePackage = event.getPackageName().toString();
-                Log.d(TAG, "Package changed: " + activePackage);
-                Intent intent = new Intent("com.example.accessibilityservice.PACKAGE_CHANGED");
-                intent.putExtra("packageName", activePackage);
-                sendBroadcast(intent);
-            }
+        switch (event.getEventType()) {
+            case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
+                if (event.getPackageName() != null && !event.getPackageName().toString().equals(activePackage)) {
+                    activePackage = event.getPackageName().toString();
+                    Log.d(TAG, "Package changed: " + activePackage);
+                    Intent intent = new Intent("com.example.accessibilityservice.PACKAGE_CHANGED");
+                    intent.putExtra("packageName", activePackage);
+                    sendBroadcast(intent);
+                }
+                break;
+            case AccessibilityEvent.TYPE_ANNOUNCEMENT:
+                if (event.getText().toString().equals("[Camera needed]")) {
+                    Log.d(TAG, "Camera needed");
+                    cameraLifecycle.resume();
+                }
+                else if (event.getText().toString().equals("[Camera not needed]")) {
+                    Log.d(TAG, "Camera not needed");
+                    cameraLifecycle.pause();
+                }
+                break;
         }
     }
 

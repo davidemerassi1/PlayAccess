@@ -5,6 +5,7 @@ import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 import static android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
@@ -17,6 +18,7 @@ import android.view.InputDevice;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -45,17 +47,17 @@ import it.unimi.di.ewlab.iss.common.model.actions.Action;
 import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction;
 import it.unimi.di.ewlab.iss.common.model.actionsmodels.ButtonActionsModel;
 
-public class OverlayView extends RelativeLayout implements LifecycleOwner, ActionListener {
+public class OverlayView extends RelativeLayout implements ActionListener {
     private AssociationDao associationsDb;
     private Map<Action, Association> map = new HashMap<>();
     private boolean configurationOpened = false;
     private ConfigurationView configurationView;
-    private LifecycleRegistry lifecycleRegistry;
     private MutableLiveData<Boolean> needCamera = new MutableLiveData<>(false);
     public static final Action FACE_MOVEMENT_ACTION;
     private ButtonActionsModel buttonActionsModel;
     MutableLiveData<Association[]> associations = new MutableLiveData<>();
 
+    //TODO: spostare in Action
     static {
         FACE_MOVEMENT_ACTION = new Action(0, "Face Movement", Action.ActionType.FACIAL_EXPRESSION) {
             @Override
@@ -78,7 +80,7 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
     }
 
     @OptIn(markerClass = ExperimentalGetImage.class)
-    public void init(WindowManager windowManager, String applicationPackage) {
+    public void init(WindowManager windowManager) {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -98,7 +100,6 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
 
         configurationView = findViewById(R.id.configurationView);
         configurationView.setup(associationsDb);
-        changeGame(applicationPackage);
 
         expandedView.findViewById(R.id.closeConfigurationBtn).setOnClickListener(v -> {
             new Thread(() -> executor.releaseAll()).start();
@@ -173,18 +174,22 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
             );
         }*/
 
-        lifecycleRegistry = new LifecycleRegistry(this);
         //new InputDeviceChecker(getContext(), this);
 
         needCamera.observeForever(nc -> {
             if (nc) {
-                lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
+                //lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
+                //announceForAccessibility("Camera needed");
+                getContext().sendBroadcast(new Intent("com.example.accessibilityservice.NEED_CAMERA"));
             } else {
-                lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
+                //lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
+                //announceForAccessibility("Camera not needed");
+                getContext().sendBroadcast(new Intent("com.example.accessibilityservice.NO_CAMERA"));
             }
         });
 
         associations.observeForever(associations -> {
+            Log.d("OverlayView", "init: " + associations.length);
             for (Association association : associations) {
                 if (association.action.getActionType() == Action.ActionType.FACIAL_EXPRESSION) {
                     Log.d("OverlayView", "init: need camera");
@@ -205,6 +210,7 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
 
     public void changeGame(String applicationPackage) {
         this.applicationPackage = applicationPackage;
+
         new Thread(() -> {
             needCamera.postValue(false);
             associations.postValue(associationsDb.getAssociations(applicationPackage));
@@ -229,12 +235,12 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
     public void start() {
         setVisibility(VISIBLE);
         if (needCamera.getValue())
-            lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
+            getContext().sendBroadcast(new Intent("com.example.accessibilityservice.NEED_CAMERA"));
     }
 
     public void stop() {
         setVisibility(GONE);
-        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
+        getContext().sendBroadcast(new Intent("com.example.accessibilityservice.NO_CAMERA"));
     }
 
     private void execute1d(Association association, Action action) {
@@ -246,12 +252,7 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
             executor.execute1d(association, EventExecutor.Action1D.RESET);
     }
 
-    @NonNull
-    @Override
-    public Lifecycle getLifecycle() {
-        return lifecycleRegistry;
-    }
-
+    /*
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         Log.d("OverlayView", "onGenericMotionEvent: " + event.getSource() + " " + event.getAction() + " " + event.getAxisValue(MotionEvent.AXIS_X) + " " + event.getAxisValue(MotionEvent.AXIS_Y));
@@ -275,6 +276,7 @@ public class OverlayView extends RelativeLayout implements LifecycleOwner, Actio
         }
         return false;
     }
+    */
 
     @Override
     public void onActionStarts(@NonNull Action action) {

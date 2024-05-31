@@ -33,10 +33,15 @@ public class OverlayService extends Service {
         instance = this;
         WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         overlay = (OverlayView) LayoutInflater.from(this).inflate(R.layout.overlay_layout, null);
-        overlay.init(windowManager, "prova");
+        overlay.init(windowManager);
         actionsBroadcastReceiver = new ActionsBroadcastReceiver(overlay, this);
         new ProcessMonitor(overlay);
         showNotification();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
     }
 
     public static OverlayService getInstance() {
@@ -74,5 +79,11 @@ public class OverlayService extends Service {
 
     public void requestActions(MutableLiveData<List<Action>> actionsLiveData) {
         actionsBroadcastReceiver.requestActions(actionsLiveData);
+    }
+
+    @Override
+    public void onDestroy() {
+        sendBroadcast(new Intent("com.example.accessibilityservice.NO_CAMERA"));
+        super.onDestroy();
     }
 }
