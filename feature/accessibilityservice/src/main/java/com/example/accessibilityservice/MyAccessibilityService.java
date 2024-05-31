@@ -20,6 +20,8 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 
@@ -40,7 +42,23 @@ public class MyAccessibilityService extends AccessibilityService {
         @NonNull
         @Override
         public androidx.lifecycle.Lifecycle getLifecycle() {
-            return new LifecycleRegistry(this);
+            return new Lifecycle() {
+                @Override
+                public void addObserver(@NonNull LifecycleObserver lifecycleObserver) {
+
+                }
+
+                @Override
+                public void removeObserver(@NonNull LifecycleObserver lifecycleObserver) {
+
+                }
+
+                @NonNull
+                @Override
+                public State getCurrentState() {
+                    return State.STARTED;
+                }
+            };
         }
     };
     private MainModel mainModel = MainModel.getInstance();

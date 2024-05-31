@@ -154,8 +154,11 @@ class FacialExpressionActionsRecognizer private constructor(
                 }
                 val face = faces[0]
 
-                val x = -face.headEulerAngleY / 30
-                val y = -(face.headEulerAngleX - 10) / 30
+                var x = -face.headEulerAngleY / 30
+                var y = -(face.headEulerAngleX - 10) / 30
+                x = adjustRange(x)
+                y = adjustRange(y)
+
                 send2dMovement(x, y)
             }
             .addOnFailureListener { e ->
@@ -164,6 +167,10 @@ class FacialExpressionActionsRecognizer private constructor(
             .addOnCompleteListener {
                 imageProxy.close()
             }
+    }
+
+    private fun adjustRange(x: Float): Float {
+        return if (x > 1) 1F else if (x < -1) -1F else x
     }
 
     override fun onActionStarts(action: Action) {

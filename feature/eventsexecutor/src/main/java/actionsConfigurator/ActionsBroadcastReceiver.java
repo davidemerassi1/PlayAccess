@@ -27,6 +27,7 @@ public class ActionsBroadcastReceiver extends BroadcastReceiver {
         filter.addAction("com.example.accessibilityservice.ACTION_END");
         filter.addAction("com.example.accessibilityservice.ACTION_REPLY");
         filter.addAction("com.example.accessibilityservice.PACKAGE_CHANGED");
+        filter.addAction("com.example.accessibilityservice.ACTION_2D_MOVEMENT");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.registerReceiver(this, filter, Context.RECEIVER_EXPORTED);
         } else
@@ -54,6 +55,12 @@ public class ActionsBroadcastReceiver extends BroadcastReceiver {
                 break;
             case "com.example.accessibilityservice.PACKAGE_CHANGED":
                 MainModel.getInstance().setActivePackage(intent.getStringExtra("packageName"));
+                break;
+            case "com.example.accessibilityservice.ACTION_2D_MOVEMENT":
+                float x = intent.getFloatExtra("x", 0);
+                float y = intent.getFloatExtra("y", 0);
+                overlay.on2dMovement(x, y);
+                Log.d("ActionsBroadcastReceiver", "2D Movement: x=" + x + ", y=" + y);
                 break;
         }
     }

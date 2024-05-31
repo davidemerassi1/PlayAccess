@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class Action implements Serializable {
+public class Action implements Serializable {
 
     public enum ActionType {
         BUTTON (ButtonAction.class),
@@ -37,6 +37,13 @@ public abstract class Action implements Serializable {
         this.actionId = actionId;
         this.name = name.trim();
         this.actionType = actionType.name();
+    }
+
+    protected Action(String name, String ActionType, boolean is2d) {
+        this.name = name;
+        this.actionType = ActionType;
+        this.is2d = is2d;
+        this.actionId = 0;
     }
 
     public void setIs2d(boolean is2d) {
@@ -80,5 +87,9 @@ public abstract class Action implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(name);
+    }
+
+    public Action lighten() {
+        return new Action(name, actionType, is2d);
     }
 }

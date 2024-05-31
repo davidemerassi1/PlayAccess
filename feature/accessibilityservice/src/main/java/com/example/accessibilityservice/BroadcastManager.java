@@ -11,6 +11,7 @@ import com.example.actionsrecognizer.facialexpressionactionsrecognizer.ActionLis
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.unimi.di.ewlab.iss.common.model.MainModel;
@@ -32,16 +33,21 @@ public class BroadcastManager extends BroadcastReceiver implements ActionListene
     @Override
     public void onActionStarts(@NonNull Action action) {
         Log.d("BroadcastManager", "onActionStarts: " + action.getName());
+        sendAction(action, ActionType.ACTION_START);
     }
 
     @Override
     public void onActionEnds(@NonNull Action action) {
         Log.d("BroadcastManager", "onActionEnds: " + action.getName());
+        sendAction(action, ActionType.ACTION_END);
     }
 
     @Override
     public void on2dMovement(float x, float y) {
-        Log.d("BroadcastManager", "on2dMovement: " + x + " " + y);
+        Intent intent = new Intent("com.example.accessibilityservice.ACTION_2D_MOVEMENT");
+        intent.putExtra("x", x);
+        intent.putExtra("y", y);
+        context.sendBroadcast(intent);
     }
 
     public void sendKeyEvent(ActionType actionType, int keyCode, int source) {
@@ -73,7 +79,7 @@ public class BroadcastManager extends BroadcastReceiver implements ActionListene
             default:
                 return;
         }
-        intent.putExtra("action", action);
+        intent.putExtra("action", action.lighten());
         context.sendBroadcast(intent);
     }
 
@@ -81,8 +87,13 @@ public class BroadcastManager extends BroadcastReceiver implements ActionListene
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals("com.example.accessibilityservice.ACTION_REQUEST")) {
             List<Action> actions = MainModel.getInstance().getActions();
+            List<Action> lightenedActions = new ArrayList<>();
+            for (Action action : actions) {
+                if (!action.getName().equals("Espressione neutrale"))
+                    lightenedActions.add(action.lighten());
+            }
             Intent intent1 = new Intent("com.example.accessibilityservice.ACTION_REPLY");
-            intent1.putExtra("actions", actions.toArray());
+            intent1.putExtra("actions", lightenedActions.toArray());
             context.sendBroadcast(intent1);
         }
     }
