@@ -30,9 +30,9 @@ public abstract class ActionsRecognizer {
         }
     }
 
-    protected void send2dMovement(float x, float y){
+    protected void send2dMovement(Action action, float x, float y){
         for(ActionListener listener: actionListeners){
-            listener.on2dMovement(x, y);
+            listener.on2dMovement(action, x, y);
         }
     }
     

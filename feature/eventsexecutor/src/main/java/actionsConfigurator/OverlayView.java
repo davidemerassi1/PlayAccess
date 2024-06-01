@@ -53,21 +53,8 @@ public class OverlayView extends RelativeLayout implements ActionListener {
     private boolean configurationOpened = false;
     private ConfigurationView configurationView;
     private MutableLiveData<Boolean> needCamera = new MutableLiveData<>(false);
-    public static final Action FACE_MOVEMENT_ACTION;
     private ButtonActionsModel buttonActionsModel;
     MutableLiveData<Association[]> associations = new MutableLiveData<>();
-
-    //TODO: spostare in Action
-    static {
-        FACE_MOVEMENT_ACTION = new Action(0, "Face Movement", Action.ActionType.FACIAL_EXPRESSION) {
-            @Override
-            public boolean equals(Object obj) {
-                return this == obj;
-            }
-        };
-
-        FACE_MOVEMENT_ACTION.setIs2d(true);
-    }
 
     private String applicationPackage;
 
@@ -307,8 +294,8 @@ public class OverlayView extends RelativeLayout implements ActionListener {
     }
 
     @Override
-    public void on2dMovement(float x, float y) {
-        if (!configurationOpened && getVisibility()==VISIBLE && map.containsKey(FACE_MOVEMENT_ACTION))
-            executor.execute2d(map.get(FACE_MOVEMENT_ACTION), x, y);
+    public void on2dMovement(Action action, float x, float y) {
+        if (!configurationOpened && getVisibility()==VISIBLE && map.containsKey(action))
+            executor.execute2d(map.get(action), x, y);
     }
 }

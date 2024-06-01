@@ -53,7 +53,7 @@ public class ActionsBroadcastReceiver extends BroadcastReceiver {
                     for (Object a : actionsArray) {
                         actionList.add((Action) a);
                     }
-                    actionList.add(OverlayView.FACE_MOVEMENT_ACTION);
+                    actionList.add(Action.FACE_MOVEMENT_ACTION);
                     actionsLiveData.setValue(actionList);
                 }
                 actionsLiveData = null;
@@ -62,9 +62,10 @@ public class ActionsBroadcastReceiver extends BroadcastReceiver {
                 MainModel.getInstance().setActivePackage(intent.getStringExtra("packageName"));
                 break;
             case "com.example.accessibilityservice.ACTION_2D_MOVEMENT":
+                action = (Action) intent.getSerializableExtra("action");
                 float x = intent.getFloatExtra("x", 0);
                 float y = intent.getFloatExtra("y", 0);
-                overlay.on2dMovement(x, y);
+                overlay.on2dMovement(action, x, y);
                 Log.d("ActionsBroadcastReceiver", "2D Movement: x=" + x + ", y=" + y);
                 break;
         }

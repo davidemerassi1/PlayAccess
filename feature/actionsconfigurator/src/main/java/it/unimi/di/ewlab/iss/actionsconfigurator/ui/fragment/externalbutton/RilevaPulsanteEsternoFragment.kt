@@ -81,6 +81,7 @@ class RilevaPulsanteEsternoFragment : Fragment() {
             Toast.LENGTH_SHORT
         ).show()
 
+        MainModel.getInstance().setTempButtonAction(null);
         startScanning()
     }
 

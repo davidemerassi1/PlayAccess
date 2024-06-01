@@ -159,7 +159,7 @@ class FacialExpressionActionsRecognizer private constructor(
                 x = adjustRange(x)
                 y = adjustRange(y)
 
-                send2dMovement(x, y)
+                send2dMovement(Action.FACE_MOVEMENT_ACTION, x, y)
             }
             .addOnFailureListener { e ->
                 // Gestisci eventuali errori durante il rilevamento dei volti
@@ -181,8 +181,8 @@ class FacialExpressionActionsRecognizer private constructor(
         endAction(action)
     }
 
-    override fun on2dMovement(x: Float, y: Float) {
-        send2dMovement(x, y)
+    override fun on2dMovement(action: Action, x: Float, y: Float) {
+        send2dMovement(action, x, y)
     }
 
     companion object {

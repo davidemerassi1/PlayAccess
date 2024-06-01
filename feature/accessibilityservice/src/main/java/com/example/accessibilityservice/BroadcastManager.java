@@ -49,8 +49,9 @@ public class BroadcastManager extends BroadcastReceiver implements ActionListene
     }
 
     @Override
-    public void on2dMovement(float x, float y) {
+    public void on2dMovement(Action action, float x, float y) {
         Intent intent = new Intent("com.example.accessibilityservice.ACTION_2D_MOVEMENT");
+        intent.putExtra("action", action.lighten());
         intent.putExtra("x", x);
         intent.putExtra("y", y);
         context.sendBroadcast(intent);

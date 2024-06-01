@@ -92,4 +92,6 @@ public class Action implements Serializable {
     public Action lighten() {
         return new Action(name, actionType, is2d);
     }
+
+    public static Action FACE_MOVEMENT_ACTION = new Action("Face Movement", "FACIAL_EXPRESSION", true);
 }

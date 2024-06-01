@@ -111,7 +111,8 @@ public class MyAccessibilityService extends AccessibilityService {
             if (buttonAction != null) {
                 broadcastManager.onActionEnds(buttonAction);
             }
-            MainModel.getInstance().setTempButtonAction(new ButtonAction(mainModel.getNextActionId(), KeyEvent.keyCodeToString(event.getKeyCode()), String.valueOf(event.getSource()), String.valueOf(event.getKeyCode())));
+            if (mainModel.getTempButtonAction().getValue() == null)
+                MainModel.getInstance().setTempButtonAction(new ButtonAction(mainModel.getNextActionId(), KeyEvent.keyCodeToString(event.getKeyCode()), String.valueOf(event.getSource()), String.valueOf(event.getKeyCode())));
         }
         return true;
     }
@@ -121,14 +122,14 @@ public class MyAccessibilityService extends AccessibilityService {
     public void onMotionEvent(@NonNull MotionEvent event) {
         Log.d(TAG, "MotionEvent: " + event + " x: " + event.getX() + " y: " + event.getY());
 
-        /*val action:ButtonAction
-        if (KeyEvent.keyCodeToString(keyCode).startsWith("KEYCODE_DPAD")) {
-            //TODO: da verificare il codice: 19 corrisponde a KEYCODE_DPAD_UP
-            action = ButtonAction(mainModel.nextActionId, KeyEvent.keyCodeToString(keyCode), source.toString(), 19.toString())
-            action.setIs2d(true)
-        } else
-            action = ButtonAction(mainModel.nextActionId, KeyEvent.keyCodeToString(keyCode), source.toString(), keyCode.toString())
-        mainModel.setTempButtonAction(action)*/
+        ButtonAction prevAction = mainModel.getTempButtonAction().getValue();
+        if (prevAction == null) {
+            ButtonAction action = new ButtonAction(mainModel.getNextActionId(), KeyEvent.keyCodeToString(19), String.valueOf(event.getSource()), String.valueOf(19));
+            action.setIs2d(true);
+            mainModel.setTempButtonAction(action);
+        }
+        if (mainModel.getButtonActionByKeyCode(19) != null)
+            broadcastManager.on2dMovement(mainModel.getButtonActionByKeyCode(19), event.getX(), event.getY());
 
         super.onMotionEvent(event);
     }

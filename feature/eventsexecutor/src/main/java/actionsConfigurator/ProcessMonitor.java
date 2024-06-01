@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -37,6 +38,7 @@ public class ProcessMonitor {
             throw new IllegalStateException("No foreground app");
         }
         activeProcess = MainModel.getInstance().getActivePackage();
+        activeProcess.setValue(sandboxName);
 
         Handler handler = new Handler(Looper.getMainLooper());
         Runnable runnable = new Runnable() {
@@ -78,9 +80,9 @@ public class ProcessMonitor {
     }
 
     private void showOverlay() {
-        if (activeProcess.getValue().equals(sandboxName) && areThereActiveApps) {
+        if (activeProcess.getValue().equals(sandboxName) && areThereActiveApps)
             overlayView.start();
-        } else
+        else if (overlayView.getVisibility() == View.VISIBLE)
             overlayView.stop();
     }
 }

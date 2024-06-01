@@ -9,5 +9,5 @@ public interface ActionListener {
 
     void onActionEnds(@NonNull Action action);
 
-    void on2dMovement(float x, float y);
+    void on2dMovement(Action action, float x, float y);
 }
