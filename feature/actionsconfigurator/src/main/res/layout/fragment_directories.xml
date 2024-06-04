@@ -31,15 +31,6 @@
 
             <include
                 layout="@layout/action_directory"
-                android:id="@+id/gesturesDirectory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:text="@{@string/actionmanager_gestures_directory}"
-                app:background="@{@drawable/orange_button_background}"
-                 />
-
-            <include
-                layout="@layout/action_directory"
                 android:id="@+id/externalButtonsDirectory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

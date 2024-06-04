@@ -70,20 +70,10 @@ public class MainModel {
     private MainModel(Context context) {
         jsonManager = new JsonManager(context);
         neutralFacialExpressionName = context.getString(R.string.feraction_neutral_expression_name);
-        initScreenGestureActions(context);
 
         associationsDb = Room.databaseBuilder(context, AssociationsDb.class, "associations")
                 .fallbackToDestructiveMigration()
                 .build();
-    }
-
-    private void initScreenGestureActions(Context context) {
-        String[] screenGesturesNames = context.getResources().getStringArray(R.array.screenGesturesNames);
-        for (int i = 0; i < DEFAULT_SCREEN_GESTURES.size(); i++) {
-            DEFAULT_SCREEN_GESTURES.get(i).setName(
-                    screenGesturesNames[i]
-            );
-        }
     }
 
     //METODO PER OTTENERE UN'ISTANZA DEL MainModel
@@ -180,74 +170,6 @@ public class MainModel {
         }
         return result;
     }
-
-    private static final List<ScreenGestureAction> DEFAULT_SCREEN_GESTURES = List.of(
-            new ScreenGestureAction(
-                    2,
-                    "Tocco Schermo Alto",
-                    GestureId.HR_UP
-            ),
-            new ScreenGestureAction(
-                    3,
-                    "Tocco Schermo Basso",
-                    GestureId.HR_DOWN
-            ),
-            new ScreenGestureAction(
-                    4,
-                    "Tocco Schermo Intero",
-                    GestureId.FULL_SCREEN
-            ),
-            new ScreenGestureAction(
-                    5,
-                    "Tocco Schermo Sinistra",
-                    GestureId.VR_LEFT
-            ),
-            new ScreenGestureAction(
-                    6,
-                    "Tocco Schermo Destra",
-                    GestureId.VR_RIGHT
-            ),
-            new ScreenGestureAction(
-                    7,
-                    "Divisione X: Tocco Schermo Alto",
-                    GestureId.X_UP
-            ),
-            new ScreenGestureAction(
-                    8,
-                    "Divisione X: Tocco Schermo Basso",
-                    GestureId.X_DOWN
-            ),
-            new ScreenGestureAction(
-                    9,
-                    "Divisione X: Tocco Schermo Sinistra",
-                    GestureId.X_LEFT
-            ),
-            new ScreenGestureAction(
-                    10,
-                    "Divisione X: Tocco Schermo Destra",
-                    GestureId.X_RIGHT
-            ),
-            new ScreenGestureAction(
-                    11,
-                    "Swipe verso alto",
-                    GestureId.SWIPE_UP
-            ),
-            new ScreenGestureAction(
-                    12,
-                    "Swipe verso basso",
-                    GestureId.SWIPE_DOWN
-            ),
-            new ScreenGestureAction(
-                    13,
-                    "Swipe verso sinistra",
-                    GestureId.SWIPE_LEFT
-            ),
-            new ScreenGestureAction(
-                    14,
-                    "Swipe verso destra",
-                    GestureId.SWIPE_RIGHT
-            )
-    );
 
     @Nullable
     public FacialExpressionAction getNeutralFacialExpressionAction() {
@@ -577,12 +499,6 @@ public class MainModel {
 
     public void writeGamesJson() {
         JsonManager.writeGames(getGames());
-    }
-
-    public void loadScreenGestures() {
-        for (Action action : DEFAULT_SCREEN_GESTURES)
-            actions.put(action.getActionId(), action);
-        MainModel.getInstance().writeActionsJson();
     }
 
     /**

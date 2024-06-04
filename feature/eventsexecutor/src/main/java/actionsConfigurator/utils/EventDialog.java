@@ -41,7 +41,6 @@ public class EventDialog extends FrameLayout {
     private Event event;
     private RadioGroup radioGroup;
     private EventDialog secondaryEventDialog;
-    private TextView touchOptionText;
     private TextView faceOptionText;
     private TextView controllerOptionText;
     private MutableLiveData<List<Action>> availableActions = new MutableLiveData<>();
@@ -209,12 +208,10 @@ public class EventDialog extends FrameLayout {
             }
         });
 
-        touchOptionText = findViewById(R.id.touchOptionTextView);
         faceOptionText = findViewById(R.id.faceOptionTextView);
         controllerOptionText = findViewById(R.id.externalButtonOptionTextView);
         faceOptionText.setOnClickListener(selectListener);
         controllerOptionText.setOnClickListener(selectListener);
-        touchOptionText.setOnClickListener(selectListener);
 
         findViewById(R.id.okButton).setOnClickListener(okListener);
         findViewById(R.id.cancelButton).setOnClickListener(cancelListener);
@@ -249,7 +246,7 @@ public class EventDialog extends FrameLayout {
             if (actions != null) {
                 findViewById(R.id.progressBar).setVisibility(GONE);
                 findViewById(R.id.availableActionsLayout).setVisibility(VISIBLE);
-                touchOptionText.performClick();
+                controllerOptionText.performClick();
             }
         });
         requestAvailableActions();
@@ -286,14 +283,12 @@ public class EventDialog extends FrameLayout {
             }
         });
 
-        touchOptionText = findViewById(R.id.touchOptionTextView);
         faceOptionText = findViewById(R.id.faceOptionTextView);
         controllerOptionText = findViewById(R.id.externalButtonOptionTextView);
         faceOptionText.setOnClickListener(selectListener);
         controllerOptionText.setOnClickListener(selectListener);
-        touchOptionText.setOnClickListener(selectListener);
 
-        touchOptionText.performClick();
+        controllerOptionText.performClick();
 
         findViewById(R.id.okButton).setOnClickListener(okListener);
         findViewById(R.id.cancelButton).setOnClickListener(cancelListener);
@@ -304,8 +299,6 @@ public class EventDialog extends FrameLayout {
         faceOptionText.setTypeface(Typeface.DEFAULT);
         controllerOptionText.setTextColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
         controllerOptionText.setTypeface(Typeface.DEFAULT);
-        touchOptionText.setTextColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
-        touchOptionText.setTypeface(Typeface.DEFAULT);
         ((TextView) v).setTextColor(ContextCompat.getColor(getContext(), R.color.primaryColor));
         ((TextView) v).setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 

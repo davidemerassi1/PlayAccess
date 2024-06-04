@@ -52,23 +52,6 @@
                     android:layout_marginBottom="10dp"
                     android:orientation="horizontal">
 
-                    <!-- Opzione 1 -->
-                    <TextView
-                        android:id="@+id/touchOptionTextView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center"
-                        android:tag="SCREEN_GESTURE"
-                        android:text="TOCCO"
-                        android:textColor="@color/primaryColor"
-                        android:textSize="16dp"
-                        android:textStyle="bold" />
-
-                    <!-- Opzione 2 -->
                     <TextView
                         android:id="@+id/externalButtonOptionTextView"
                         android:layout_width="0dp"

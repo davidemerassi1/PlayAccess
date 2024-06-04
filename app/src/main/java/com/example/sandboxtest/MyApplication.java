@@ -13,7 +13,6 @@ public class MyApplication extends Application {
         super.onCreate();
 
         MainModel.getInstance(this).initFolders(this);
-        MainModel.getInstance().loadScreenGestures();
         String sandboxPackageName = SandboxVerifier.getSandboxPackageName(this);
         MainModel.getInstance().setSandboxPackageName(sandboxPackageName);
         MainModel.getInstance().setSandboxName(getSandboxName(sandboxPackageName));

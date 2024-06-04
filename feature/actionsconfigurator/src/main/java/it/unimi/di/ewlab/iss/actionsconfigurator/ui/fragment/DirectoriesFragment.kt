@@ -74,10 +74,6 @@ class DirectoriesFragment : Fragment(), InfoFragment {
                 )
         }
 
-        binding.gesturesDirectory.root.setOnClickListener{
-            navigateToActionsListFragment(Action.ActionType.SCREEN_GESTURE)
-        }
-
         binding.externalButtonsDirectory.root.setOnClickListener{
             navigateToActionsListFragment(Action.ActionType.BUTTON)
         }
