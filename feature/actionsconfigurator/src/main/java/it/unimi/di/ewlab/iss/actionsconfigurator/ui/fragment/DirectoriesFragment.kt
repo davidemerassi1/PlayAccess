@@ -59,11 +59,17 @@ class DirectoriesFragment : Fragment(), InfoFragment {
     private fun setUi() {
         if (MainModel.getInstance().facialExpressionActions.isEmpty())
             binding.facialExpressionsDirectory.root.visibility = View.GONE
-        else binding.facialExpressionsDirectory.root.visibility = View.VISIBLE
+        else {
+            binding.facialExpressionsDirectory.root.visibility = View.VISIBLE
+            binding.noActionsTextView.visibility = View.GONE
+        }
 
         if (MainModel.getInstance().buttonActions.isEmpty())
             binding.externalButtonsDirectory.root.visibility = View.GONE
-        else binding.externalButtonsDirectory.root.visibility = View.VISIBLE
+        else {
+            binding.externalButtonsDirectory.root.visibility = View.VISIBLE
+            binding.noActionsTextView.visibility = View.GONE
+        }
     }
 
     private fun setListeners(){

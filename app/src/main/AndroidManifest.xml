@@ -30,7 +30,6 @@
             android:name=".ui.intro.PlayAccessIntroActivity"
             android:exported="true"
             android:label="PlayAccess"
-            android:noHistory="true"
             android:taskAffinity="">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -55,11 +55,9 @@ public class MyAccessibilityService extends AccessibilityService {
             setServiceInfo(info);
         }
 
-        if (!MainModel.getInstance().getFacialExpressionActions().isEmpty()) {
-            FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(broadcastManager)).init(
+        FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(broadcastManager)).init(
                     this, cameraLifecycle
-            );
-        }
+        );
 
         // Mostra la notifica
         showNotification();
