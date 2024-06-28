@@ -131,7 +131,7 @@ class RecordFacialExpressionFragment : Fragment(),
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause")
-        cameraProvider?.unbindAll()
+        //cameraProvider?.unbindAll()
         frameHandler.stop()
         frameHandlerThread.interrupt()
     }
@@ -232,7 +232,7 @@ class RecordFacialExpressionFragment : Fragment(),
                 return@addListener
             }
 
-            cameraProvider?.unbindAll()
+            //cameraProvider?.unbindAll()
             cameraProvider?.bindToLifecycle(requireActivity(), cameraSelector, analysisUseCase)
             binding.loadingCameraProgressBar.visibility = View.GONE
         }, ContextCompat.getMainExecutor(requireContext()))

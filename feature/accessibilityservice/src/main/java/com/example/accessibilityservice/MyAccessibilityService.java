@@ -6,6 +6,7 @@ import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Notification;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -73,16 +74,6 @@ public class MyAccessibilityService extends AccessibilityService {
                     Intent intent = new Intent("com.example.accessibilityservice.PACKAGE_CHANGED");
                     intent.putExtra("packageName", activePackage);
                     sendBroadcast(intent);
-                }
-                break;
-            case AccessibilityEvent.TYPE_ANNOUNCEMENT:
-                if (event.getText().toString().equals("[Camera needed]")) {
-                    Log.d(TAG, "Camera needed");
-                    cameraLifecycle.resume();
-                }
-                else if (event.getText().toString().equals("[Camera not needed]")) {
-                    Log.d(TAG, "Camera not needed");
-                    cameraLifecycle.pause();
                 }
                 break;
         }

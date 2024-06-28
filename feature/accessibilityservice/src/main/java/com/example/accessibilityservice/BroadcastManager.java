@@ -72,9 +72,11 @@ public class BroadcastManager extends BroadcastReceiver implements ActionListene
                 context.sendBroadcast(intent1);
                 break;
             case "com.example.accessibilityservice.NEED_CAMERA":
+                Log.d("BroadcastManager", "NEED_CAMERA");
                 cameraLifecycle.resume();
                 break;
             case "com.example.accessibilityservice.NO_CAMERA":
+                Log.d("BroadcastManager", "NO_CAMERA");
                 cameraLifecycle.pause();
                 break;
         }

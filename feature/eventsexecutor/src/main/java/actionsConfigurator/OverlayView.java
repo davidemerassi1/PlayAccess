@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
@@ -272,6 +273,7 @@ public class OverlayView extends RelativeLayout implements ActionListener {
         if (!configurationOpened && getVisibility()==VISIBLE) {
             if (map.containsKey(action)) {
                 Association association = map.get(action);
+                Toast.makeText(getContext(), action.getName(), Toast.LENGTH_SHORT).show();
                 if (association.event != Event.MONODIMENSIONAL_SLIDING)
                     executor.execute(association);
                 else {

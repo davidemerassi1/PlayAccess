@@ -11,6 +11,7 @@ import android.util.Log
 import android.util.Size
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageProxy
+import com.google.mediapipe.framework.MediaPipeException
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.framework.image.MPImage
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
@@ -219,7 +220,12 @@ import it.unimi.di.ewlab.iss.common.utils.Utils
     }
 
     private fun detectAsync(mpImage: MPImage, frameTime: Long) {
-        landmarkExtractor?.detectAsync(mpImage, frameTime)
+        try {
+            landmarkExtractor?.detectAsync(mpImage, frameTime)
+        } catch (e: MediaPipeException) {
+            Log.e(TAG, "MediaPipeException: ${e.message}")
+            //isProcessingFrame = false
+        }
         // As we're using running mode LIVE_STREAM, the landmark result will
         // be returned in returnLivestreamResult function
     }

@@ -126,7 +126,7 @@ class FacialExpressionActionsRecognizer private constructor(
                 }
             }
 
-            cameraProvider.unbindAll()
+            //cameraProvider.unbindAll()
             cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, analysisUseCase)
 
         }, ContextCompat.getMainExecutor(context))

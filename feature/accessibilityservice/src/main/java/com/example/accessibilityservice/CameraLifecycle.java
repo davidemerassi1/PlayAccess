@@ -1,5 +1,12 @@
 package com.example.accessibilityservice;
 
+
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.content.Context;
+import android.hardware.camera2.CameraManager;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
@@ -13,7 +20,7 @@ public class CameraLifecycle implements LifecycleOwner {
     }
 
     public void resume() {
-        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
+        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
     }
 
     public void pause() {
