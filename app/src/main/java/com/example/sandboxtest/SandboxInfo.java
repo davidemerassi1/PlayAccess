@@ -16,6 +16,7 @@ import com.example.sandboxtest.ui.intro.PlayAccessIntroActivity;
 
 import java.util.List;
 
+import it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity.MainActivityConfAzioni;
 import it.unimi.di.ewlab.iss.common.model.MainModel;
 
 public class SandboxInfo extends AppCompatActivity {
@@ -45,6 +46,12 @@ public class SandboxInfo extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
+
+        findViewById(R.id.goToConfiguratorButton).setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainActivityConfAzioni.class);
+            startActivity(intent);
+            finish();
+        });
     }
 
     private String getSandboxName(String packageName) {

@@ -75,5 +75,22 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="@dimen/default_margin" />
 
+    <Button
+        android:id="@+id/goToConfiguratorButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin_medium"
+        android:layout_marginBottom="@dimen/default_margin_medium"
+        android:textColor="@color/primaryColor"
+        android:background="@color/transparent"
+        android:gravity="center"
+        android:text="Vai al configuratore azioni"
+        android:textAlignment="center"
+        android:textSize="@dimen/H4_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="@dimen/default_margin" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
