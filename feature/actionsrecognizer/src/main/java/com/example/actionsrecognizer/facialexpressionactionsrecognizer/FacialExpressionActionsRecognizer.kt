@@ -36,6 +36,7 @@ class FacialExpressionActionsRecognizer private constructor(
     private lateinit var frameHandlerThread: Thread
 
     private var isInitialized = false
+    private lateinit var fsm: FiniteStateMachine
 
     private lateinit var faceDetector: FaceDetector
 
@@ -80,7 +81,7 @@ class FacialExpressionActionsRecognizer private constructor(
         context: Context,
         feModel: FacialExpressionActionsModel,
     ) {
-        val fsm = FiniteStateMachine(feModel, this)
+        fsm = FiniteStateMachine(feModel, this)
         val filter =
             ClassificationsFilter(Configuration.Settings.FacialExpressionPrecision.MEDIUM, fsm)
 
@@ -92,6 +93,13 @@ class FacialExpressionActionsRecognizer private constructor(
         frameHandler.trainClassifier(feModel.actions)
 
         frameHandler.setClassifierPrecision(0.80F)
+    }
+
+    fun updateActions(actions: List<Action>?){
+        this.actions = actions
+        val feModel = initFeModel()
+        fsm.updateActions(feModel)
+        frameHandler.trainClassifier(feModel.actions)
     }
 
 

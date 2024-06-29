@@ -41,10 +41,11 @@ public class EventExecutor {
             MotionEvent.PointerCoords coords = createCoords(targetX, targetY + statusBarHeight);
             pointerCoords.add(coords);
             actions.add(association);
-            Log.d("ActionExecutor", "properties size: " + pointerProperties.size() + "coords size: " + pointerCoords.size() + "events size: " + actions.size());
             MotionEvent.PointerProperties[] propertiesArray = pointerProperties.toArray(new MotionEvent.PointerProperties[0]);
             MotionEvent.PointerCoords[] coordsArray = pointerCoords.toArray(new MotionEvent.PointerCoords[0]);
             long now = SystemClock.uptimeMillis();
+            Log.d("ActionExecutor", "properties size: " + pointerProperties.size() + " coords size: " + pointerCoords.size() + " events size: " + actions.size() + " time: " + now + "id: " + properties.id);
+
             MotionEvent touchEvent;
             switch (pointerCoords.size()) {
                 case 1:
@@ -140,6 +141,7 @@ public class EventExecutor {
     }
 
     public void execute(Association association) {
+        Log.d("ActionExecutor", "Executing event");
         if (actions.contains(association)) {
             Log.d("ActionExecutor", "Event already in progress");
             return;

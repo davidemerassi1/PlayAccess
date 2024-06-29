@@ -4,6 +4,8 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import it.unimi.di.ewlab.iss.common.model.actions.Action;
+
 @Dao
 public interface AssociationDao {
     @Insert
@@ -17,4 +19,7 @@ public interface AssociationDao {
 
     @Query("DELETE FROM Association WHERE applicationPackage = :applicationPackage")
     void deleteAssociations(String applicationPackage);
+
+    @Query("DELETE FROM Association WHERE `action` = :action")
+    void deleteAssociationsByAction(Action action);
 }

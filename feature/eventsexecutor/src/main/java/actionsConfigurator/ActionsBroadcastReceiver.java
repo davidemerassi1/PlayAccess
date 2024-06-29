@@ -28,6 +28,7 @@ public class ActionsBroadcastReceiver extends BroadcastReceiver {
         filter.addAction("com.example.accessibilityservice.ACTION_REPLY");
         filter.addAction("com.example.accessibilityservice.PACKAGE_CHANGED");
         filter.addAction("com.example.accessibilityservice.ACTION_2D_MOVEMENT");
+        filter.addAction("com.example.accessibilityservice.ACTION_REMOVED");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.registerReceiver(this, filter, Context.RECEIVER_EXPORTED);
         } else
@@ -67,6 +68,11 @@ public class ActionsBroadcastReceiver extends BroadcastReceiver {
                 float y = intent.getFloatExtra("y", 0);
                 overlay.on2dMovement(action, x, y);
                 Log.d("ActionsBroadcastReceiver", "2D Movement: x=" + x + ", y=" + y);
+                break;
+            case "com.example.accessibilityservice.ACTION_REMOVED":
+                action = (Action) intent.getSerializableExtra("action");
+                Log.d("ActionsBroadcastReceiver", "Action removed: " + action.getName());
+                overlay.removeAssociations(action);
                 break;
         }
     }

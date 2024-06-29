@@ -81,4 +81,10 @@ public class BroadcastManager extends BroadcastReceiver implements ActionListene
                 break;
         }
     }
+
+    public void removeAction(Action removedAction) {
+        Intent intent = new Intent("com.example.accessibilityservice.ACTION_REMOVED");
+        intent.putExtra("action", removedAction.lighten());
+        context.sendBroadcast(intent);
+    }
 }

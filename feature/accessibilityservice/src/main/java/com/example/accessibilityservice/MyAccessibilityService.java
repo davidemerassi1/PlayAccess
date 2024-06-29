@@ -18,6 +18,7 @@ import android.view.accessibility.AccessibilityEvent;
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.annotation.RequiresApi;
+import androidx.camera.core.ExperimentalGetImage;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -30,10 +31,12 @@ import com.example.actionsrecognizer.facialexpressionactionsrecognizer.FacialExp
 
 import java.util.List;
 
+import it.unimi.di.ewlab.iss.common.model.ActionsChangedObserver;
 import it.unimi.di.ewlab.iss.common.model.MainModel;
+import it.unimi.di.ewlab.iss.common.model.actions.Action;
 import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction;
 
-public class MyAccessibilityService extends AccessibilityService {
+public class MyAccessibilityService extends AccessibilityService implements ActionsChangedObserver {
     private String activePackage;
     private final String TAG = "MyAccessibilityService";
     private static final int NOTIFICATION_ID = 1;
@@ -55,6 +58,8 @@ public class MyAccessibilityService extends AccessibilityService {
             // Aggiorna le informazioni del servizio
             setServiceInfo(info);
         }
+
+        MainModel.observeActions(this);
 
         FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(broadcastManager)).init(
                     this, cameraLifecycle
@@ -134,5 +139,13 @@ public class MyAccessibilityService extends AccessibilityService {
             return;
         }
         NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, notification);
+    }
+
+    @OptIn(markerClass = ExperimentalGetImage.class)
+    @Override
+    public void onActionsChanged(Action removedAction) {
+        FacialExpressionActionsRecognizer.Companion.getInstance().updateActions(mainModel.getActions());
+        if (removedAction != null)
+            broadcastManager.removeAction(removedAction);
     }
 }

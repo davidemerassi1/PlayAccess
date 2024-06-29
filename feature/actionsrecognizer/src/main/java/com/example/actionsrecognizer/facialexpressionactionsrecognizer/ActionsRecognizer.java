@@ -9,7 +9,7 @@ import java.util.List;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
 public abstract class ActionsRecognizer {
-    protected final List<Action> actions;
+    protected List<Action> actions;
     private final List<ActionListener> actionListeners;
 
     protected ActionsRecognizer(List<Action> actions, List<ActionListener> actionListeners) {

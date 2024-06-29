@@ -18,6 +18,12 @@ class FiniteStateMachine(
             actions[action.actionId] = action
     }
 
+    fun updateActions(feModel: FacialExpressionActionsModel) {
+        actions.clear()
+        for (action in feModel.actions)
+            actions[action.actionId] = action
+    }
+
     override fun onClassification(classification: Int) {
         Log.d("FiniteStateMachine", "Classification: $classification")
         if (classification != currentAction) {

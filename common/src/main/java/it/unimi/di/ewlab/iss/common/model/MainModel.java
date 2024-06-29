@@ -56,6 +56,7 @@ public class MainModel {
     private String sandboxName;
     private String sandboxPackageName;
     private MutableLiveData<String> activePackage = new MutableLiveData<>("");
+    private static List<ActionsChangedObserver> observers = new ArrayList<>();
 
     public PhotosDatabase getDB(Context context) {
         if (DB == null) {
@@ -104,6 +105,16 @@ public class MainModel {
             List<Action> result = new ArrayList<>(actions.values());
             Collections.sort(result, (o1, o2) -> o1.getName().compareTo(o2.getName()));
             return result;
+        }
+    }
+
+    public static void observeActions(ActionsChangedObserver observer) {
+        observers.add(observer);
+    }
+
+    private void notifyActionsChanged(Action removedAction) {
+        for (ActionsChangedObserver observer : observers) {
+            observer.onActionsChanged(removedAction);
         }
     }
 
@@ -223,6 +234,7 @@ public class MainModel {
         if (!Objects.equals(action.getName(), neutralFacialExpressionName))
             throw new IllegalStateException("Action name is not " + neutralFacialExpressionName);
         actions.put(NEUTRAL_FACIAL_EXPRESSION_ACTION_ID, action);
+        notifyActionsChanged(null);
     }
 
 
@@ -258,6 +270,7 @@ public class MainModel {
         }
 
         actions.remove(actionId);
+        notifyActionsChanged(action);
 
         return linksRemoved;
     }
@@ -533,6 +546,7 @@ public class MainModel {
         }
 
         actions.put(actionToAdd.getActionId(), actionToAdd);
+        notifyActionsChanged(null);
 
         return true;
     }
