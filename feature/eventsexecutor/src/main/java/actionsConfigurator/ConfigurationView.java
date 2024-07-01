@@ -167,14 +167,6 @@ public class ConfigurationView extends RelativeLayout {
                         eventDialog.showErrorMessage();
                         return;
                     }
-                    //se si toglie si può spostare tutta la logica in eventdialog
-                    for (int i = 0; i < events.getChildCount(); i++) {
-                        EventButton button = (EventButton) events.getChildAt(i);
-                        if (eventButton != button && button.getAction() == selectedAction) {
-                            eventDialog.showSameKeyErrorMessage();
-                            return;
-                        }
-                    }
                     eventButton.setAction(selectedAction);
                     if (eventButton instanceof ResizableSlidingDraggableButton) {
                         ResizableSlidingDraggableButton resizableSlidingDraggableButton = (ResizableSlidingDraggableButton) eventButton;

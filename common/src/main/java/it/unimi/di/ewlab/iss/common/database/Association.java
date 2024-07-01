@@ -2,11 +2,15 @@ package it.unimi.di.ewlab.iss.common.database;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
-@Entity(primaryKeys = {"applicationPackage", "action"})
+@Entity
 public class Association {
+    @PrimaryKey(autoGenerate = true)
+    public int id;
+
     @NonNull
     public String applicationPackage;
 
