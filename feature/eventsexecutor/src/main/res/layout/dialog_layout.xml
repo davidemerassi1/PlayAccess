@@ -128,90 +128,6 @@
                         android:layout_weight="1" />
                 </LinearLayout>
             </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/additional_actions_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Move left:"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:id="@+id/actionLeftTextView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Select an action..."
-                        android:textAlignment="textEnd"
-                        android:textColor="@color/primaryColor"
-                        android:textSize="15sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Move right:"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:id="@+id/actionRightTextView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Select an action..."
-                        android:textAlignment="textEnd"
-                        android:textColor="@color/primaryColor"
-                        android:textSize="15sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Reset pointer:"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:id="@+id/actionResetTextView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Select an action..."
-                        android:textAlignment="textEnd"
-                        android:textColor="@color/primaryColor"
-                        android:textSize="15sp" />
-                </LinearLayout>
-
-                <CheckBox
-                    android:id="@+id/resetToStartCheckBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="Reset alla posizione iniziale" />
-            </LinearLayout>
         </FrameLayout>
 
         <!-- Pulsanti OK e Annulla -->
@@ -262,14 +178,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Select an event to continue"
-            android:textColor="#FF0000"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/sameEventErrorMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Questo evento è già associato a un'altra azione"
             android:textColor="#FF0000"
             android:visibility="gone" />
     </LinearLayout>

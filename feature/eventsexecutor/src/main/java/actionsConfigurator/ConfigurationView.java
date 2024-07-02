@@ -19,6 +19,7 @@ import com.example.eventsexecutor.R;
 import actionsConfigurator.utils.EventButton;
 import actionsConfigurator.utils.EventDialog;
 import actionsConfigurator.utils.ResizableSlidingDraggableButton;
+import actionsConfigurator.utils.SlidingEventDialog;
 import it.unimi.di.ewlab.iss.common.database.Event;
 import it.unimi.di.ewlab.iss.common.database.Association;
 import it.unimi.di.ewlab.iss.common.database.AssociationDao;
@@ -40,6 +41,7 @@ public class ConfigurationView extends RelativeLayout {
     private Context context;
     private String applicationPackage;
     private AssociationDao associationsDb;
+    private SlidingEventDialog slidingEventDialog;
     private EventDialog eventDialog;
     private OnClickListener updateListener = v -> {
         EventButton eventButton = (EventButton) v;
@@ -156,42 +158,78 @@ public class ConfigurationView extends RelativeLayout {
 
     private void showDialog(EventButton eventButton, boolean isNew) {
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        eventDialog = (EventDialog) inflater.inflate(R.layout.dialog_layout, this, false);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-        addView(eventDialog, layoutParams);
-        eventDialog.init(eventButton,
-                view1 -> {
-                    Action selectedAction = eventDialog.getSelectedAction();
-                    if (selectedAction == null || (eventButton.getEvent() == Event.MONODIMENSIONAL_SLIDING && (eventDialog.getSelectedAction2() == null || eventDialog.getSelectedAction3() == null)) ) {
-                        eventDialog.showErrorMessage();
-                        return;
-                    }
-                    eventButton.setAction(selectedAction);
-                    if (eventButton instanceof ResizableSlidingDraggableButton) {
-                        ResizableSlidingDraggableButton resizableSlidingDraggableButton = (ResizableSlidingDraggableButton) eventButton;
-                        resizableSlidingDraggableButton.setAction2(eventDialog.getSelectedAction2());
-                        resizableSlidingDraggableButton.setAction3(eventDialog.getSelectedAction3());
-                        resizableSlidingDraggableButton.setResetToStart(eventDialog.getResetToStart());
-                    }
-                    eventButton.setEvent(eventDialog.getEvent());
-                    eventButton.setOnClickListener(updateListener);
-                    removeView(eventDialog);
-                    eventDialog = null;
-                    if (isNew)
-                        events.addView((View) eventButton);
-                },
-                view1 -> {
-                    removeView(eventDialog);
-                    eventDialog = null;
-                },
-                isNew ? null :
-                view1 -> {
-                    events.removeView((View) eventButton);
-                    removeView(eventDialog);
-                    eventDialog = null;
-                }
-        );
+        if (eventButton instanceof ResizableSlidingDraggableButton slidingEventButton) {
+            slidingEventDialog = (SlidingEventDialog) inflater.inflate(R.layout.sliding_dialog_layout, this, false);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+            addView(slidingEventDialog, layoutParams);
+            slidingEventDialog.init(slidingEventButton,
+                    view1 -> {
+                        Action selectedAction = slidingEventDialog.getSelectedAction();
+                        Action selectedAction2 = slidingEventDialog.getSelectedAction2();
+                        Action selectedAction3 = slidingEventDialog.getSelectedAction3();
+                        if (selectedAction == null || selectedAction2 == null || selectedAction3 == null) {
+                            slidingEventDialog.showErrorMessage();
+                            return;
+                        }
+                        if (selectedAction.equals(selectedAction2) || selectedAction.equals(selectedAction3) || selectedAction2.equals(selectedAction3)) {
+                            slidingEventDialog.showSameActionErrorMessage();
+                            return;
+                        }
+                        slidingEventButton.setAction(selectedAction);
+                        slidingEventButton.setAction2(selectedAction2);
+                        slidingEventButton.setAction3(selectedAction3);
+                        slidingEventButton.setEvent(eventButton.getEvent());
+                        slidingEventButton.setOnClickListener(updateListener);
+                        slidingEventButton.setResetToStart(slidingEventDialog.getResetToStart());
+                        removeView(slidingEventDialog);
+                        slidingEventDialog = null;
+                        if (isNew)
+                            events.addView((View) eventButton);
+                    },
+                    view1 -> {
+                        removeView(slidingEventDialog);
+                        slidingEventDialog = null;
+                    },
+                    isNew ? null :
+                            view1 -> {
+                                events.removeView((View) eventButton);
+                                removeView(slidingEventDialog);
+                                slidingEventDialog = null;
+                            }
+            );
+        } else {
+            eventDialog = (EventDialog) inflater.inflate(R.layout.dialog_layout, this, false);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+            addView(eventDialog, layoutParams);
+            eventDialog.init(eventButton,
+                    view1 -> {
+                        Action selectedAction = eventDialog.getSelectedAction();
+                        if (selectedAction == null) {
+                            eventDialog.showErrorMessage();
+                            return;
+                        }
+                        eventButton.setAction(selectedAction);
+                        eventButton.setEvent(eventDialog.getEvent());
+                        eventButton.setOnClickListener(updateListener);
+                        removeView(eventDialog);
+                        eventDialog = null;
+                        if (isNew)
+                            events.addView((View) eventButton);
+                    },
+                    view1 -> {
+                        removeView(eventDialog);
+                        eventDialog = null;
+                    },
+                    isNew ? null :
+                            view1 -> {
+                                events.removeView((View) eventButton);
+                                removeView(eventDialog);
+                                eventDialog = null;
+                            }
+            );
+        }
     }
 
     public List<Association> save() {
@@ -232,19 +270,6 @@ public class ConfigurationView extends RelativeLayout {
     private float positionStart(int center, int radius) {
         return (float) (center - radius);
     }
-
-    /*private List<CameraAction> availableActions() {
-        Log.d("ConfigurationView", MainModel.getInstance().getActions().get(0).getName());
-        ArrayList<CameraAction> actions = new ArrayList<>(Arrays.asList(CameraAction.values()));
-        for (int i = 0; i < events.getChildCount(); i++) {
-            EventButton button = (EventButton) events.getChildAt(i);
-            if (button.getAction() >= 0)
-                continue;
-            CameraAction action = CameraAction.valueOf(button.getAction());
-            actions.remove(action);
-        }
-        return actions;
-    }*/
 
     private static int toPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
