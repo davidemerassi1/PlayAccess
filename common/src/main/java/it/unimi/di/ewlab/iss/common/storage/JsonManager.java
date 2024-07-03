@@ -39,7 +39,6 @@ public class JsonManager {
 
     private static final String TAG = JsonManager.class.getName();
     private static String JSON_PATH = "";
-    private static final String FILE_GAMES = "games.json";
     private static final String FILE_ACTIONS = "actions.json";
     private static final String DISTANCES_PAIRS_FILE = "distances_pairs.json";
     private static Gson typedSerializer;
@@ -80,31 +79,6 @@ public class JsonManager {
 
         String json = typedSerializer.toJson(values);
         JsonManager.writeJson("actions", json);
-
-    }
-
-    //----------------------------------------------------------------------------------------------
-    /** METODI PER LEGGERE E SCRIVERE GIOCHI DA E PER FILE games.json */
-
-    public List<Game> getGamesFromJson() {
-
-        ArrayList<Game> games = new ArrayList<>();
-        String json = this.readMemoryJsonFile(FILE_GAMES);
-
-        if(json != null && !json.equals("")) {
-            Type listType = new TypeToken<ArrayList<Game>>() {
-            }.getType();
-            games = typedSerializer.fromJson(json, listType);
-
-        }
-        return games;
-
-    }
-
-    public static void writeGames(Collection<Game> values) {
-
-        String json = serializer.toJson(values);
-        JsonManager.writeJson("games", json);
 
     }
 

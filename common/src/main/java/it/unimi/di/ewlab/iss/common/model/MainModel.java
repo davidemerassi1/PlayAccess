@@ -423,68 +423,6 @@ public class MainModel {
         else return game.getSelectedConfiguration();
     }
 
-
-    /**
-     * It receives the link that you want to add and, if it is a new version of an existing link, also that link.
-     * The method adds a new link, modifies a pre-existing one or chooses not to add according to different situations.
-     *
-     * @param bundleId, nameConfig, oldLink, newLink
-     * @return true if the new event is added or if an old one is changed
-     */
-
-    public boolean saveLink(String bundleId, String nameConfig, Link oldLink, Link newLink) {  //Dovrai aggiungere le altre caratteristiche di un Link
-        Log.d(TAG, "saveLink");
-
-        boolean linkSaved = false;
-        Configuration thisConfig = MainModel.getInstance().getConfiguration(bundleId, nameConfig);
-        if (thisConfig == null)
-            return false;
-
-        if (
-                thisConfig.getLinks() == null ||
-                        thisConfig.getLinks().isEmpty()
-        ) {
-            Log.e(TAG, "saveLink: Lista link vuota, aggiungo direttamente link");
-            Log.d(TAG, "Configurazione: nome: " + thisConfig.getConfName() + ", link: " + thisConfig.getLinks());
-            thisConfig.addLink(newLink);
-            Log.d(TAG, "Configurazione aggiornata: nome: " + thisConfig.getConfName() + ", link: " + thisConfig.getLinks());
-        } else {
-
-            //alreadyExistInConfig is true if an event already exists with the same name associated with the game
-            //modifyingExistingLink is true if we are modifying a pre-existent event, then oldEvent! = null
-            boolean alreadyExistInConfig = (thisConfig.getLink(newLink.getEvent().getName()) != null);
-            boolean modifyingExistingLink = (oldLink != null);
-
-            //if it exists and we are modifying it, we delete the previous copy to create an updated one
-
-            if (alreadyExistInConfig && modifyingExistingLink) {
-                Log.d(TAG, "deleted old link, added a new one: " + newLink.getEvent().getName());
-                thisConfig.getLinks().remove(oldLink);
-            }
-
-            //if the link does not exist in the configuration we add it without other controls
-            //if (!alreadyExistInConfig) {
-
-            Log.d(TAG, "added a new Link");
-
-            thisConfig.addLink(newLink);
-        }
-        writeGamesJson();
-        return true;
-    }
-
-    public boolean saveMyLink(String bundleId, String nameConfig, Link oldLink, Link newLink) {
-        Log.d(TAG, "saveLink");
-
-        Configuration thisConfig = MainModel.getInstance().getConfiguration(bundleId, nameConfig);
-        if (thisConfig == null)
-            return false;
-        thisConfig.addLink(newLink);
-        writeGamesJson();
-
-        return true;
-    }
-
 //---------------------------------------------------------------------------------------------------------------------------------
 
     /**
@@ -508,10 +446,6 @@ public class MainModel {
 
     public void writeActionsJson() {
         JsonManager.writeActions(getActions());
-    }
-
-    public void writeGamesJson() {
-        JsonManager.writeGames(getGames());
     }
 
     /**

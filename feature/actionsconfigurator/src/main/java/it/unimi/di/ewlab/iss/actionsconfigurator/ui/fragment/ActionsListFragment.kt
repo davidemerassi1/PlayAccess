@@ -140,8 +140,11 @@ class ActionsListFragment : Fragment() {
             override fun onPrimaryButtonClicked() {
                 val linksRemoved = MainModel.getInstance().removeAction(actionId)
                 MainModel.getInstance().writeActionsJson()
+
+                /*
                 if (linksRemoved)
                     MainModel.getInstance().writeGamesJson()
+                */
                 actionsAdapter!!.notifyDataSetChanged()
 
                 val actions = when (action.actionType) {
