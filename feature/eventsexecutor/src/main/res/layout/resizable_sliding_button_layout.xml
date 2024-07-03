@@ -12,15 +12,28 @@
         android:layout_centerVertical="true"
         android:background="@drawable/rounded_line" />
 
-    <ImageButton
-        android:id="@+id/fab"
+    <RelativeLayout
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/circle_background_white"
-        android:padding="15dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/monodimensional_sliding_icon" />
+        android:layout_centerInParent="true">
+        <ImageButton
+            android:id="@+id/fab"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/circle_background_white"
+            android:padding="15dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/monodimensional_sliding_icon" />
+
+        <ImageView
+            android:id="@+id/alert"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/alert"
+            android:elevation="10dp"
+            android:visibility="gone"/>
+    </RelativeLayout>
 
     <ImageButton
         android:id="@+id/resize_button"

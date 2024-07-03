@@ -196,4 +196,14 @@ public class ResizableSlidingDraggableButton extends FrameLayout implements Even
         display.getSize(size);
         return size.x;
     }
+
+    @Override
+    public void showAlert() {
+        findViewById(R.id.alert).setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void hideAlert() {
+        findViewById(R.id.alert).setVisibility(GONE);
+    }
 }

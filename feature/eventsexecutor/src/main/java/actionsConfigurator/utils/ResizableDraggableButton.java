@@ -179,4 +179,14 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
     @Override
     public void setEvent(Event event) {
     }
+
+    @Override
+    public void showAlert() {
+        findViewById(R.id.alert).setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void hideAlert() {
+        findViewById(R.id.alert).setVisibility(GONE);
+    }
 }

@@ -72,7 +72,7 @@ public class ActionsBroadcastReceiver extends BroadcastReceiver {
             case "com.example.accessibilityservice.ACTION_REMOVED":
                 action = (Action) intent.getSerializableExtra("action");
                 Log.d("ActionsBroadcastReceiver", "Action removed: " + action.getName());
-                overlay.removeAssociations(action);
+                overlay.notifyRemoved(action);
                 break;
         }
     }

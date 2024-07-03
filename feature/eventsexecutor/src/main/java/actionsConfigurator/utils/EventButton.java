@@ -12,4 +12,6 @@ public interface EventButton {
     public void setOnClickListener(View.OnClickListener listener);
     public Event getEvent();
     public void setEvent(Event event);
+    public void showAlert();
+    public void hideAlert();
 }

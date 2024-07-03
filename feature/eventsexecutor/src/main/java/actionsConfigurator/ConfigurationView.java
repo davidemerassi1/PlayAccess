@@ -4,15 +4,15 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.eventsexecutor.R;
 
@@ -47,6 +47,7 @@ public class ConfigurationView extends RelativeLayout {
         EventButton eventButton = (EventButton) v;
         showDialog(eventButton, false);
     };
+    private MutableLiveData<List<Action>> availableActions = new MutableLiveData<>();
 
     public ConfigurationView(Context context) {
         super(context);
@@ -122,6 +123,8 @@ public class ConfigurationView extends RelativeLayout {
             closeFABMenu();
             showDialog(new ResizableSlidingDraggableButton(context, null, null, null), true);
         });
+
+        availableActions.observeForever(this::refreshAlerts);
     }
 
     public void changeGame(String applicationPackage, Association[] associations) {
@@ -154,6 +157,8 @@ public class ConfigurationView extends RelativeLayout {
                 button.setY(positionStart(association.y, button.getLayoutParams().width / 2));
             }
         }
+
+        OverlayService.getInstance().requestActions(availableActions);
     }
 
     private void showDialog(EventButton eventButton, boolean isNew) {
@@ -186,6 +191,7 @@ public class ConfigurationView extends RelativeLayout {
                         slidingEventDialog = null;
                         if (isNew)
                             events.addView((View) eventButton);
+                        OverlayService.getInstance().requestActions(availableActions);
                     },
                     view1 -> {
                         removeView(slidingEventDialog);
@@ -196,7 +202,8 @@ public class ConfigurationView extends RelativeLayout {
                                 events.removeView((View) eventButton);
                                 removeView(slidingEventDialog);
                                 slidingEventDialog = null;
-                            }
+                            },
+                    availableActions.getValue()
             );
         } else {
             eventDialog = (EventDialog) inflater.inflate(R.layout.dialog_layout, this, false);
@@ -217,6 +224,7 @@ public class ConfigurationView extends RelativeLayout {
                         eventDialog = null;
                         if (isNew)
                             events.addView((View) eventButton);
+                        OverlayService.getInstance().requestActions(availableActions);
                     },
                     view1 -> {
                         removeView(eventDialog);
@@ -273,5 +281,29 @@ public class ConfigurationView extends RelativeLayout {
 
     private static int toPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public void notifyRemoved(Action action) {
+        availableActions.getValue().remove(action);
+        refreshAlerts(availableActions.getValue());
+    }
+
+    private void refreshAlerts(List<Action> availableActions) {
+        Log.d("ConfigurationView", "refreshAlerts: " + availableActions.size());
+
+        int eventsNumber = events.getChildCount();
+        for (int i = 0; i < eventsNumber; i++) {
+            EventButton eventButton = (EventButton) events.getChildAt(i);
+            Log.d("ConfigurationView", "refreshAlerts: " + eventButton.getAction().getName() + " " + availableActions.contains(eventButton.getAction()));
+            eventButton.hideAlert();
+            if (!availableActions.contains(eventButton.getAction())) {
+                eventButton.showAlert();
+            }
+            if (eventButton instanceof ResizableSlidingDraggableButton slidingEventButton) {
+                if (!availableActions.contains(slidingEventButton.getAction2()) || !availableActions.contains(slidingEventButton.getAction3())) {
+                    slidingEventButton.showAlert();
+                }
+            }
+        }
     }
 }

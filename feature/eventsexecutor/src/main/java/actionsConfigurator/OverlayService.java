@@ -33,8 +33,8 @@ public class OverlayService extends Service {
         instance = this;
         WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         overlay = (OverlayView) LayoutInflater.from(this).inflate(R.layout.overlay_layout, null);
-        overlay.init(windowManager);
         actionsBroadcastReceiver = new ActionsBroadcastReceiver(overlay, this);
+        overlay.init(windowManager);
         new ProcessMonitor(overlay);
         showNotification();
     }

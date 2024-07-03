@@ -13,6 +13,8 @@ import androidx.annotation.Nullable;
 
 import com.example.eventsexecutor.R;
 
+import java.util.List;
+
 import it.unimi.di.ewlab.iss.common.database.Event;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
@@ -48,6 +50,14 @@ public class SlidingEventDialog extends FrameLayout {
         public void setEvent(Event event) {
             this.event = event;
         }
+
+        @Override
+        public void showAlert() {
+        }
+
+        @Override
+        public void hideAlert() {
+        }
     };
 
     public SlidingEventDialog(Context context) {
@@ -62,7 +72,7 @@ public class SlidingEventDialog extends FrameLayout {
         super(context, attrs, defStyleAttr);
     }
 
-    public void init(ResizableSlidingDraggableButton eventButton, OnClickListener okListener, OnClickListener cancelListener, OnClickListener deleteListener) {
+    public void init(ResizableSlidingDraggableButton eventButton, OnClickListener okListener, OnClickListener cancelListener, OnClickListener deleteListener, List<Action> availableActions) {
         setElevation(30);
         findViewById(R.id.additional_actions_layout).setVisibility(VISIBLE);
         TextView actionLeftTextView = findViewById(R.id.actionLeftTextView);
@@ -81,8 +91,16 @@ public class SlidingEventDialog extends FrameLayout {
             if (eventButton.getResetToStart())
                 ((CheckBox) findViewById(R.id.resetToStartCheckBox)).setChecked(true);
             ((TextView) findViewById(R.id.actionLeftTextView)).setText(selectedAction.getName());
+            if (!availableActions.contains(selectedAction))
+                actionLeftTextView.setTextColor(getResources().getColor(R.color.red, null));
+
             ((TextView) findViewById(R.id.actionRightTextView)).setText(selectedAction2.getName());
+            if (!availableActions.contains(selectedAction2))
+                actionRightTextView.setTextColor(getResources().getColor(R.color.red, null));
+
             ((TextView) findViewById(R.id.actionResetTextView)).setText(selectedAction3.getName());
+            if (!availableActions.contains(selectedAction3))
+                actionResetTextView.setTextColor(getResources().getColor(R.color.red, null));
         }
 
         actionLeftTextView.setOnClickListener(v -> openSecondaryDialog(R.id.actionLeftTextView));
@@ -113,6 +131,7 @@ public class SlidingEventDialog extends FrameLayout {
                     else
                         selectedAction3 = a;
                     ((TextView) findViewById(selectedTextView)).setText(a.getName());
+                    ((TextView) findViewById(selectedTextView)).setTextColor(getResources().getColor(R.color.primaryColor, null));
                     removeView(secondaryEventDialog);
                     secondaryEventDialog = null;
                 },

@@ -2,9 +2,12 @@ package actionsConfigurator.utils;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.example.eventsexecutor.R;
 
@@ -12,7 +15,7 @@ import it.unimi.di.ewlab.iss.common.database.Event;
 
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
-public class DraggableButton extends androidx.appcompat.widget.AppCompatImageButton implements EventButton, View.OnTouchListener {
+public class DraggableButton extends RelativeLayout implements EventButton, View.OnTouchListener {
     private float lastTouchX;
     private float lastTouchY;
     private float posX;
@@ -23,20 +26,21 @@ public class DraggableButton extends androidx.appcompat.widget.AppCompatImageBut
 
     public DraggableButton(Context context, Event event) {
         super(context);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(R.layout.button_layout, this, true);
+        ImageButton fab = findViewById(R.id.fab);
+
         this.event = event;
-        setOnTouchListener(this);
-        setPadding(15, 15, 15, 15);
-        setBackgroundResource(R.drawable.circle_background_white);
-        setScaleType(ScaleType.FIT_XY);
-        setLayoutParams(new FrameLayout.LayoutParams(120, 120));
+        fab.setOnTouchListener(this);
+
         switch (event) {
-            case TAP -> setImageResource(R.drawable.tap_icon);
-            case SWIPE_DOWN -> setImageResource(R.drawable.swipe_down_icon);
-            case SWIPE_UP -> setImageResource(R.drawable.swipe_up_icon);
-            case SWIPE_LEFT -> setImageResource(R.drawable.swipe_left_icon);
-            case SWIPE_RIGHT -> setImageResource(R.drawable.swipe_right_icon);
-            case LONG_TAP -> setImageResource(R.drawable.long_tap_icon);
-            case MONODIMENSIONAL_SLIDING -> setImageResource(R.drawable.monodimensional_sliding_icon);
+            case TAP -> fab.setImageResource(R.drawable.tap_icon);
+            case SWIPE_DOWN -> fab.setImageResource(R.drawable.swipe_down_icon);
+            case SWIPE_UP -> fab.setImageResource(R.drawable.swipe_up_icon);
+            case SWIPE_LEFT -> fab.setImageResource(R.drawable.swipe_left_icon);
+            case SWIPE_RIGHT -> fab.setImageResource(R.drawable.swipe_right_icon);
+            case LONG_TAP -> fab.setImageResource(R.drawable.long_tap_icon);
+            case MONODIMENSIONAL_SLIDING -> fab.setImageResource(R.drawable.monodimensional_sliding_icon);
         }
     }
 
@@ -87,6 +91,16 @@ public class DraggableButton extends androidx.appcompat.widget.AppCompatImageBut
     @Override
     public void setEvent(Event event) {
         this.event = event;
+    }
+
+    @Override
+    public void showAlert() {
+        findViewById(R.id.alert).setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void hideAlert() {
+        findViewById(R.id.alert).setVisibility(GONE);
     }
 
     public Action getAction() {

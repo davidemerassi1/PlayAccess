@@ -14,21 +14,10 @@
         android:scaleType="fitXY"
         android:src="@drawable/joystick_icon" />
 
-    <ImageButton
-        android:id="@+id/resize_button"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:background="@drawable/circle_background_primary"
-        android:elevation="10dp"
-        android:padding="2dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/arrows" />
-
     <ImageView
         android:id="@+id/alert"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginStart="-20dp"
         android:src="@drawable/alert"
         android:elevation="10dp"
         android:visibility="gone"/>

@@ -271,10 +271,7 @@ public class OverlayView extends RelativeLayout implements ActionListener {
             executor.execute2d(map.get(action), x, y);
     }
 
-    public void removeAssociations(Action action) {
-        new Thread(() -> {
-            associationsDb.deleteAssociationsByAction(action);
-            associations.postValue(associationsDb.getAssociations(applicationPackage));
-        }).start();
+    public void notifyRemoved(Action action) {
+        configurationView.notifyRemoved(action);
     }
 }
