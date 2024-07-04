@@ -36,6 +36,8 @@ public class EventExecutor {
             MotionEvent.PointerProperties properties = new MotionEvent.PointerProperties();
             properties.id = currentId;
             currentId++;
+            if (currentId == 32)
+                currentId = 0;
             properties.toolType = MotionEvent.TOOL_TYPE_FINGER;
             pointerProperties.add(properties);
             MotionEvent.PointerCoords coords = createCoords(targetX, targetY + statusBarHeight);
