@@ -1,4 +1,4 @@
-package actionsConfigurator;
+package com.example.eventsexecutor;
 
 import android.app.Instrumentation;
 import android.content.Context;

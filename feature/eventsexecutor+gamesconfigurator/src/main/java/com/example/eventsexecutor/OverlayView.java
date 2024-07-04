@@ -1,4 +1,4 @@
-package actionsConfigurator;
+package com.example.eventsexecutor;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,7 +23,7 @@ import androidx.camera.core.ExperimentalGetImage;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.actionsrecognizer.facialexpressionactionsrecognizer.ActionListener;
-import com.example.eventsexecutor.R;
+import com.example.eventsexecutor.gamesconfigurator.ConfigurationView;
 
 import it.unimi.di.ewlab.iss.common.database.Association;
 import it.unimi.di.ewlab.iss.common.database.AssociationDao;

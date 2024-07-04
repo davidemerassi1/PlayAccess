@@ -1,13 +1,11 @@
-package actionsConfigurator.utils;
+package com.example.eventsexecutor.gamesconfigurator.buttons;
 
 import static android.content.Context.WINDOW_SERVICE;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,9 +21,8 @@ import it.unimi.di.ewlab.iss.common.database.Event;
 
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
-public class ResizableSlidingDraggableButton extends FrameLayout implements EventButton {
+public class ResizableDraggableButton extends FrameLayout implements EventButton {
     private ImageButton fab;
-    private RelativeLayout layout;
     private ImageButton resizeButton;
     private Context context;
     private float lastTouchX;
@@ -33,67 +30,63 @@ public class ResizableSlidingDraggableButton extends FrameLayout implements Even
     private float posX;
     private float posY;
     private Action action;
-    private Action action2;
-    private Action action3;
-    private boolean resetToStart;
     private OnClickListener listener;
 
-    public ResizableSlidingDraggableButton(Context context) {
+    public ResizableDraggableButton(Context context) {
         super(context);
         this.context = context;
         init();
     }
 
-    public ResizableSlidingDraggableButton(Context context, AttributeSet attrs) {
+    public ResizableDraggableButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         init();
     }
 
-    public ResizableSlidingDraggableButton(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ResizableDraggableButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
-        init();
-    }
-
-    public ResizableSlidingDraggableButton(Context context, Action action, Action action2, Action action3) {
-        super(context);
-        this.context = context;
-        this.action = action;
-        this.action2 = action2;
-        this.action3 = action3;
         init();
     }
 
     @SuppressLint("ClickableViewAccessibility")
     public void init() {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.resizable_sliding_button_layout, this, true);
+        inflater.inflate(R.layout.resizable_button_layout, this, true);
 
         fab = findViewById(R.id.fab);
-        layout = findViewById(R.id.resizable_sliding_button_layout);
         resizeButton = findViewById(R.id.resize_button);
+
 
         int width = getDisplayWidth();
 
         resizeButton.setOnTouchListener(new OnTouchListener() {
-            private int initialWidth, initialX;
-            private float initialTouchX;
+            private int initialWidth, initialX, initialY;
+            private float initialTouchX, initialTouchY;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        initialWidth = layout.getWidth();
+                        // Memorizza le dimensioni iniziali del FAB
+                        initialWidth = fab.getWidth();
+
+                        // Memorizza le coordinate iniziali
                         initialTouchX = event.getRawX();
+                        initialTouchY = event.getRawY();
+
                         initialX = (int) getX();
+                        initialY = (int) getY();
+
                         return true;
                     case MotionEvent.ACTION_MOVE:
-                        int delta = (int) (initialTouchX - event.getRawX());
+                        // Calcola il cambio di dimensione del FAB
+                        int delta = (int) Math.min(initialTouchX - event.getRawX(), initialTouchY - event.getRawY());
                         int newDim = initialWidth + 2 * delta;
 
-                        if (newDim < 200) {
-                            newDim = 200;
+                        if (newDim < 100) {
+                            newDim = 100;
                             delta = (newDim - initialWidth) / 2;
                         }
 
@@ -103,8 +96,10 @@ public class ResizableSlidingDraggableButton extends FrameLayout implements Even
                         }
 
                         setDimensions(newDim);
+                        setPadding(newDim);
 
                         setX(initialX - delta);
+                        setY(initialY - delta);
                         return true;
                     default:
                         return false;
@@ -139,33 +134,35 @@ public class ResizableSlidingDraggableButton extends FrameLayout implements Even
         });
     }
 
+    private int getDisplayWidth() {
+        WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size.x;
+    }
+
+    public void setPadding(int newDim) {
+        int padding = newDim / 2 - 30;
+        double k = 0.2929;  //1-sin45
+        fab.setPadding(padding, padding, padding, padding);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(resizeButton.getLayoutParams());
+        params.setMargins((int) (k * newDim / 2 - 15), (int) (k * newDim / 2 - 15), 0, 0);
+        resizeButton.setLayoutParams(params);
+    }
+
     public void setDimensions(int newDim) {
-        layout.getLayoutParams().width = newDim;
-        layout.requestLayout();
+        fab.getLayoutParams().width = newDim;
+        fab.getLayoutParams().height = newDim;
+        fab.requestLayout();
     }
 
     public Action getAction() {
         return action;
     }
 
-    public Action getAction2() {
-        return action2;
-    }
-
-    public Action getAction3() {
-        return action3;
-    }
-
     public void setAction(Action action) {
         this.action = action;
-    }
-
-    public void setAction2(Action action) {
-        this.action2 = action;
-    }
-
-    public void setAction3(Action action) {
-        this.action3 = action;
     }
 
     public void setOnClickListener(OnClickListener listener) {
@@ -174,27 +171,11 @@ public class ResizableSlidingDraggableButton extends FrameLayout implements Even
 
     @Override
     public Event getEvent() {
-        return Event.MONODIMENSIONAL_SLIDING;
+        return Event.JOYSTICK;
     }
 
     @Override
     public void setEvent(Event event) {
-    }
-
-    public void setResetToStart(boolean resetToStart) {
-        this.resetToStart = resetToStart;
-    }
-
-    public boolean getResetToStart() {
-        return resetToStart;
-    }
-
-    private int getDisplayWidth() {
-        WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
-        Display display = windowManager.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        return size.x;
     }
 
     @Override

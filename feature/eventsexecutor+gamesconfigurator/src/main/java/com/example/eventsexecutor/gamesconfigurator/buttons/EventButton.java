@@ -1,4 +1,4 @@
-package actionsConfigurator.utils;
+package com.example.eventsexecutor.gamesconfigurator.buttons;
 
 import android.view.View;
 

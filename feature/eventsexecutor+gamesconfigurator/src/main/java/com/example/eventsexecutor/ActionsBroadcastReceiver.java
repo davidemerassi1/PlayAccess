@@ -1,4 +1,4 @@
-package actionsConfigurator;
+package com.example.eventsexecutor;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -1,8 +1,7 @@
-package actionsConfigurator.utils;
+package com.example.eventsexecutor.gamesconfigurator;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
@@ -12,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.example.eventsexecutor.R;
+import com.example.eventsexecutor.gamesconfigurator.buttons.EventButton;
+import com.example.eventsexecutor.gamesconfigurator.buttons.ResizableSlidingDraggableButton;
 
 import java.util.List;
 

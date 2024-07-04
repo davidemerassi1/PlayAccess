@@ -1,4 +1,4 @@
-package actionsConfigurator;
+package com.example.eventsexecutor;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -13,8 +13,6 @@ import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.MutableLiveData;
-
-import com.example.eventsexecutor.R;
 
 import java.util.List;
 

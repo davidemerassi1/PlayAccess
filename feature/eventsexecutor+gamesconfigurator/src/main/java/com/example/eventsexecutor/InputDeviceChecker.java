@@ -1,4 +1,4 @@
-package actionsConfigurator.utils;
+package com.example.eventsexecutor;
 
 import android.content.Context;
 import android.hardware.input.InputManager;

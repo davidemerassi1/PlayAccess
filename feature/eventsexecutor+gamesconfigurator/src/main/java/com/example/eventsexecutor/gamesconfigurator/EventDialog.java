@@ -1,4 +1,4 @@
-package actionsConfigurator.utils;
+package com.example.eventsexecutor.gamesconfigurator;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -22,7 +22,9 @@ import com.example.eventsexecutor.R;
 
 import java.util.List;
 
-import actionsConfigurator.OverlayService;
+import com.example.eventsexecutor.OverlayService;
+import com.example.eventsexecutor.gamesconfigurator.buttons.EventButton;
+
 import it.unimi.di.ewlab.iss.common.database.Event;
 
 import it.unimi.di.ewlab.iss.common.model.actions.Action;

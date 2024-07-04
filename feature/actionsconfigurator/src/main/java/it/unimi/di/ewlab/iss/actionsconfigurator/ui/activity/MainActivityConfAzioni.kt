@@ -1,15 +1,7 @@
 package it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity
 
-import actionsConfigurator.OverlayManager
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
 import android.view.View
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController

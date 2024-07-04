@@ -1,4 +1,4 @@
-package actionsConfigurator.utils;
+package com.example.eventsexecutor.gamesconfigurator.buttons;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.example.eventsexecutor.R;

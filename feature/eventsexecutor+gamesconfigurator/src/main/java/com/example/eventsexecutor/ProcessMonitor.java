@@ -1,25 +1,15 @@
-package actionsConfigurator;
-
-import static androidx.core.content.ContextCompat.startActivity;
+package com.example.eventsexecutor;
 
 import android.app.ActivityManager;
-import android.app.usage.UsageStats;
-import android.app.usage.UsageStatsManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import it.unimi.di.ewlab.iss.common.model.MainModel;
 

@@ -1,4 +1,4 @@
-package actionsConfigurator;
+package com.example.eventsexecutor.gamesconfigurator;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -14,17 +14,16 @@ import android.widget.RelativeLayout;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.eventsexecutor.OverlayService;
 import com.example.eventsexecutor.R;
+import com.example.eventsexecutor.gamesconfigurator.buttons.EventButton;
+import com.example.eventsexecutor.gamesconfigurator.buttons.ResizableSlidingDraggableButton;
 
-import actionsConfigurator.utils.EventButton;
-import actionsConfigurator.utils.EventDialog;
-import actionsConfigurator.utils.ResizableSlidingDraggableButton;
-import actionsConfigurator.utils.SlidingEventDialog;
 import it.unimi.di.ewlab.iss.common.database.Event;
 import it.unimi.di.ewlab.iss.common.database.Association;
 import it.unimi.di.ewlab.iss.common.database.AssociationDao;
-import actionsConfigurator.utils.DraggableButton;
-import actionsConfigurator.utils.ResizableDraggableButton;
+import com.example.eventsexecutor.gamesconfigurator.buttons.DraggableButton;
+import com.example.eventsexecutor.gamesconfigurator.buttons.ResizableDraggableButton;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
