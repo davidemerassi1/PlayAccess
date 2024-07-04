@@ -138,13 +138,9 @@ class ActionsListFragment : Fragment() {
 
         dialog.listener = object : BaseDialog.BaseDialogListener {
             override fun onPrimaryButtonClicked() {
-                val linksRemoved = MainModel.getInstance().removeAction(actionId)
+                MainModel.getInstance().removeAction(actionId)
                 MainModel.getInstance().writeActionsJson()
 
-                /*
-                if (linksRemoved)
-                    MainModel.getInstance().writeGamesJson()
-                */
                 actionsAdapter!!.notifyDataSetChanged()
 
                 val actions = when (action.actionType) {

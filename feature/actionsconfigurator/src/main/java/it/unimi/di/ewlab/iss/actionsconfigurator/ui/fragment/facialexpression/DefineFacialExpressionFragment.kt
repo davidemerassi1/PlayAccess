@@ -89,9 +89,11 @@ class DefineFacialExpressionFragment : Fragment() {
         } else if (!MainModel.getInstance().isValidActionName(viewModel.name)) {
             showNameUnavailableToast(viewModel.name)
         } else {
-            viewModel.saveAction()
+            Thread {
+                viewModel.saveAction()
+            }.start()
             closeKeyboard()
-            showActionDefinedMessage()
+            //showActionDefinedMessage()
             startActivity(Intent(context, MainActivityConfAzioni::class.java))
         }
     }
