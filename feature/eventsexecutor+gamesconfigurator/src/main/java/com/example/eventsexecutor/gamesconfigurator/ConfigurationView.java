@@ -152,8 +152,8 @@ public class ConfigurationView extends RelativeLayout {
                 button.setAction(association.action);
                 button.setOnClickListener(updateListener);
                 events.addView(button);
-                button.setX(positionStart(association.x, button.getLayoutParams().width / 2));
-                button.setY(positionStart(association.y, button.getLayoutParams().width / 2));
+                button.setX(positionStart(association.x, toPx(30)));
+                button.setY(positionStart(association.y, toPx(30)));
             }
         }
 
@@ -271,10 +271,12 @@ public class ConfigurationView extends RelativeLayout {
     }
 
     private int center(float value, int size) {
+        Log.d("ConfigurationView", "center: " + value + " " + size + " " + (int) value + size / 2);
         return (int) value + size / 2;
     }
 
     private float positionStart(int center, int radius) {
+        Log.d("ConfigurationView", "positionStart: " + center + " " + radius);
         return (float) (center - radius);
     }
 

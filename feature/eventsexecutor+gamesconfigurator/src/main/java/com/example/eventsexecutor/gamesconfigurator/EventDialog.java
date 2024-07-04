@@ -104,7 +104,6 @@ public class EventDialog extends FrameLayout {
         if (deleteListener != null) {
             findViewById(R.id.deleteButtonLayout).setVisibility(VISIBLE);
             findViewById(R.id.deleteButton).setOnClickListener(deleteListener);
-            selectedAction = eventButton.getAction();
         }
 
         availableActions.observeForever(actions -> {
@@ -112,8 +111,11 @@ public class EventDialog extends FrameLayout {
                 findViewById(R.id.progressBar).setVisibility(GONE);
                 findViewById(R.id.availableActionsLayout).setVisibility(VISIBLE);
                 controllerOptionText.performClick();
+                if (deleteListener != null && actions.contains(eventButton.getAction()))
+                    selectedAction = eventButton.getAction();
             }
         });
+
         requestAvailableActions();
     }
 
@@ -138,9 +140,8 @@ public class EventDialog extends FrameLayout {
         ((TextView) v).setTextColor(ContextCompat.getColor(getContext(), R.color.primaryColor));
         ((TextView) v).setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
-        while (radioGroup.getChildCount() > 0) {
+        while (radioGroup.getChildCount() > 0)
             radioGroup.removeView(radioGroup.getChildAt(0));
-        }
 
         Action.ActionType actionType = Action.ActionType.valueOf((String) v.getTag());
         findViewById(R.id.noEventsTextview).setVisibility(GONE);
@@ -153,9 +154,9 @@ public class EventDialog extends FrameLayout {
             radioButton.setTag(option);
             radioButton.setText(option.getName());
             radioButton.setTextColor(Color.BLACK);
-            if (selectedAction != null && selectedAction.equals(option))
-                radioButton.setChecked(true);
             radioGroup.addView(radioButton);
+            if (selectedAction != null && selectedAction.equals(option))
+                radioGroup.check(radioButton.getId());
         }
         if (radioGroup.getChildCount() == 0)
             findViewById(R.id.noEventsTextview).setVisibility(VISIBLE);
