@@ -33,7 +33,7 @@ public class DraggableButton extends RelativeLayout implements EventButton, View
         fab.setOnTouchListener(this);
 
         switch (event) {
-            case TAP -> fab.setImageResource(R.drawable.tap_icon);
+            case TAP, TAP_ON_OFF -> fab.setImageResource(R.drawable.tap_icon);
             case SWIPE_DOWN -> fab.setImageResource(R.drawable.swipe_down_icon);
             case SWIPE_UP -> fab.setImageResource(R.drawable.swipe_up_icon);
             case SWIPE_LEFT -> fab.setImageResource(R.drawable.swipe_left_icon);

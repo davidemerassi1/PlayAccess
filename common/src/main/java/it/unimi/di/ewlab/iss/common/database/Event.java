@@ -8,7 +8,8 @@ public enum Event {
     SWIPE_RIGHT,
     LONG_TAP,
     JOYSTICK,
-    MONODIMENSIONAL_SLIDING;
+    MONODIMENSIONAL_SLIDING,
+    TAP_ON_OFF;
 
     public String toString() {
         switch (this) {
@@ -26,6 +27,10 @@ public enum Event {
                 return "Long tap";
             case JOYSTICK:
                 return "Joystick";
+            case MONODIMENSIONAL_SLIDING:
+                return "Monodimensional sliding";
+            case TAP_ON_OFF:
+                return "Long tap on/off";
             default:
                 return "Unknown";
         }

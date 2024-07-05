@@ -114,6 +114,11 @@ public class ConfigurationView extends RelativeLayout {
             showDialog(new ResizableSlidingDraggableButton(context, null, null, null), true);
         });
 
+        fabLayouts.get(5).getChildAt(1).setOnClickListener(view -> {
+            closeFABMenu();
+            showDialog(new DraggableButton(context, Event.TAP_ON_OFF), true);
+        });
+
         availableActions.observeForever(this::refreshAlerts);
     }
 

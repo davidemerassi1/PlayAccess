@@ -109,7 +109,7 @@ public class EventExecutor {
                     break;
             }
         } catch (Exception e) {
-            Log.d("EventExecutor", "Exception in release");
+            Log.d("EventExecutor", "Exception in release: " + e.toString());
             actions.remove(0);
         }
     }
@@ -198,6 +198,9 @@ public class EventExecutor {
                         sleep(2000);
                         release(association);
                         break;
+                    case TAP_ON_OFF:
+                        touch(association.x, association.y, association);
+                        break;
                 }
             } catch (SecurityException e) {
                 e.printStackTrace();
@@ -276,7 +279,13 @@ public class EventExecutor {
     }
 
     public void stopExecuting(Association association) {
-        moving1d.remove(association);
+        new Thread(() -> {
+            switch (association.event) {
+                case MONODIMENSIONAL_SLIDING -> moving1d.remove(association);
+                case TAP_ON_OFF -> release(association);
+            }
+        }).start();
+
     }
 
     public void releaseAll() {
