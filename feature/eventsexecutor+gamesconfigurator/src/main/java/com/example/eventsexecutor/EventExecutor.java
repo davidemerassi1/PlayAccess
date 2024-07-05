@@ -110,6 +110,7 @@ public class EventExecutor {
             }
         } catch (Exception e) {
             Log.d("EventExecutor", "Exception in release");
+            actions.remove(0);
         }
     }
 
