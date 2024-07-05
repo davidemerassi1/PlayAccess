@@ -24,7 +24,7 @@
             android:id="@+id/gameIcon"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_alignParentEnd="true"/>
+            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 
     <!-- this is the expanded layout -->
@@ -48,141 +48,149 @@
             android:id="@+id/closeConfigurationBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_margin="10dp"
             android:backgroundTint="@android:color/transparent"
             android:src="@drawable/close_icon" />
 
-        <RelativeLayout
-            android:id="@+id/optionsLayout"
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="15dp"
-            android:elevation="10dp"
-            android:gravity="bottom|end">
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="75dp"
+            android:visibility="gone">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/optionsLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:elevation="10dp">
+                android:layout_marginEnd="15dp"
+                android:elevation="10dp"
+                android:orientation="vertical"
+                android:gravity="end">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center_vertical"
-                    android:text="Tap"
-                    android:textColor="@color/white"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content"
+                    android:elevation="10dp"
+                    android:layout_marginTop="5dp">
 
-                <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/circle_background_primary"
-                    android:scaleType="fitXY"
-                    android:padding="10dp"
-                    android:src="@drawable/tap_icon_white"
-                    app:tint="@color/white" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center_vertical"
+                        android:text="Tap"
+                        android:textColor="@color/white" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true">
+                    <ImageButton
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/circle_background_primary"
+                        android:padding="10dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/tap_icon"
+                        android:tint="@color/white"
+                        app:tint="@color/white" />
+                </LinearLayout>
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center_vertical"
-                    android:text="Joystick"
-                    android:textColor="@color/white"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
 
-                <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/circle_background_primary"
-                    android:scaleType="fitXY"
-                    android:padding="10dp"
-                    android:src="@drawable/joystick_icon_white"
-                    app:tint="@color/white" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center_vertical"
+                        android:text="Joystick"
+                        android:textColor="@color/white" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true">
+                    <ImageButton
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/circle_background_primary"
+                        android:padding="10dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/joystick_icon"
+                        android:tint="@color/white"
+                        app:tint="@color/white" />
+                </LinearLayout>
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center_vertical"
-                    android:text="Swipe"
-                    android:textColor="@color/white"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
 
-                <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/circle_background_primary"
-                    android:scaleType="fitXY"
-                    android:padding="10dp"
-                    android:src="@drawable/swipe_icon_white"
-                    app:tint="@color/white" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center_vertical"
+                        android:text="Swipe"
+                        android:textColor="@color/white" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true">
+                    <ImageButton
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/circle_background_primary"
+                        android:padding="10dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/swipe_icon"
+                        android:tint="@color/white"
+                        app:tint="@color/white" />
+                </LinearLayout>
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center_vertical"
-                    android:text="Long tap"
-                    android:textColor="@color/white"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
 
-                <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/circle_background_primary"
-                    android:scaleType="fitXY"
-                    android:padding="10dp"
-                    android:src="@drawable/long_tap_icon_white"
-                    app:tint="@color/white" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center_vertical"
+                        android:text="Long tap"
+                        android:textColor="@color/white" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true">
+                    <ImageButton
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/circle_background_primary"
+                        android:padding="10dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/long_tap_icon"
+                        android:tint="@color/white"
+                        app:tint="@color/white" />
+                </LinearLayout>
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center_vertical"
-                    android:text="Monodimensional sliding"
-                    android:textColor="@color/white"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
 
-                <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/circle_background_primary"
-                    android:scaleType="fitXY"
-                    android:padding="10dp"
-                    android:src="@drawable/monodimensional_sliding_icon_white"
-                    app:tint="@color/white" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center_vertical"
+                        android:text="Monodimensional sliding"
+                        android:textColor="@color/white" />
+
+                    <ImageButton
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/circle_background_primary"
+                        android:padding="10dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/monodimensional_sliding_icon"
+                        android:tint="@color/white"
+                        app:tint="@color/white" />
+                </LinearLayout>
             </LinearLayout>
-        </RelativeLayout>
+        </androidx.core.widget.NestedScrollView>
 
         <ImageButton
             android:id="@+id/fab"
@@ -193,8 +201,9 @@
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/circle_background_primary"
-            android:src="@drawable/add_icon"
             android:elevation="10dp"
+            android:src="@drawable/add_icon"
+            android:tint="@color/white"
             app:tint="@color/white" />
 
         <RelativeLayout

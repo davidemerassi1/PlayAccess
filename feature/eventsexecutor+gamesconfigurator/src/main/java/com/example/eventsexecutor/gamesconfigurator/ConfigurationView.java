@@ -34,7 +34,6 @@ import it.unimi.di.ewlab.iss.common.model.actions.Action;
 public class ConfigurationView extends RelativeLayout {
     private boolean isFABOpen = false;
     private ImageButton fab;
-    private RelativeLayout optionsLayout;
     private List<LinearLayout> fabLayouts = new ArrayList<>();
     private RelativeLayout events;
     private Context context;
@@ -62,28 +61,20 @@ public class ConfigurationView extends RelativeLayout {
         isFABOpen = true;
         Animation rotateAnimation = AnimationUtils.loadAnimation(context, R.anim.rotate);
         fab.startAnimation(rotateAnimation);
-        int dp = -55;
-        for (LinearLayout layout : fabLayouts) {
-            layout.animate().translationY(toPx(dp));
-            dp -= 50;
-            layout.getChildAt(0).setVisibility(VISIBLE);
-        }
+        findViewById(R.id.scollView).setVisibility(View.VISIBLE);
     }
 
     private void closeFABMenu() {
         isFABOpen = false;
         Animation rotateAnimation = AnimationUtils.loadAnimation(context, R.anim.rotate_reverse);
         fab.startAnimation(rotateAnimation);
-        for (LinearLayout layout : fabLayouts) {
-            layout.animate().translationY(0);
-            layout.getChildAt(0).setVisibility(GONE);
-        }
+        findViewById(R.id.scollView).setVisibility(View.GONE);
     }
 
     public void setup(AssociationDao associationsDb) {
         this.associationsDb = associationsDb;
         fab = findViewById(R.id.fab);
-        optionsLayout = findViewById(R.id.optionsLayout);
+        LinearLayout optionsLayout = findViewById(R.id.optionsLayout);
         for (int i = 0; i < optionsLayout.getChildCount(); i++) {
             LinearLayout layout = (LinearLayout) optionsLayout.getChildAt(i);
             fabLayouts.add(layout);
