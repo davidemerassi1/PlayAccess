@@ -200,7 +200,7 @@
                         android:layout_height="50dp"
                         android:layout_marginEnd="10dp"
                         android:gravity="center_vertical"
-                        android:text="Tap while"
+                        android:text="Tap on/off"
                         android:textColor="@color/white" />
 
                     <ImageButton
