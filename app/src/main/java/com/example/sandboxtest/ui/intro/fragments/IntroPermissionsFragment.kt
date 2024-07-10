@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.example.sandboxtest.SandboxInfo
 import com.example.sandboxtest.databinding.AlertDialogPermissionsNeededBinding
 import com.example.sandboxtest.databinding.FragmentIntroPermissionsBinding
 import com.example.sandboxtest.ui.intro.IntroViewModel
@@ -75,7 +74,7 @@ class IntroPermissionsFragment : Fragment() {
     }
 
     private fun finishIntro() {
-        val intent = Intent(requireContext(), SandboxInfo::class.java)
+        val intent = Intent(requireContext(), MainActivityConfAzioni::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(intent)
         requireActivity().finish()

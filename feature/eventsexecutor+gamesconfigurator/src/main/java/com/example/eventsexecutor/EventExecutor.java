@@ -1,5 +1,6 @@
 package com.example.eventsexecutor;
 
+import android.accessibilityservice.AccessibilityService;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.content.res.Resources;
@@ -7,13 +8,25 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import androidx.lifecycle.MutableLiveData;
+
+import com.example.actionsrecognizer.facialexpressionactionsrecognizer.ActionListener;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import it.unimi.di.ewlab.iss.common.database.Association;
+import it.unimi.di.ewlab.iss.common.database.AssociationDao;
+import it.unimi.di.ewlab.iss.common.database.Event;
+import it.unimi.di.ewlab.iss.common.model.MainModel;
+import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class EventExecutor {
+public class EventExecutor implements ActionListener {
     private int statusBarHeight;
     private Instrumentation instrumentation;
     private ArrayList<MotionEvent.PointerProperties> pointerProperties;
@@ -22,13 +35,20 @@ public class EventExecutor {
     private Map<Association, Integer> x2d = new HashMap<>();
     private Map<Association, Boolean> moving1d = new HashMap<>();
     int currentId = 0;
+    private AssociationDao associationsDb;
+    private boolean needCamera = false;
+    MutableLiveData<Association[]> associations = new MutableLiveData<>();
 
-    public EventExecutor(Context context) {
-        statusBarHeight = getStatusBarHeight(context);
+    private Map<Action, Association> map = new HashMap<>();
+
+    public EventExecutor(AccessibilityService accessibilityService) {
+        statusBarHeight = getStatusBarHeight(accessibilityService);
         instrumentation = new Instrumentation();
         pointerProperties = new ArrayList<>();
         pointerCoords = new ArrayList<>();
         actions = new ArrayList<>();
+        associationsDb = MainModel.getInstance().getAssociationsDb().getDao();
+
     }
 
     public void touch(int targetX, int targetY, Association association) {
@@ -313,6 +333,38 @@ public class EventExecutor {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onActionStarts(@NonNull Action action) {
+
+    }
+
+    @Override
+    public void onActionEnds(@NonNull Action action) {
+
+    }
+
+    @Override
+    public void on2dMovement(Action action, float x, float y) {
+
+    }
+
+    public void changeGame(String packageName) {
+        new Thread(() -> {
+            Association[] associationList = associationsDb.getAssociations(packageName);
+            map.clear();
+            needCamera = false;
+            for (Association association : associationList) {
+                map.put(association.action, association);
+                if (association.action.getActionType() == Action.ActionType.FACIAL_EXPRESSION)
+                    needCamera = true;
+                if (association.event == Event.MONODIMENSIONAL_SLIDING) {
+                    map.put(association.additionalAction1, association);
+                    map.put(association.additionalAction2, association);
+                }
+            }
+        }).start();
     }
 
     public enum Action1D {

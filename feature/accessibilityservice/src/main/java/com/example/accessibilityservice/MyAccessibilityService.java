@@ -8,11 +8,9 @@ import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -25,12 +23,10 @@ import androidx.camera.core.ExperimentalGetImage;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LifecycleRegistry;
 
 import com.example.actionsrecognizer.facialexpressionactionsrecognizer.FacialExpressionActionsRecognizer;
+import com.example.eventsexecutor.EventExecutor;
+import com.example.eventsexecutor.OverlayManager;
 
 import java.util.List;
 
@@ -47,6 +43,8 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
     private BroadcastManager broadcastManager;
     private CameraLifecycle cameraLifecycle = new CameraLifecycle();
     private MainModel mainModel = MainModel.getInstance();
+    private OverlayManager overlayManager;
+    private EventExecutor executor;
 
     @OptIn(markerClass = androidx.camera.core.ExperimentalGetImage.class)
     @Override
@@ -64,24 +62,29 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
 
         MainModel.observeActions(this);
 
-        FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(broadcastManager)).init(
+        FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(executor)).init(
                     this, cameraLifecycle
         );
 
         // Mostra la notifica
         showNotification();
+
+        overlayManager = new OverlayManager(this);
+        executor = new EventExecutor(this);
     }
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         switch (event.getEventType()) {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                if (event.getPackageName() != null && !event.getPackageName().toString().equals(activePackage)) {
+                if (event.getPackageName() != null) {
                     activePackage = event.getPackageName().toString();
                     Log.d(TAG, "Package changed: " + activePackage);
                     Intent intent = new Intent("com.example.accessibilityservice.PACKAGE_CHANGED");
                     intent.putExtra("packageName", activePackage);
                     sendBroadcast(intent);
+                    overlayManager.changeGame(activePackage);
+                    overlayManager.showOverlay();
                 }
                 break;
         }
@@ -101,12 +104,14 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
             ButtonAction buttonAction = mainModel.getButtonActionByKeyCode(event.getKeyCode());
             if (buttonAction != null) {
                 broadcastManager.onActionStarts(buttonAction);
+                executor.onActionStarts(buttonAction);
             }
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
             Log.d(TAG, "Key up: " + event.getKeyCode());
             ButtonAction buttonAction = mainModel.getButtonActionByKeyCode(event.getKeyCode());
             if (buttonAction != null) {
                 broadcastManager.onActionEnds(buttonAction);
+                executor.onActionEnds(buttonAction);
             }
             if (mainModel.getTempButtonAction().getValue() == null)
                 MainModel.getInstance().setTempButtonAction(new ButtonAction(mainModel.getNextActionId(), KeyEvent.keyCodeToString(event.getKeyCode()), String.valueOf(event.getSource()), String.valueOf(event.getKeyCode())));
@@ -147,6 +152,7 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
                 .setContentTitle("PlayAccess Accessibility Service")
                 .setContentText("Il servizio di accessibilità è attivo")
                 .setSmallIcon(R.drawable.playaccess_logo_notification)
+                .setOngoing(true)
                 .build();
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -162,4 +168,5 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
         if (removedAction != null)
             broadcastManager.removeAction(removedAction);
     }
+
 }

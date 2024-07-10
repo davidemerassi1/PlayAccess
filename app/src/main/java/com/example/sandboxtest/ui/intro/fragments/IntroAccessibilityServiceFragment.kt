@@ -10,7 +10,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.sandboxtest.R
-import com.example.sandboxtest.SandboxVerifier
 import com.example.sandboxtest.databinding.AlertDialogPermissionsNeededBinding
 import com.example.sandboxtest.databinding.FragmentIntroAccessibilityServiceBinding
 import it.unimi.di.ewlab.iss.common.model.MainModel
@@ -100,15 +99,9 @@ class IntroAccessibilityServiceFragment : Fragment() {
     }
 
     private fun navigateToNext() {
-        if (MainModel.getInstance().sandboxPackageName == null)
-            Navigation.findNavController(requireView())
-                .navigate(
-                    R.id.introPermissionsFragment
-                )
-        else
-            Navigation.findNavController(requireView())
-                .navigate(
-                    R.id.introOverlayPermissionFragment
-                )
+        Navigation.findNavController(requireView())
+            .navigate(
+                R.id.introOverlayPermissionFragment
+            )
     }
 }

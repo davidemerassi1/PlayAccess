@@ -3,7 +3,7 @@
 
     <uses-permission android:name="android.permission.INJECT_EVENTS" />
     <application>
-        <service android:name=".OverlayService"
+        <service android:name=".OverlayManager"
             android:foregroundServiceType="specialUse"/>
     </application>
 

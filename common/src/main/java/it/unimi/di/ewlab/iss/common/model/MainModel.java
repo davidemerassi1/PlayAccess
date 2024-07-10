@@ -53,8 +53,6 @@ public class MainModel {
     private final MutableLiveData<ButtonAction> tempButtonAction = new MutableLiveData<>(null);
     private AssociationsDb associationsDb;
 
-    private String sandboxName;
-    private String sandboxPackageName;
     private MutableLiveData<String> activePackage = new MutableLiveData<>("");
     private static List<ActionsChangedObserver> observers = new ArrayList<>();
 
@@ -504,22 +502,6 @@ public class MainModel {
 
     public AssociationsDb getAssociationsDb() {
         return associationsDb;
-    }
-
-    public String getSandboxName() {
-        return sandboxName;
-    }
-
-    public void setSandboxName(String sandboxName) {
-        this.sandboxName = sandboxName;
-    }
-
-    public String getSandboxPackageName() {
-        return sandboxPackageName;
-    }
-
-    public void setSandboxPackageName(String sandboxPackageName) {
-        this.sandboxPackageName = sandboxPackageName;
     }
 
     public MutableLiveData<String> getActivePackage() {

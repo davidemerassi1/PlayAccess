@@ -22,11 +22,12 @@ import com.example.eventsexecutor.R;
 
 import java.util.List;
 
-import com.example.eventsexecutor.OverlayService;
+import com.example.eventsexecutor.OverlayManager;
 import com.example.eventsexecutor.gamesconfigurator.buttons.EventButton;
 
 import it.unimi.di.ewlab.iss.common.database.Event;
 
+import it.unimi.di.ewlab.iss.common.model.MainModel;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
 public class EventDialog extends FrameLayout {
@@ -116,7 +117,7 @@ public class EventDialog extends FrameLayout {
             }
         });
 
-        requestAvailableActions();
+        availableActions.setValue(MainModel.getInstance().getActions());
     }
 
     private void requestAvailableActions() {
@@ -129,7 +130,7 @@ public class EventDialog extends FrameLayout {
         };
         handler.postDelayed(runnable, 10000);
 
-        OverlayService.getInstance().requestActions(availableActions);
+
     }
 
     private OnClickListener selectListener = v -> {

@@ -1,31 +1,43 @@
 package com.example.eventsexecutor;
 
+import static android.content.Context.WINDOW_SERVICE;
+
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.widget.Toast;
+import android.os.IBinder;
+import android.view.LayoutInflater;
+import android.view.WindowManager;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.lifecycle.MutableLiveData;
+
+import java.util.List;
+
+import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
 public class OverlayManager {
-    public static OverlayManager instance;
+    private OverlayView overlay;
 
     public OverlayManager(Context context) {
-        try {
-            Intent serviceIntent = new Intent(context, OverlayService.class);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(serviceIntent);
-            } else {
-                context.startService(serviceIntent);
-            }
-            Toast.makeText(context, "Servizio attivo", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(context, "Impossibile avviare il servizio", Toast.LENGTH_SHORT).show();
-        }
+        WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
+        overlay = (OverlayView) LayoutInflater.from(context).inflate(R.layout.overlay_layout, null);
+        overlay.init(windowManager);
     }
 
-    public static OverlayManager getInstance(Context context) {
-        if (instance == null) {
-            instance = new OverlayManager(context);
-        }
-        return instance;
+    public void changeGame(String packageName) {
+        overlay.changeGame(packageName);
+    }
+
+    public void showOverlay() {
+        overlay.start();
+    }
+
+    public void hideOverlay() {
+        overlay.stop();
     }
 }

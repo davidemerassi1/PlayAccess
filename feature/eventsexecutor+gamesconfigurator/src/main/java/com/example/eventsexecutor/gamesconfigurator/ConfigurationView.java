@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.eventsexecutor.OverlayService;
+import com.example.eventsexecutor.OverlayManager;
 import com.example.eventsexecutor.R;
 import com.example.eventsexecutor.gamesconfigurator.buttons.EventButton;
 import com.example.eventsexecutor.gamesconfigurator.buttons.ResizableSlidingDraggableButton;
@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import it.unimi.di.ewlab.iss.common.model.MainModel;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
 public class ConfigurationView extends RelativeLayout {
@@ -71,8 +72,8 @@ public class ConfigurationView extends RelativeLayout {
         findViewById(R.id.scollView).setVisibility(View.GONE);
     }
 
-    public void setup(AssociationDao associationsDb) {
-        this.associationsDb = associationsDb;
+    public void setup() {
+        associationsDb = MainModel.getInstance().getAssociationsDb().getDao();;
         fab = findViewById(R.id.fab);
         LinearLayout optionsLayout = findViewById(R.id.optionsLayout);
         for (int i = 0; i < optionsLayout.getChildCount(); i++) {
@@ -153,7 +154,7 @@ public class ConfigurationView extends RelativeLayout {
             }
         }
 
-        OverlayService.getInstance().requestActions(availableActions);
+        requestActions();
     }
 
     private void showDialog(EventButton eventButton, boolean isNew) {
@@ -186,7 +187,7 @@ public class ConfigurationView extends RelativeLayout {
                         slidingEventDialog = null;
                         if (isNew)
                             events.addView((View) eventButton);
-                        OverlayService.getInstance().requestActions(availableActions);
+                        requestActions();
                     },
                     view1 -> {
                         removeView(slidingEventDialog);
@@ -219,7 +220,7 @@ public class ConfigurationView extends RelativeLayout {
                         eventDialog = null;
                         if (isNew)
                             events.addView((View) eventButton);
-                        OverlayService.getInstance().requestActions(availableActions);
+                        requestActions();
                     },
                     view1 -> {
                         removeView(eventDialog);
@@ -235,7 +236,11 @@ public class ConfigurationView extends RelativeLayout {
         }
     }
 
-    public List<Association> save() {
+    private void requestActions() {
+        availableActions.setValue(MainModel.getInstance().getActions());
+    }
+
+    public void save() {
         List<Association> list = new LinkedList<>();
 
         for (int i = 0; i < events.getChildCount(); i++) {
@@ -262,8 +267,6 @@ public class ConfigurationView extends RelativeLayout {
             associationsDb.deleteAssociations(applicationPackage);
             associationsDb.insert(list.toArray(new Association[0]));
         }).start();
-
-        return list;
     }
 
     private int center(float value, int size) {

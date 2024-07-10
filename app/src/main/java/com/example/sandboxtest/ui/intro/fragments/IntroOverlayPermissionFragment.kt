@@ -1,6 +1,5 @@
 package com.example.sandboxtest.ui.intro.fragments
 
-import com.example.eventsexecutor.OverlayManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -10,9 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
+import com.example.sandboxtest.R
 import com.example.sandboxtest.databinding.AlertDialogPermissionsNeededBinding
 import com.example.sandboxtest.databinding.FragmentIntroOverlayPermissionBinding
-import it.unimi.di.ewlab.iss.common.model.MainModel
 
 class IntroOverlayPermissionFragment : Fragment() {
     private val binding: FragmentIntroOverlayPermissionBinding by lazy {
@@ -52,7 +52,7 @@ class IntroOverlayPermissionFragment : Fragment() {
             settingsOpened = true
         }
 
-        binding.text.text = "Per continuare, concedi a ${MainModel.getInstance().sandboxName} il permesso di sovrapporsi ad altre app"
+        binding.text.text = "Per continuare, concedi a ${requireActivity().packageName} il permesso di sovrapporsi ad altre app"
     }
 
     private fun openOverlaySettings() {
@@ -83,10 +83,7 @@ class IntroOverlayPermissionFragment : Fragment() {
         super.onResume()
 
         if (checkOverlayPermission()) {
-            OverlayManager(
-                requireContext()
-            )
-            requireActivity().finish()
+            navigateToNext()
         } else if (settingsOpened) {
             openDenyDialog()
             settingsOpened = false
@@ -101,11 +98,18 @@ class IntroOverlayPermissionFragment : Fragment() {
 
         dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
 
-        dialogBinding.msg.text = "Questa app non può funzionare senza il permesso richiesto. Assicurati di aver concesso il permesso a ${MainModel.getInstance().sandboxName} e non a PlayAccess"
+        dialogBinding.msg.text = "Questa app non può funzionare senza il permesso richiesto."
 
         dialogBinding.okButton.setOnClickListener {
             dialog.dismiss()
         }
         dialog.show()
+    }
+
+    private fun navigateToNext() {
+        Navigation.findNavController(requireView())
+            .navigate(
+                R.id.introPermissionsFragment
+            )
     }
 }

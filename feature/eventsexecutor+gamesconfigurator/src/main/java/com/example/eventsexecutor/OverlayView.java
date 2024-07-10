@@ -36,13 +36,9 @@ import java.util.Map;
 import it.unimi.di.ewlab.iss.common.model.MainModel;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
-public class OverlayView extends RelativeLayout implements ActionListener {
-    private AssociationDao associationsDb;
-    private Map<Action, Association> map = new HashMap<>();
+public class OverlayView extends RelativeLayout {
     private boolean configurationOpened = false;
     private ConfigurationView configurationView;
-    private boolean needCamera = false;
-    MutableLiveData<Association[]> associations = new MutableLiveData<>();
 
     private String applicationPackage;
 
@@ -54,7 +50,6 @@ public class OverlayView extends RelativeLayout implements ActionListener {
         super(context, attrs);
     }
 
-    @OptIn(markerClass = ExperimentalGetImage.class)
     public void init(WindowManager windowManager) {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -71,30 +66,17 @@ public class OverlayView extends RelativeLayout implements ActionListener {
         View collapsedView = this.findViewById(R.id.layoutCollapsed);
         View expandedView = this.findViewById(R.id.configurationView);
 
-        associationsDb = MainModel.getInstance().getAssociationsDb().getDao();
-
         configurationView = findViewById(R.id.configurationView);
-        configurationView.setup(associationsDb);
+        configurationView.setup();
 
         expandedView.findViewById(R.id.closeConfigurationBtn).setOnClickListener(v -> {
-            new Thread(() -> executor.releaseAll()).start();
+            //new Thread(() -> executor.releaseAll()).start();
             collapsedView.setVisibility(View.VISIBLE);
             expandedView.setVisibility(View.GONE);
             params.width = WindowManager.LayoutParams.WRAP_CONTENT;
             params.height = WindowManager.LayoutParams.WRAP_CONTENT;
             windowManager.updateViewLayout(this, params);
-            List<Association> associationList = configurationView.save();
-            map.clear();
-            needCamera = false;
-            for (Association association : associationList) {
-                map.put(association.action, association);
-                if (association.action.getActionType() == Action.ActionType.FACIAL_EXPRESSION)
-                    needCamera = true;
-                if (association.event == Event.MONODIMENSIONAL_SLIDING) {
-                    map.put(association.additionalAction1, association);
-                    map.put(association.additionalAction2, association);
-                }
-            }
+            configurationView.save();
             configurationOpened = false;
         });
 
@@ -146,7 +128,7 @@ public class OverlayView extends RelativeLayout implements ActionListener {
             );
         }*/
 
-        associations.observeForever(associations -> {
+        /*associations.observeForever(associations -> {
             Log.d("OverlayView", "init: " + associations.length);
             map.clear();
             needCamera = false;
@@ -162,15 +144,11 @@ public class OverlayView extends RelativeLayout implements ActionListener {
                 }
             }
             configurationView.changeGame(applicationPackage, associations);
-        });
+        });*/
     }
-
-    private EventExecutor executor = new EventExecutor(getContext());
 
     public void changeGame(String applicationPackage) {
         this.applicationPackage = applicationPackage;
-
-        new Thread(() -> associations.postValue(associationsDb.getAssociations(applicationPackage))).start();
 
         Drawable appIcon = getAppIconFromPackageName(getContext(), applicationPackage);
         if (appIcon != null)
@@ -190,15 +168,16 @@ public class OverlayView extends RelativeLayout implements ActionListener {
 
     public void start() {
         setVisibility(VISIBLE);
-        if (needCamera)
-            getContext().sendBroadcast(new Intent("com.example.accessibilityservice.NEED_CAMERA"));
+        /*if (needCamera)
+            getContext().sendBroadcast(new Intent("com.example.accessibilityservice.NEED_CAMERA"));*/
     }
 
     public void stop() {
         setVisibility(GONE);
-        getContext().sendBroadcast(new Intent("com.example.accessibilityservice.NO_CAMERA"));
+        //getContext().sendBroadcast(new Intent("com.example.accessibilityservice.NO_CAMERA"));
     }
 
+    /*
     private void execute1d(Association association, Action action) {
         if (!configurationOpened && getVisibility()==VISIBLE) {
             if (association.action.equals(action))
@@ -209,6 +188,7 @@ public class OverlayView extends RelativeLayout implements ActionListener {
                 executor.execute1d(association, EventExecutor.Action1D.RESET);
         }
     }
+     */
 
     /*
     @Override
@@ -236,6 +216,7 @@ public class OverlayView extends RelativeLayout implements ActionListener {
     }
     */
 
+    /*
     @Override
     public void onActionStarts(@NonNull Action action) {
         Log.d("OverlayView", "onActionStarts: " + action.getName());
@@ -270,6 +251,7 @@ public class OverlayView extends RelativeLayout implements ActionListener {
         if (!configurationOpened && getVisibility()==VISIBLE && map.containsKey(action))
             executor.execute2d(map.get(action), x, y);
     }
+    */
 
     public void notifyRemoved(Action action) {
         configurationView.notifyRemoved(action);

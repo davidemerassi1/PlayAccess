@@ -23,7 +23,7 @@ public class ProcessMonitor {
     public ProcessMonitor(OverlayView overlayView) {
         this.overlayView = overlayView;
         ActivityManager activityManager = (ActivityManager) overlayView.getContext().getSystemService(Context.ACTIVITY_SERVICE);
-        sandboxName = MainModel.getInstance().getSandboxPackageName();
+        sandboxName = null;
         if (sandboxName == null) {
             throw new IllegalStateException("No foreground app");
         }
