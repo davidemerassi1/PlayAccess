@@ -54,12 +54,13 @@ public class ResizableSlidingDraggableButton extends FrameLayout implements Even
         init();
     }
 
-    public ResizableSlidingDraggableButton(Context context, Action action, Action action2, Action action3) {
+    public ResizableSlidingDraggableButton(Context context, Action action, Action action2, Action action3, boolean resetToStart) {
         super(context);
         this.context = context;
         this.action = action;
         this.action2 = action2;
         this.action3 = action3;
+        this.resetToStart = resetToStart;
         init();
     }
 

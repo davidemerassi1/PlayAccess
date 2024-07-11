@@ -112,7 +112,7 @@ public class ConfigurationView extends RelativeLayout {
 
         fabLayouts.get(4).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(new ResizableSlidingDraggableButton(context, null, null, null), true);
+            showDialog(new ResizableSlidingDraggableButton(context, null, null, null, false), true);
         });
 
         fabLayouts.get(5).getChildAt(1).setOnClickListener(view -> {
@@ -133,7 +133,7 @@ public class ConfigurationView extends RelativeLayout {
                     button.setDimensions(association.radius * 2);
                     button.setPadding(association.radius * 2);
                 } else if (association.event == Event.MONODIMENSIONAL_SLIDING) {
-                    ResizableSlidingDraggableButton button = new ResizableSlidingDraggableButton(context, association.action, association.additionalAction1, association.additionalAction2);
+                    ResizableSlidingDraggableButton button = new ResizableSlidingDraggableButton(context, association.action, association.additionalAction1, association.additionalAction2, association.resetToStart);
                     events.addView(button);
                     button.setOnClickListener(updateListener);
                     button.setX(positionStart(association.x, association.radius));
@@ -274,6 +274,7 @@ public class ConfigurationView extends RelativeLayout {
         new Thread(() -> {
             associationsDb.deleteAssociations(applicationPackage);
             associationsDb.insert(list.toArray(new Association[0]));
+            announceForAccessibility("RELOAD_ASSOCIATIONS");
         }).start();
     }
 

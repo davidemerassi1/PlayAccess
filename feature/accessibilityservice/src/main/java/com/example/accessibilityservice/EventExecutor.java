@@ -78,6 +78,7 @@ public class EventExecutor implements ActionListener {
                 s = new StrokeDescription(path, 0, 10);
                 g = new GestureDescription.Builder().addStroke(s).build();
                 accessibilityService.dispatchGesture(g, null, null);
+                break;
             case SWIPE_UP:
                 path = new Path();
                 path.moveTo(association.x, association.y);
@@ -218,10 +219,12 @@ public class EventExecutor implements ActionListener {
                 break;
             case RESET:
                 if (inProgress.containsKey(association)) {
+                    Log.d("ActionExecutor", "Reset to start: " + association.resetToStart);
                     if (association.resetToStart) {
                         StrokeInProgress strokeInProgress = inProgress.get(association);
                         path.moveTo(strokeInProgress.x(), strokeInProgress.y());
-                        StrokeDescription s = strokeInProgress.strokeDescription().continueStroke(path, 0, 50, false);
+                        path.lineTo(association.x, association.y);
+                        StrokeDescription s = strokeInProgress.strokeDescription().continueStroke(path, 0, 200, false);
                         GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
                         accessibilityService.dispatchGesture(g, null, null);
                         inProgress.remove(association);
@@ -294,6 +297,7 @@ public class EventExecutor implements ActionListener {
     }
 
     public void changeGame(String packageName) {
+        Log.d("EventExecutor", "Changing game");
         new Thread(() -> associations.postValue(associationsDb.getAssociations(packageName))).start();
     }
 

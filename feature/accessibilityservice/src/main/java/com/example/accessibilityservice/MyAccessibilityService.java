@@ -65,7 +65,7 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
         MainModel.observeActions(this);
 
         FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(executor)).init(
-                    this, cameraLifecycle
+                this, cameraLifecycle
         );
 
         // Mostra la notifica
@@ -88,6 +88,10 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
                     executor.changeGame(activePackage);
                     overlayManager.showOverlay();
                 }
+                break;
+            case AccessibilityEvent.TYPE_ANNOUNCEMENT:
+                if (event.getText().toString().equals("[RELOAD_ASSOCIATIONS]"))
+                    executor.changeGame(activePackage);
                 break;
         }
     }

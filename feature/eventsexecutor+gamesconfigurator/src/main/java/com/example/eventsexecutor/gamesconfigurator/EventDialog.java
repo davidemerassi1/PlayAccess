@@ -36,7 +36,7 @@ public class EventDialog extends FrameLayout {
     private RadioGroup radioGroup;
     private TextView faceOptionText;
     private TextView controllerOptionText;
-    private MutableLiveData<List<Action>> availableActions = new MutableLiveData<>();
+    private List<Action> availableActions;
 
     public EventDialog(Context context) {
         super(context);
@@ -54,6 +54,7 @@ public class EventDialog extends FrameLayout {
         setElevation(30);
         radioGroup = findViewById(R.id.radioGroup);
         event = eventButton.getEvent();
+        availableActions = MainModel.getInstance().getActions();
 
         if (event == Event.SWIPE_UP || event == Event.SWIPE_DOWN || event == Event.SWIPE_LEFT || event == Event.SWIPE_RIGHT) {
             findViewById(R.id.selectSwipeDirectionLayout).setVisibility(VISIBLE);
@@ -107,30 +108,10 @@ public class EventDialog extends FrameLayout {
             findViewById(R.id.deleteButton).setOnClickListener(deleteListener);
         }
 
-        availableActions.observeForever(actions -> {
-            if (actions != null) {
-                findViewById(R.id.progressBar).setVisibility(GONE);
-                findViewById(R.id.availableActionsLayout).setVisibility(VISIBLE);
-                controllerOptionText.performClick();
-                if (deleteListener != null && actions.contains(eventButton.getAction()))
-                    selectedAction = eventButton.getAction();
-            }
-        });
+        if (deleteListener != null && availableActions.contains(eventButton.getAction()))
+            selectedAction = eventButton.getAction();
 
-        availableActions.setValue(MainModel.getInstance().getActions());
-    }
-
-    private void requestAvailableActions() {
-        Handler handler = new Handler(Looper.getMainLooper());
-        Runnable runnable = () -> {
-            if (!availableActions.isInitialized()) {
-                findViewById(R.id.progressBar).setVisibility(GONE);
-                findViewById(R.id.errorRetrievingActions).setVisibility(VISIBLE);
-            }
-        };
-        handler.postDelayed(runnable, 10000);
-
-
+        controllerOptionText.performClick();
     }
 
     private OnClickListener selectListener = v -> {
@@ -146,7 +127,7 @@ public class EventDialog extends FrameLayout {
 
         Action.ActionType actionType = Action.ActionType.valueOf((String) v.getTag());
         findViewById(R.id.noEventsTextview).setVisibility(GONE);
-        for (Action option : availableActions.getValue()) {
+        for (Action option : availableActions) {
             if ((event == Event.JOYSTICK) != option.is2d())
                 continue;
             if (option.getActionType() != actionType)
