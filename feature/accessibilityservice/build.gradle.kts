@@ -7,7 +7,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 26
         targetSdk = 34
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -22,8 +22,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
@@ -49,4 +49,10 @@ dependencies {
     implementation ("com.google.guava:guava:31.0.1-android")
     //ML Kit
     implementation ("com.google.mlkit:face-detection:16.1.6")
+
+    //Room
+    val room_version = "2.5.1"
+    implementation ("androidx.room:room-common:$room_version")
+    implementation ("androidx.room:room-runtime:$room_version")
+    annotationProcessor ("androidx.room:room-compiler:$room_version")
 }

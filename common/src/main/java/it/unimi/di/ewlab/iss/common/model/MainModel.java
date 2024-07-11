@@ -139,7 +139,7 @@ public class MainModel {
     //METODO CHE SETTA I GIOCHI NEL MAINMODEL PRENDENDOLI DAL FILE JSON
     public void initActions() {
         actions = new HashMap<>();
-
+        actions.put(0, Action.FACE_MOVEMENT_ACTION);
         for (Action a : jsonManager.getActionsFromJson()) {
             actions.put(a.getActionId(), a);
         }

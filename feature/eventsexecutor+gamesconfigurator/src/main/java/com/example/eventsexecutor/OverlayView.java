@@ -150,6 +150,8 @@ public class OverlayView extends RelativeLayout {
     public void changeGame(String applicationPackage) {
         this.applicationPackage = applicationPackage;
 
+        configurationView.changeGame(applicationPackage);
+
         Drawable appIcon = getAppIconFromPackageName(getContext(), applicationPackage);
         if (appIcon != null)
             ((ImageView) findViewById(R.id.gameIcon)).setImageDrawable(appIcon);

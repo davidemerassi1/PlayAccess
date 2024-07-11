@@ -23,9 +23,9 @@ import androidx.camera.core.ExperimentalGetImage;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.actionsrecognizer.facialexpressionactionsrecognizer.FacialExpressionActionsRecognizer;
-import com.example.eventsexecutor.EventExecutor;
 import com.example.eventsexecutor.OverlayManager;
 
 import java.util.List;
@@ -60,6 +60,8 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
             setServiceInfo(info);
         }
 
+        executor = new EventExecutor(this);
+
         MainModel.observeActions(this);
 
         FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(executor)).init(
@@ -70,20 +72,20 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
         showNotification();
 
         overlayManager = new OverlayManager(this);
-        executor = new EventExecutor(this);
     }
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         switch (event.getEventType()) {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                if (event.getPackageName() != null) {
+                if (event.getPackageName() != null && !event.getPackageName().toString().equals("com.example.sandboxtest")) {
                     activePackage = event.getPackageName().toString();
                     Log.d(TAG, "Package changed: " + activePackage);
                     Intent intent = new Intent("com.example.accessibilityservice.PACKAGE_CHANGED");
                     intent.putExtra("packageName", activePackage);
                     sendBroadcast(intent);
                     overlayManager.changeGame(activePackage);
+                    executor.changeGame(activePackage);
                     overlayManager.showOverlay();
                 }
                 break;
@@ -169,4 +171,10 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
             broadcastManager.removeAction(removedAction);
     }
 
+    public void setCameraNeeded(boolean cameraNeeded) {
+        if (cameraNeeded)
+            cameraLifecycle.resume();
+        else
+            cameraLifecycle.pause();
+    }
 }

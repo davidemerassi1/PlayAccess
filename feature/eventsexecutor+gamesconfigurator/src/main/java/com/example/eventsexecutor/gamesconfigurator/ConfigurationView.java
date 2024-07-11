@@ -47,6 +47,7 @@ public class ConfigurationView extends RelativeLayout {
         showDialog(eventButton, false);
     };
     private MutableLiveData<List<Action>> availableActions = new MutableLiveData<>();
+    private MutableLiveData<Association[]> associations = new MutableLiveData<>();
 
     public ConfigurationView(Context context) {
         super(context);
@@ -73,7 +74,6 @@ public class ConfigurationView extends RelativeLayout {
     }
 
     public void setup() {
-        associationsDb = MainModel.getInstance().getAssociationsDb().getDao();;
         fab = findViewById(R.id.fab);
         LinearLayout optionsLayout = findViewById(R.id.optionsLayout);
         for (int i = 0; i < optionsLayout.getChildCount(); i++) {
@@ -120,39 +120,47 @@ public class ConfigurationView extends RelativeLayout {
             showDialog(new DraggableButton(context, Event.TAP_ON_OFF), true);
         });
 
+        associationsDb = MainModel.getInstance().getAssociationsDb().getDao();
+        associations.observeForever(ass -> {
+            for (Association association : ass) {
+                if (association.event == Event.JOYSTICK) {
+                    ResizableDraggableButton button = new ResizableDraggableButton(context);
+                    button.setAction(association.action);
+                    button.setOnClickListener(updateListener);
+                    button.setX(positionStart(association.x, association.radius));
+                    button.setY(positionStart(association.y, association.radius));
+                    events.addView(button);
+                    button.setDimensions(association.radius * 2);
+                    button.setPadding(association.radius * 2);
+                } else if (association.event == Event.MONODIMENSIONAL_SLIDING) {
+                    ResizableSlidingDraggableButton button = new ResizableSlidingDraggableButton(context, association.action, association.additionalAction1, association.additionalAction2);
+                    events.addView(button);
+                    button.setOnClickListener(updateListener);
+                    button.setX(positionStart(association.x, association.radius));
+                    button.setY(positionStart(association.y, toPx(30)));
+                    button.setDimensions(association.radius * 2);
+                } else {
+                    DraggableButton button = new DraggableButton(context, association.event);
+                    button.setAction(association.action);
+                    button.setOnClickListener(updateListener);
+                    events.addView(button);
+                    button.setX(positionStart(association.x, toPx(30)));
+                    button.setY(positionStart(association.y, toPx(30)));
+                }
+            }
+        });
+
         availableActions.observeForever(this::refreshAlerts);
     }
 
-    public void changeGame(String applicationPackage, Association[] associations) {
+    public void changeGame(String applicationPackage) {
         this.applicationPackage = applicationPackage;
         events.removeAllViews();
 
-        for (Association association : associations) {
-            if (association.event == Event.JOYSTICK) {
-                ResizableDraggableButton button = new ResizableDraggableButton(context);
-                button.setAction(association.action);
-                button.setOnClickListener(updateListener);
-                button.setX(positionStart(association.x, association.radius));
-                button.setY(positionStart(association.y, association.radius));
-                events.addView(button);
-                button.setDimensions(association.radius * 2);
-                button.setPadding(association.radius * 2);
-            } else if (association.event == Event.MONODIMENSIONAL_SLIDING) {
-                ResizableSlidingDraggableButton button = new ResizableSlidingDraggableButton(context, association.action, association.additionalAction1, association.additionalAction2);
-                events.addView(button);
-                button.setOnClickListener(updateListener);
-                button.setX(positionStart(association.x, association.radius));
-                button.setY(positionStart(association.y, toPx(30)));
-                button.setDimensions(association.radius * 2);
-            } else {
-                DraggableButton button = new DraggableButton(context, association.event);
-                button.setAction(association.action);
-                button.setOnClickListener(updateListener);
-                events.addView(button);
-                button.setX(positionStart(association.x, toPx(30)));
-                button.setY(positionStart(association.y, toPx(30)));
-            }
-        }
+        new Thread(() -> {
+            Association[] a = associationsDb.getAssociations(applicationPackage);
+            associations.postValue(a);
+        }).start();
 
         requestActions();
     }
