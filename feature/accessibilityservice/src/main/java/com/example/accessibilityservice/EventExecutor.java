@@ -6,6 +6,8 @@ import android.accessibilityservice.GestureDescription.StrokeDescription;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Path;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -30,6 +32,8 @@ public class EventExecutor implements ActionListener {
     private AssociationDao associationsDb;
     private MutableLiveData<Association[]> associations = new MutableLiveData<>();
     private MyAccessibilityService accessibilityService;
+    Handler handler = new Handler(Looper.getMainLooper());
+    private boolean moving1d = false;
 
     public EventExecutor(MyAccessibilityService accessibilityService) {
         this.accessibilityService = accessibilityService;
@@ -176,46 +180,90 @@ public class EventExecutor implements ActionListener {
 
     public void execute1d(Association association, Action1D action1d) {
         Path path = new Path();
+        StrokeDescription s;
+        GestureDescription g;
         switch (action1d) {
             case MOVE_LEFT:
                 if (!inProgress.containsKey(association)) {
                     path.moveTo(association.x, association.y);
                     int toX = Math.max(association.x - 100, association.x - association.radius);
                     path.lineTo(toX, association.y);
-                    StrokeDescription s = new StrokeDescription(path, 0, 100, true);
+                    s = new StrokeDescription(path, 0, 100, true);
                     inProgress.put(association, new StrokeInProgress(s, toX, association.y));
-                    GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
-                    accessibilityService.dispatchGesture(g, null, null);
                 } else {
                     StrokeInProgress strokeInProgress = inProgress.get(association);
                     path.moveTo(strokeInProgress.x(), strokeInProgress.y());
                     int toX = Math.max(strokeInProgress.x() - 100, association.x - association.radius);
                     path.lineTo(toX, strokeInProgress.y());
-                    StrokeDescription s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 100, true);
+                    s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 100, true);
                     inProgress.put(association, new StrokeInProgress(s, toX, strokeInProgress.y()));
-                    GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
-                    accessibilityService.dispatchGesture(g, null, null);
                 }
+                g = new GestureDescription.Builder().addStroke(s).build();
+                accessibilityService.dispatchGesture(g, null, null);
+                moving1d = true;
+                sleep(100);
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!moving1d) {
+                            handler.removeCallbacks(this);
+                            return;
+                        }
+                        StrokeInProgress strokeInProgress = inProgress.get(association);
+                        Path path1 = new Path();
+                        path1.moveTo(strokeInProgress.x(), strokeInProgress.y());
+                        int toX = Math.max(strokeInProgress.x() - 20, association.x - association.radius);
+                        path1.lineTo(toX, strokeInProgress.y());
+                        StrokeDescription s1 = inProgress.get(association).strokeDescription().continueStroke(path1, 0, 20, true);
+                        inProgress.put(association, new StrokeInProgress(s1, toX, strokeInProgress.y()));
+                        GestureDescription g1 = new GestureDescription.Builder().addStroke(s1).build();
+                        accessibilityService.dispatchGesture(g1, null, null);
+                        handler.postDelayed(this, 20);
+                    }
+                });
+
                 break;
             case MOVE_RIGHT:
                 if (!inProgress.containsKey(association)) {
                     path.moveTo(association.x, association.y);
                     int toX = Math.min(association.x + 100, association.x + association.radius);
                     path.lineTo(toX, association.y);
-                    StrokeDescription s = new StrokeDescription(path, 0, 100, true);
+                    s = new StrokeDescription(path, 0, 100, true);
                     inProgress.put(association, new StrokeInProgress(s, toX, association.y));
-                    GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
-                    accessibilityService.dispatchGesture(g, null, null);
                 } else {
                     StrokeInProgress strokeInProgress = inProgress.get(association);
                     path.moveTo(strokeInProgress.x(), strokeInProgress.y());
                     int toX = Math.min(strokeInProgress.x() + 100, association.x + association.radius);
                     path.lineTo(toX, strokeInProgress.y());
-                    StrokeDescription s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 100, true);
+                    s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 100, true);
                     inProgress.put(association, new StrokeInProgress(s, toX, strokeInProgress.y()));
-                    GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
-                    accessibilityService.dispatchGesture(g, null, null);
                 }
+                g = new GestureDescription.Builder().addStroke(s).build();
+                accessibilityService.dispatchGesture(g, null, null);
+                moving1d = true;
+                sleep(100);
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!moving1d) {
+                            handler.removeCallbacks(this);
+                            return;
+                        }
+                        StrokeInProgress strokeInProgress = inProgress.get(association);
+                        Path path1 = new Path();
+                        path1.moveTo(strokeInProgress.x(), strokeInProgress.y());
+                        int toX = Math.max(strokeInProgress.x() + 20, association.x - association.radius);
+                        path1.lineTo(toX, strokeInProgress.y());
+                        StrokeDescription s1 = inProgress.get(association).strokeDescription().continueStroke(path1, 0, 20, true);
+                        inProgress.put(association, new StrokeInProgress(s1, toX, strokeInProgress.y()));
+                        GestureDescription g1 = new GestureDescription.Builder().addStroke(s1).build();
+                        accessibilityService.dispatchGesture(g1, null, null);
+                        handler.postDelayed(this, 20);
+                    }
+                });
+
                 break;
             case RESET:
                 if (inProgress.containsKey(association)) {
@@ -224,31 +272,34 @@ public class EventExecutor implements ActionListener {
                         StrokeInProgress strokeInProgress = inProgress.get(association);
                         path.moveTo(strokeInProgress.x(), strokeInProgress.y());
                         path.lineTo(association.x, association.y);
-                        StrokeDescription s = strokeInProgress.strokeDescription().continueStroke(path, 0, 200, false);
-                        GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
-                        accessibilityService.dispatchGesture(g, null, null);
-                        inProgress.remove(association);
+                        s = strokeInProgress.strokeDescription().continueStroke(path, 0, 400, false);
+
                     } else {
                         StrokeInProgress strokeInProgress = inProgress.get(association);
                         path.moveTo(strokeInProgress.x(), strokeInProgress.y());
-                        StrokeDescription s = strokeInProgress.strokeDescription().continueStroke(path, 0, 1, false);
-                        GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
-                        accessibilityService.dispatchGesture(g, null, null);
-                        inProgress.remove(association);
+                        s = strokeInProgress.strokeDescription().continueStroke(path, 0, 1, false);
                     }
+                    g = new GestureDescription.Builder().addStroke(s).build();
+                    accessibilityService.dispatchGesture(g, null, null);
+                    inProgress.remove(association);
                 }
                 break;
         }
     }
 
-    public void stopExecuting(Association association) {
-        if (association.event == Event.TAP_ON_OFF) {
-            Path path = new Path();
-            path.moveTo(association.x, association.y);
-            StrokeDescription s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 1, false);
-            inProgress.remove(association);
-            GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
-            accessibilityService.dispatchGesture(g, null, null);
+    public void stopExecuting(Association association, Action1D action1d) {
+        switch (association.event) {
+            case TAP_ON_OFF -> {
+                Path path = new Path();
+                path.moveTo(association.x, association.y);
+                StrokeDescription s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 1, false);
+                inProgress.remove(association);
+                GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
+                accessibilityService.dispatchGesture(g, null, null);
+            }
+            case MONODIMENSIONAL_SLIDING -> {
+                moving1d = false;
+            }
         }
     }
 
@@ -283,7 +334,15 @@ public class EventExecutor implements ActionListener {
     @Override
     public void onActionEnds(@NonNull Action action) {
         for (Association a : associations.getValue()) {
-            stopExecuting(a);
+            if (a.event == Event.MONODIMENSIONAL_SLIDING) {
+                if (a.action.equals(action))
+                    stopExecuting(a, Action1D.MOVE_LEFT);
+                else if (a.additionalAction1.equals(action))
+                    stopExecuting(a, Action1D.MOVE_RIGHT);
+                else if (a.additionalAction2.equals(action))
+                    stopExecuting(a, Action1D.RESET);
+            } else if (a.action.equals(action))
+                stopExecuting(a, null);
         }
     }
 
@@ -298,7 +357,20 @@ public class EventExecutor implements ActionListener {
 
     public void changeGame(String packageName) {
         Log.d("EventExecutor", "Changing game");
-        new Thread(() -> associations.postValue(associationsDb.getAssociations(packageName))).start();
+        new Thread(() -> {
+            Association[] associationsArray = associationsDb.getAssociations(packageName);
+            for (Association a : associationsArray)
+                a.y += statusBarHeight;
+            associations.postValue(associationsArray);
+        }).start();
+    }
+
+    private void sleep(int duration) {
+        try {
+            Thread.sleep(duration);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public enum Action1D {
