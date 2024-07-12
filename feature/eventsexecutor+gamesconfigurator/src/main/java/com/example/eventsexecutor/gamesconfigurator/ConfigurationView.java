@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -22,6 +23,7 @@ import com.example.eventsexecutor.gamesconfigurator.buttons.ResizableSlidingDrag
 import it.unimi.di.ewlab.iss.common.database.Event;
 import it.unimi.di.ewlab.iss.common.database.Association;
 import it.unimi.di.ewlab.iss.common.database.AssociationDao;
+
 import com.example.eventsexecutor.gamesconfigurator.buttons.DraggableButton;
 import com.example.eventsexecutor.gamesconfigurator.buttons.ResizableDraggableButton;
 
@@ -48,6 +50,7 @@ public class ConfigurationView extends RelativeLayout {
     };
     private MutableLiveData<List<Action>> availableActions = new MutableLiveData<>();
     private MutableLiveData<Association[]> associations = new MutableLiveData<>();
+    private boolean configurationChanged = false;
 
     public ConfigurationView(Context context) {
         super(context);
@@ -122,6 +125,7 @@ public class ConfigurationView extends RelativeLayout {
 
         associationsDb = MainModel.getInstance().getAssociationsDb().getDao();
         associations.observeForever(ass -> {
+            events.removeAllViews();
             for (Association association : ass) {
                 if (association.event == Event.JOYSTICK) {
                     ResizableDraggableButton button = new ResizableDraggableButton(context);
@@ -154,10 +158,12 @@ public class ConfigurationView extends RelativeLayout {
     }
 
     public void changeGame(String applicationPackage) {
-        this.applicationPackage = applicationPackage;
-        events.removeAllViews();
-
         new Thread(() -> {
+            if (configurationChanged) {
+                save();
+                configurationChanged = false;
+            }
+            this.applicationPackage = applicationPackage;
             Association[] a = associationsDb.getAssociations(applicationPackage);
             associations.postValue(a);
         }).start();
@@ -271,11 +277,11 @@ public class ConfigurationView extends RelativeLayout {
             }
         }
 
-        new Thread(() -> {
-            associationsDb.deleteAssociations(applicationPackage);
-            associationsDb.insert(list.toArray(new Association[0]));
-            announceForAccessibility("RELOAD_ASSOCIATIONS");
-        }).start();
+        Association[] associationsArray = list.toArray(new Association[0]);
+        Log.d("ConfigurationView", "save: " + list.size());
+        associationsDb.deleteAssociations(applicationPackage);
+        associationsDb.insert(associationsArray);
+        announceForAccessibility("RELOAD_ASSOCIATIONS");
     }
 
     private int center(float value, int size) {
@@ -290,11 +296,6 @@ public class ConfigurationView extends RelativeLayout {
 
     private static int toPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
-    }
-
-    public void notifyRemoved(Action action) {
-        availableActions.getValue().remove(action);
-        refreshAlerts(availableActions.getValue());
     }
 
     private void refreshAlerts(List<Action> availableActions) {
@@ -314,5 +315,9 @@ public class ConfigurationView extends RelativeLayout {
                 }
             }
         }
+    }
+
+    public void open() {
+        configurationChanged = true;
     }
 }

@@ -10,6 +10,7 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -37,10 +38,11 @@ import it.unimi.di.ewlab.iss.common.model.MainModel;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
 public class OverlayView extends RelativeLayout {
-    private boolean configurationOpened = false;
     private ConfigurationView configurationView;
-
-    private String applicationPackage;
+    private WindowManager.LayoutParams params;
+    private WindowManager windowManager;
+    private View collapsedView;
+    private View expandedView;
 
     public OverlayView(Context context) {
         super(context);
@@ -51,7 +53,8 @@ public class OverlayView extends RelativeLayout {
     }
 
     public void init(WindowManager windowManager) {
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+        this.windowManager = windowManager;
+        params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
@@ -63,21 +66,15 @@ public class OverlayView extends RelativeLayout {
         params.x = 10;
         params.y = 10;
         windowManager.addView(this, params);
-        View collapsedView = this.findViewById(R.id.layoutCollapsed);
-        View expandedView = this.findViewById(R.id.configurationView);
+        collapsedView = this.findViewById(R.id.layoutCollapsed);
+        expandedView = this.findViewById(R.id.configurationView);
 
         configurationView = findViewById(R.id.configurationView);
         configurationView.setup();
 
         expandedView.findViewById(R.id.closeConfigurationBtn).setOnClickListener(v -> {
-            //new Thread(() -> executor.releaseAll()).start();
-            collapsedView.setVisibility(View.VISIBLE);
-            expandedView.setVisibility(View.GONE);
-            params.width = WindowManager.LayoutParams.WRAP_CONTENT;
-            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-            windowManager.updateViewLayout(this, params);
-            configurationView.save();
-            configurationOpened = false;
+            closeConfiguration();
+            new Thread(() -> configurationView.save()).start();
         });
 
         collapsedView.setOnTouchListener(new View.OnTouchListener() {
@@ -103,7 +100,8 @@ public class OverlayView extends RelativeLayout {
                             params.width = WindowManager.LayoutParams.MATCH_PARENT;
                             params.height = WindowManager.LayoutParams.MATCH_PARENT;
                             windowManager.updateViewLayout(OverlayView.this, params);
-                            configurationOpened = true;
+                            announceForAccessibility("CONFIGURATION_OPENED");
+                            configurationView.open();
                         }
                         return true;
 
@@ -148,8 +146,6 @@ public class OverlayView extends RelativeLayout {
     }
 
     public void changeGame(String applicationPackage) {
-        this.applicationPackage = applicationPackage;
-
         configurationView.changeGame(applicationPackage);
 
         Drawable appIcon = getAppIconFromPackageName(getContext(), applicationPackage);
@@ -177,6 +173,15 @@ public class OverlayView extends RelativeLayout {
     public void stop() {
         setVisibility(GONE);
         //getContext().sendBroadcast(new Intent("com.example.accessibilityservice.NO_CAMERA"));
+    }
+
+    public void closeConfiguration() {
+        //new Thread(() -> executor.releaseAll()).start();
+        collapsedView.setVisibility(View.VISIBLE);
+        expandedView.setVisibility(View.GONE);
+        params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        windowManager.updateViewLayout(this, params);
     }
 
     /*
@@ -254,8 +259,4 @@ public class OverlayView extends RelativeLayout {
             executor.execute2d(map.get(action), x, y);
     }
     */
-
-    public void notifyRemoved(Action action) {
-        configurationView.notifyRemoved(action);
-    }
 }

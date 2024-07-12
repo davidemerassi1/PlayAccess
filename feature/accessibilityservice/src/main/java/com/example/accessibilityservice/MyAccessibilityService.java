@@ -90,9 +90,10 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
                 }
                 break;
             case AccessibilityEvent.TYPE_ANNOUNCEMENT:
-                if (event.getText().toString().equals("[RELOAD_ASSOCIATIONS]"))
-                    executor.changeGame(activePackage);
-                break;
+                switch (event.getText().toString()) {
+                    case "[RELOAD_ASSOCIATIONS]" -> executor.changeGame(activePackage);
+                    case "[CONFIGURATION_OPENED]" -> executor.pause();
+                }
         }
     }
 

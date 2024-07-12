@@ -34,6 +34,7 @@ public class EventExecutor implements ActionListener {
     private MyAccessibilityService accessibilityService;
     Handler handler = new Handler(Looper.getMainLooper());
     private boolean moving1d = false;
+    private boolean paused = false;
 
     public EventExecutor(MyAccessibilityService accessibilityService) {
         this.accessibilityService = accessibilityService;
@@ -318,6 +319,7 @@ public class EventExecutor implements ActionListener {
 
     @Override
     public void onActionStarts(@NonNull Action action) {
+        if (paused) return;
         for (Association a : associations.getValue()) {
             if (a.event == Event.MONODIMENSIONAL_SLIDING) {
                 if (a.action.equals(action))
@@ -333,6 +335,7 @@ public class EventExecutor implements ActionListener {
 
     @Override
     public void onActionEnds(@NonNull Action action) {
+        if (paused) return;
         for (Association a : associations.getValue()) {
             if (a.event == Event.MONODIMENSIONAL_SLIDING) {
                 if (a.action.equals(action))
@@ -348,6 +351,7 @@ public class EventExecutor implements ActionListener {
 
     @Override
     public void on2dMovement(Action action, float x, float y) {
+        if (paused) return;
         Log.d("EventExecutor", "2d movement: " + action.getName() + " x: " + x + " y: " + y);
         for (Association a : associations.getValue()) {
             if (a.action.equals(action) && a.event == Event.JOYSTICK)
@@ -362,6 +366,7 @@ public class EventExecutor implements ActionListener {
             for (Association a : associationsArray)
                 a.y += statusBarHeight;
             associations.postValue(associationsArray);
+            resume();
         }).start();
     }
 
@@ -371,6 +376,14 @@ public class EventExecutor implements ActionListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public void pause() {
+        paused = true;
+    }
+
+    public void resume() {
+        paused = false;
     }
 
     public enum Action1D {

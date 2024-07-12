@@ -30,6 +30,7 @@ public class OverlayManager {
     }
 
     public void changeGame(String packageName) {
+        overlay.closeConfiguration();
         overlay.changeGame(packageName);
     }
 
