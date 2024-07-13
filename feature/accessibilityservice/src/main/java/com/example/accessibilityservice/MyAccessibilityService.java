@@ -60,9 +60,11 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
             setServiceInfo(info);
         }
 
-        executor = new EventExecutor(this);
-
         MainModel.observeActions(this);
+
+        overlayManager = new OverlayManager(this);
+
+        executor = new EventExecutor(this, overlayManager.getTouchIndicatorView());
 
         FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(executor)).init(
                 this, cameraLifecycle
@@ -70,8 +72,6 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
 
         // Mostra la notifica
         showNotification();
-
-        overlayManager = new OverlayManager(this);
     }
 
     @Override

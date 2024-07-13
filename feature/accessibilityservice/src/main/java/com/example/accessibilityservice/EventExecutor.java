@@ -13,6 +13,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.actionsrecognizer.facialexpressionactionsrecognizer.ActionListener;
+import com.example.eventsexecutor.TouchIndicatorView;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -35,9 +36,27 @@ public class EventExecutor implements ActionListener {
     Handler handler = new Handler(Looper.getMainLooper());
     private boolean moving1d = false;
     private boolean paused = false;
+    private TouchIndicatorView touchIndicatorView;
+    private AccessibilityService.GestureResultCallback gestureResultCallback = new AccessibilityService.GestureResultCallback() {
+        @Override
+        public void onCompleted(GestureDescription gestureDescription) {
+            super.onCompleted(gestureDescription);
+        }
 
-    public EventExecutor(MyAccessibilityService accessibilityService) {
+        @Override
+        public void onCancelled(GestureDescription gestureDescription) {
+            touchIndicatorView.clear();
+            moving1d = false;
+            inProgress.clear();
+
+            Log.d("EventExecutor", "Gesture cancelled");
+            super.onCancelled(gestureDescription);
+        }
+    };
+
+    public EventExecutor(MyAccessibilityService accessibilityService, TouchIndicatorView touchIndicatorView) {
         this.accessibilityService = accessibilityService;
+        this.touchIndicatorView = touchIndicatorView;
         statusBarHeight = getStatusBarHeight(accessibilityService);
         associationsDb = MainModel.getInstance().getAssociationsDb().getDao();
 
@@ -80,9 +99,11 @@ public class EventExecutor implements ActionListener {
             case TAP:
                 path = new Path();
                 path.moveTo(association.x, association.y);
-                s = new StrokeDescription(path, 0, 10);
+                s = new StrokeDescription(path, 0, 100);
                 g = new GestureDescription.Builder().addStroke(s).build();
-                accessibilityService.dispatchGesture(g, null, null);
+                accessibilityService.dispatchGesture(g, gestureResultCallback, null);
+                touchIndicatorView.onTouch(association.x, association.y);
+                handler.postDelayed(() -> touchIndicatorView.clear(), 100);
                 break;
             case SWIPE_UP:
                 path = new Path();
@@ -90,7 +111,8 @@ public class EventExecutor implements ActionListener {
                 path.lineTo(association.x, association.y - 500);
                 s = new StrokeDescription(path, 0, 300);
                 g = new GestureDescription.Builder().addStroke(s).build();
-                accessibilityService.dispatchGesture(g, null, null);
+                accessibilityService.dispatchGesture(g, gestureResultCallback, null);
+                touchIndicatorView.drawSwipe(association.x, association.y, 500, TouchIndicatorView.SwipeDirection.UP, 300, true);
                 break;
             case SWIPE_DOWN:
                 path = new Path();
@@ -99,6 +121,7 @@ public class EventExecutor implements ActionListener {
                 s = new StrokeDescription(path, 0, 300);
                 g = new GestureDescription.Builder().addStroke(s).build();
                 accessibilityService.dispatchGesture(g, null, null);
+                touchIndicatorView.drawSwipe(association.x, association.y, 500, TouchIndicatorView.SwipeDirection.DOWN, 300, true);
                 break;
             case SWIPE_LEFT:
                 path = new Path();
@@ -106,7 +129,8 @@ public class EventExecutor implements ActionListener {
                 path.lineTo(association.x - 500, association.y);
                 s = new StrokeDescription(path, 0, 300);
                 g = new GestureDescription.Builder().addStroke(s).build();
-                accessibilityService.dispatchGesture(g, null, null);
+                accessibilityService.dispatchGesture(g, gestureResultCallback, null);
+                touchIndicatorView.drawSwipe(association.x, association.y, 500, TouchIndicatorView.SwipeDirection.LEFT, 300, true);
                 break;
             case SWIPE_RIGHT:
                 path = new Path();
@@ -114,14 +138,17 @@ public class EventExecutor implements ActionListener {
                 path.lineTo(association.x + 500, association.y);
                 s = new StrokeDescription(path, 0, 300);
                 g = new GestureDescription.Builder().addStroke(s).build();
-                accessibilityService.dispatchGesture(g, null, null);
+                accessibilityService.dispatchGesture(g, gestureResultCallback, null);
+                touchIndicatorView.drawSwipe(association.x, association.y, 500, TouchIndicatorView.SwipeDirection.RIGHT, 300, true);
                 break;
             case LONG_TAP:
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 s = new StrokeDescription(path, 0, 1500);
                 g = new GestureDescription.Builder().addStroke(s).build();
-                accessibilityService.dispatchGesture(g, null, null);
+                accessibilityService.dispatchGesture(g, gestureResultCallback, null);
+                touchIndicatorView.onTouch(association.x, association.y);
+                handler.postDelayed(() -> touchIndicatorView.clear(), 1500);
                 break;
             case TAP_ON_OFF:
                 path = new Path();
@@ -129,7 +156,8 @@ public class EventExecutor implements ActionListener {
                 s = new StrokeDescription(path, 0, 1, true);
                 inProgress.put(association, new StrokeInProgress(s, association.x, association.y));
                 g = new GestureDescription.Builder().addStroke(s).build();
-                accessibilityService.dispatchGesture(g, null, null);
+                accessibilityService.dispatchGesture(g, gestureResultCallback, null);
+                touchIndicatorView.onTouch(association.x, association.y);
                 break;
         }
     }
@@ -153,7 +181,8 @@ public class EventExecutor implements ActionListener {
                 StrokeDescription s = new StrokeDescription(path, 0, 10, true);
                 inProgress.put(association, new StrokeInProgress(s, toX, toY));
                 GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
-                accessibilityService.dispatchGesture(g, null, null);
+                accessibilityService.dispatchGesture(g, gestureResultCallback, null);
+                touchIndicatorView.onTouch(toX, toY);
             }
         } else {
             if (activeMovement) {
@@ -166,7 +195,8 @@ public class EventExecutor implements ActionListener {
                 StrokeDescription s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 10, true);
                 inProgress.put(association, new StrokeInProgress(s, toX, toY));
                 GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
-                accessibilityService.dispatchGesture(g, null, null);
+                accessibilityService.dispatchGesture(g, gestureResultCallback, null);
+                touchIndicatorView.onTouch(toX, toY);
             } else {
                 Path path = new Path();
                 StrokeInProgress strokeInProgress = inProgress.get(association);
@@ -174,7 +204,8 @@ public class EventExecutor implements ActionListener {
                 StrokeDescription s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 1, false);
                 inProgress.remove(association);
                 GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
-                accessibilityService.dispatchGesture(g, null, null);
+                accessibilityService.dispatchGesture(g, gestureResultCallback, null);
+                touchIndicatorView.clear();
             }
         }
     }
@@ -191,6 +222,7 @@ public class EventExecutor implements ActionListener {
                     path.lineTo(toX, association.y);
                     s = new StrokeDescription(path, 0, 100, true);
                     inProgress.put(association, new StrokeInProgress(s, toX, association.y));
+                    touchIndicatorView.drawSwipe(association.x, association.y, Math.abs(toX-association.x), TouchIndicatorView.SwipeDirection.LEFT, 100, false);
                 } else {
                     StrokeInProgress strokeInProgress = inProgress.get(association);
                     path.moveTo(strokeInProgress.x(), strokeInProgress.y());
@@ -198,13 +230,13 @@ public class EventExecutor implements ActionListener {
                     path.lineTo(toX, strokeInProgress.y());
                     s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 100, true);
                     inProgress.put(association, new StrokeInProgress(s, toX, strokeInProgress.y()));
+                    touchIndicatorView.drawSwipe(strokeInProgress.x(), association.y, Math.abs(toX-strokeInProgress.x()), TouchIndicatorView.SwipeDirection.LEFT, 100, false);
                 }
                 g = new GestureDescription.Builder().addStroke(s).build();
-                accessibilityService.dispatchGesture(g, null, null);
+                accessibilityService.dispatchGesture(g, gestureResultCallback, null);
                 moving1d = true;
-                sleep(100);
 
-                handler.post(new Runnable() {
+                handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         if (!moving1d) {
@@ -219,10 +251,11 @@ public class EventExecutor implements ActionListener {
                         StrokeDescription s1 = inProgress.get(association).strokeDescription().continueStroke(path1, 0, 20, true);
                         inProgress.put(association, new StrokeInProgress(s1, toX, strokeInProgress.y()));
                         GestureDescription g1 = new GestureDescription.Builder().addStroke(s1).build();
-                        accessibilityService.dispatchGesture(g1, null, null);
+                        accessibilityService.dispatchGesture(g1, gestureResultCallback, null);
+                        touchIndicatorView.onTouch(toX, strokeInProgress.y());
                         handler.postDelayed(this, 20);
                     }
-                });
+                }, 100);
 
                 break;
             case MOVE_RIGHT:
@@ -232,6 +265,7 @@ public class EventExecutor implements ActionListener {
                     path.lineTo(toX, association.y);
                     s = new StrokeDescription(path, 0, 100, true);
                     inProgress.put(association, new StrokeInProgress(s, toX, association.y));
+                    touchIndicatorView.drawSwipe(association.x, association.y, Math.abs(toX-association.x), TouchIndicatorView.SwipeDirection.RIGHT, 100, false);
                 } else {
                     StrokeInProgress strokeInProgress = inProgress.get(association);
                     path.moveTo(strokeInProgress.x(), strokeInProgress.y());
@@ -239,13 +273,13 @@ public class EventExecutor implements ActionListener {
                     path.lineTo(toX, strokeInProgress.y());
                     s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 100, true);
                     inProgress.put(association, new StrokeInProgress(s, toX, strokeInProgress.y()));
+                    touchIndicatorView.drawSwipe(strokeInProgress.x(), association.y, Math.abs(toX-strokeInProgress.x()), TouchIndicatorView.SwipeDirection.RIGHT, 100, false);
                 }
                 g = new GestureDescription.Builder().addStroke(s).build();
-                accessibilityService.dispatchGesture(g, null, null);
+                accessibilityService.dispatchGesture(g, gestureResultCallback, null);
                 moving1d = true;
-                sleep(100);
 
-                handler.post(new Runnable() {
+                handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         if (!moving1d) {
@@ -255,15 +289,16 @@ public class EventExecutor implements ActionListener {
                         StrokeInProgress strokeInProgress = inProgress.get(association);
                         Path path1 = new Path();
                         path1.moveTo(strokeInProgress.x(), strokeInProgress.y());
-                        int toX = Math.max(strokeInProgress.x() + 20, association.x - association.radius);
+                        int toX = Math.min(strokeInProgress.x() + 20, association.x + association.radius);
                         path1.lineTo(toX, strokeInProgress.y());
                         StrokeDescription s1 = inProgress.get(association).strokeDescription().continueStroke(path1, 0, 20, true);
                         inProgress.put(association, new StrokeInProgress(s1, toX, strokeInProgress.y()));
                         GestureDescription g1 = new GestureDescription.Builder().addStroke(s1).build();
-                        accessibilityService.dispatchGesture(g1, null, null);
+                        accessibilityService.dispatchGesture(g1, gestureResultCallback, null);
+                        touchIndicatorView.onTouch(toX, strokeInProgress.y());
                         handler.postDelayed(this, 20);
                     }
-                });
+                }, 100);
 
                 break;
             case RESET:
@@ -273,15 +308,20 @@ public class EventExecutor implements ActionListener {
                         StrokeInProgress strokeInProgress = inProgress.get(association);
                         path.moveTo(strokeInProgress.x(), strokeInProgress.y());
                         path.lineTo(association.x, association.y);
-                        s = strokeInProgress.strokeDescription().continueStroke(path, 0, 400, false);
-
+                        s = strokeInProgress.strokeDescription().continueStroke(path, 0, 300, false);
+                        if (strokeInProgress.x() < association.x) {
+                            touchIndicatorView.drawSwipe(strokeInProgress.x(), association.y, Math.abs(association.x-strokeInProgress.x()), TouchIndicatorView.SwipeDirection.RIGHT, 300, true);
+                        } else {
+                            touchIndicatorView.drawSwipe(strokeInProgress.x(), association.y, Math.abs(association.x-strokeInProgress.x()), TouchIndicatorView.SwipeDirection.LEFT, 300, true);
+                        }
                     } else {
                         StrokeInProgress strokeInProgress = inProgress.get(association);
                         path.moveTo(strokeInProgress.x(), strokeInProgress.y());
                         s = strokeInProgress.strokeDescription().continueStroke(path, 0, 1, false);
+                        touchIndicatorView.clear();
                     }
                     g = new GestureDescription.Builder().addStroke(s).build();
-                    accessibilityService.dispatchGesture(g, null, null);
+                    accessibilityService.dispatchGesture(g, gestureResultCallback, null);
                     inProgress.remove(association);
                 }
                 break;
@@ -296,7 +336,8 @@ public class EventExecutor implements ActionListener {
                 StrokeDescription s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 1, false);
                 inProgress.remove(association);
                 GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
-                accessibilityService.dispatchGesture(g, null, null);
+                accessibilityService.dispatchGesture(g, gestureResultCallback, null);
+                touchIndicatorView.clear();
             }
             case MONODIMENSIONAL_SLIDING -> {
                 moving1d = false;
@@ -361,6 +402,7 @@ public class EventExecutor implements ActionListener {
 
     public void changeGame(String packageName) {
         Log.d("EventExecutor", "Changing game");
+        touchIndicatorView.clear();
         new Thread(() -> {
             Association[] associationsArray = associationsDb.getAssociations(packageName);
             for (Association a : associationsArray)
@@ -368,14 +410,6 @@ public class EventExecutor implements ActionListener {
             associations.postValue(associationsArray);
             resume();
         }).start();
-    }
-
-    private void sleep(int duration) {
-        try {
-            Thread.sleep(duration);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     public void pause() {

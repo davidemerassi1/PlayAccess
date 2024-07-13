@@ -7,10 +7,12 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -22,11 +24,21 @@ import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
 public class OverlayManager {
     private OverlayView overlay;
+    private TouchIndicatorView touchIndicatorView;
 
     public OverlayManager(Context context) {
         WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
         overlay = (OverlayView) LayoutInflater.from(context).inflate(R.layout.overlay_layout, null);
         overlay.init(windowManager);
+
+        touchIndicatorView = new TouchIndicatorView(context);
+        LayoutParams params = new LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
+                LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_NOT_TOUCHABLE,
+                PixelFormat.TRANSLUCENT);
+        windowManager.addView(touchIndicatorView, params);
     }
 
     public void changeGame(String packageName) {
@@ -40,5 +52,9 @@ public class OverlayManager {
 
     public void hideOverlay() {
         overlay.stop();
+    }
+
+    public TouchIndicatorView getTouchIndicatorView() {
+        return touchIndicatorView;
     }
 }
