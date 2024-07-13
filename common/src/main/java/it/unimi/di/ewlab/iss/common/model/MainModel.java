@@ -56,6 +56,8 @@ public class MainModel {
     private MutableLiveData<String> activePackage = new MutableLiveData<>("");
     private static List<ActionsChangedObserver> observers = new ArrayList<>();
 
+    public static Action FACE_MOVEMENT_ACTION = new Action("Face Movement", "FACIAL_EXPRESSION", true);
+
     public PhotosDatabase getDB(Context context) {
         if (DB == null) {
             DB = Room.databaseBuilder(context, PhotosDatabase.class, "pose-photos-db")
@@ -139,7 +141,7 @@ public class MainModel {
     //METODO CHE SETTA I GIOCHI NEL MAINMODEL PRENDENDOLI DAL FILE JSON
     public void initActions() {
         actions = new HashMap<>();
-        actions.put(0, Action.FACE_MOVEMENT_ACTION);
+        actions.put(0, FACE_MOVEMENT_ACTION);
         for (Action a : jsonManager.getActionsFromJson()) {
             actions.put(a.getActionId(), a);
         }
@@ -232,7 +234,6 @@ public class MainModel {
         if (!Objects.equals(action.getName(), neutralFacialExpressionName))
             throw new IllegalStateException("Action name is not " + neutralFacialExpressionName);
         actions.put(NEUTRAL_FACIAL_EXPRESSION_ACTION_ID, action);
-        notifyActionsChanged(null);
     }
 
 
@@ -443,7 +444,9 @@ public class MainModel {
     }
 
     public void writeActionsJson() {
-        JsonManager.writeActions(getActions());
+        List<Action> toBeWritten = new ArrayList<>(actions.values());
+        toBeWritten.remove(FACE_MOVEMENT_ACTION);
+        JsonManager.writeActions(toBeWritten);
     }
 
     /**

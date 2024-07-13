@@ -39,7 +39,7 @@ public class Action implements Serializable {
         this.actionType = actionType.name();
     }
 
-    protected Action(String name, String ActionType, boolean is2d) {
+    public Action(String name, String ActionType, boolean is2d) {
         this.name = name;
         this.actionType = ActionType;
         this.is2d = is2d;
@@ -92,6 +92,4 @@ public class Action implements Serializable {
     public Action lighten() {
         return new Action(name, actionType, is2d);
     }
-
-    public static Action FACE_MOVEMENT_ACTION = new Action("Face Movement", "FACIAL_EXPRESSION", true);
 }

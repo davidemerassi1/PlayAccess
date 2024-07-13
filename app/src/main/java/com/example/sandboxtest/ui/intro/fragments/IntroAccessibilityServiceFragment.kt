@@ -12,6 +12,7 @@ import androidx.navigation.Navigation
 import com.example.sandboxtest.R
 import com.example.sandboxtest.databinding.AlertDialogPermissionsNeededBinding
 import com.example.sandboxtest.databinding.FragmentIntroAccessibilityServiceBinding
+import it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity.MainActivityConfAzioni
 import it.unimi.di.ewlab.iss.common.model.MainModel
 import it.unimi.di.ewlab.iss.common.storage.INTRO_REQUIRED
 import it.unimi.di.ewlab.iss.common.storage.PersistenceManager
@@ -75,7 +76,7 @@ class IntroAccessibilityServiceFragment : Fragment() {
         super.onResume()
 
         if (checkAccessibilityServiceEnabled()) {
-            navigateToNext()
+            finishIntro()
         } else if (settingsOpened) {
             openDenyDialog()
             settingsOpened = false
@@ -98,10 +99,10 @@ class IntroAccessibilityServiceFragment : Fragment() {
         dialog.show()
     }
 
-    private fun navigateToNext() {
-        Navigation.findNavController(requireView())
-            .navigate(
-                R.id.introOverlayPermissionFragment
-            )
+    private fun finishIntro() {
+        val intent = Intent(requireContext(), MainActivityConfAzioni::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+        requireActivity().finish()
     }
 }

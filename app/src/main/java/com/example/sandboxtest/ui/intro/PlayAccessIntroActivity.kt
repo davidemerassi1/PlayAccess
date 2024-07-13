@@ -33,7 +33,7 @@ class PlayAccessIntroActivity : AppCompatActivity() {
     private val viewModel: IntroViewModel by viewModels()
 
     private lateinit var navController: NavController
-    private var skipAction = R.id.action_introWelcomeFragment_to_introAccessibilityServiceFragment
+    private var skipAction = R.id.action_introWelcomeFragment_to_introOverlayPermissionFragment
     private var nextAction = R.id.action_introWelcomeFragment_to_introActionConfiguratorFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,19 +83,19 @@ class PlayAccessIntroActivity : AppCompatActivity() {
                 R.id.introWelcomeFragment -> {
                     nextAction = R.id.action_introWelcomeFragment_to_introActionConfiguratorFragment
                     skipAction =
-                        R.id.action_introWelcomeFragment_to_introAccessibilityServiceFragment
+                        R.id.action_introWelcomeFragment_to_introOverlayPermissionFragment
                 }
                 R.id.introActionConfiguratorFragment -> {
                     nextAction =
                         R.id.action_introActionConfiguratorFragment_to_introGamesConfiguratorFragment
                     skipAction =
-                        R.id.action_introActionConfiguratorFragment_to_introAccessibilityServiceFragment
+                        R.id.action_introActionConfiguratorFragment_to_introOverlayPermissionFragment
                 }
                 R.id.introGamesConfiguratorFragment -> {
                     nextAction =
-                        R.id.action_introGamesConfiguratorFragment_to_introAccessibilityServiceFragment
+                        R.id.action_introGamesConfiguratorFragment_to_introOverlayPermissionFragment
                     skipAction =
-                        R.id.action_introGamesConfiguratorFragment_to_introAccessibilityServiceFragment
+                        R.id.action_introGamesConfiguratorFragment_to_introOverlayPermissionFragment
                 }
                 R.id.introOverlayPermissionFragment,
                 R.id.introPermissionsFragment,

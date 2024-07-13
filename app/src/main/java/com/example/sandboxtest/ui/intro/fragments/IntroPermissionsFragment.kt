@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.Navigation
+import com.example.sandboxtest.R
 import com.example.sandboxtest.databinding.AlertDialogPermissionsNeededBinding
 import com.example.sandboxtest.databinding.FragmentIntroPermissionsBinding
 import com.example.sandboxtest.ui.intro.IntroViewModel
@@ -52,7 +54,7 @@ class IntroPermissionsFragment : Fragment() {
         viewModel.permissions.observe(requireActivity()) {
             if (it) {
                 //broadcastNotifications()
-                finishIntro()
+                navigateToNext()
             } else if (init)
                 openDenyDialog()
             else
@@ -73,11 +75,11 @@ class IntroPermissionsFragment : Fragment() {
         )
     }
 
-    private fun finishIntro() {
-        val intent = Intent(requireContext(), MainActivityConfAzioni::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        startActivity(intent)
-        requireActivity().finish()
+    private fun navigateToNext() {
+        Navigation.findNavController(requireView())
+            .navigate(
+                R.id.introAccessibilityServiceFragment
+            )
     }
 
     private fun openDenyDialog() {

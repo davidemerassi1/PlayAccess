@@ -66,9 +66,10 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
 
         executor = new EventExecutor(this, overlayManager.getTouchIndicatorView());
 
-        FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(executor)).init(
-                this, cameraLifecycle
-        );
+        if (mainModel.getNeutralFacialExpressionAction() != null)
+            FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(executor)).init(
+                    this, cameraLifecycle
+            );
 
         // Mostra la notifica
         showNotification();
@@ -171,9 +172,18 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
     @OptIn(markerClass = ExperimentalGetImage.class)
     @Override
     public void onActionsChanged(Action removedAction) {
-        FacialExpressionActionsRecognizer.Companion.getInstance().updateActions(mainModel.getActions());
-        if (removedAction != null)
-            broadcastManager.removeAction(removedAction);
+        try {
+            FacialExpressionActionsRecognizer.Companion.getInstance().updateActions(mainModel.getActions());
+            if (removedAction != null)
+                broadcastManager.removeAction(removedAction);
+        } catch (IllegalStateException e) {
+            if (mainModel.getNeutralFacialExpressionAction() != null) {
+                FacialExpressionActionsRecognizer.Companion.getInstance(mainModel.getActions(), List.of(executor)).init(
+                        this, cameraLifecycle
+                );
+                onActionsChanged(removedAction);
+            }
+        }
     }
 
     public void setCameraNeeded(boolean cameraNeeded) {

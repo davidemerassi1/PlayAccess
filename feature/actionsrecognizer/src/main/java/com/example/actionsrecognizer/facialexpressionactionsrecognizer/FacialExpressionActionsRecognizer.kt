@@ -167,7 +167,7 @@ class FacialExpressionActionsRecognizer private constructor(
                 x = adjustRange(x)
                 y = adjustRange(y)
 
-                send2dMovement(Action.FACE_MOVEMENT_ACTION, x, y)
+                send2dMovement(MainModel.FACE_MOVEMENT_ACTION, x, y)
             }
             .addOnFailureListener { e ->
                 // Gestisci eventuali errori durante il rilevamento dei volti
