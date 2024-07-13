@@ -11,6 +11,7 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -73,13 +74,28 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
 
         // Mostra la notifica
         showNotification();
+
+
+        Handler handler = new Handler(getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (motionX != null && motionY != null) {
+                    broadcastManager.on2dMovement(mainModel.getButtonActionByKeyCode(19), motionX, motionY);
+                    executor.on2dMovement(mainModel.getButtonActionByKeyCode(19), motionX, motionY);
+                    motionX = null;
+                    motionY = null;
+                }
+                handler.postDelayed(this, 100);
+            }
+        });
     }
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         switch (event.getEventType()) {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                if (event.getPackageName() != null && !event.getPackageName().toString().equals("com.example.sandboxtest")) {
+                if (event.getPackageName() != null && !event.getPackageName().toString().equals("com.example.sandboxtest") && !event.getPackageName().toString().equals("com.android.systemui")) {
                     activePackage = event.getPackageName().toString();
                     Log.d(TAG, "Package changed: " + activePackage);
                     Intent intent = new Intent("com.example.accessibilityservice.PACKAGE_CHANGED");
@@ -126,7 +142,8 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
         }
         return true;
     }
-
+    private Float motionX;
+    private Float motionY;
     @RequiresApi(api = 34)
     @Override
     public void onMotionEvent(@NonNull MotionEvent event) {
@@ -138,8 +155,10 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
             action.setIs2d(true);
             mainModel.setTempButtonAction(action);
         }
-        if (mainModel.getButtonActionByKeyCode(19) != null)
-            broadcastManager.on2dMovement(mainModel.getButtonActionByKeyCode(19), event.getX(), event.getY());
+        if (mainModel.getButtonActionByKeyCode(19) != null) {
+            motionX = event.getX();
+            motionY = event.getY();
+        }
 
         super.onMotionEvent(event);
     }

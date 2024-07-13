@@ -41,6 +41,7 @@ public class EventExecutor implements ActionListener {
         @Override
         public void onCompleted(GestureDescription gestureDescription) {
             super.onCompleted(gestureDescription);
+            Log.d("EventExecutor", "Gesture completed");
         }
 
         @Override
@@ -170,6 +171,7 @@ public class EventExecutor implements ActionListener {
      * @param y           coordinata y in [-1, 1]
      */
     public void execute2d(Association association, float x, float y) {
+        Log.d("EventExecutor", "2d movement: x: " + x + " y: " + y);
         boolean activeMovement = Math.abs(x) > 0.3 || Math.abs(y) > 0.3;
         if (!inProgress.containsKey(association)) {
             if (activeMovement) {
@@ -178,8 +180,9 @@ public class EventExecutor implements ActionListener {
                 int toX = (int) (x * association.radius) + association.x;
                 int toY = (int) (y * association.radius) + association.y;
                 path.lineTo(toX, toY);
-                StrokeDescription s = new StrokeDescription(path, 0, 10, true);
+                StrokeDescription s = new StrokeDescription(path, 0, 1, true);
                 inProgress.put(association, new StrokeInProgress(s, toX, toY));
+                Log.d("EventExecutor", "Starting " + s +" from " + association.x + " " + association.y + " to " + toX + " " + toY);
                 GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
                 accessibilityService.dispatchGesture(g, gestureResultCallback, null);
                 touchIndicatorView.onTouch(toX, toY);
@@ -192,7 +195,8 @@ public class EventExecutor implements ActionListener {
                 int toX = (int) (x * association.radius) + association.x;
                 int toY = (int) (y * association.radius) + association.y;
                 path.lineTo(toX, toY);
-                StrokeDescription s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 10, true);
+                Log.d("EventExecutor", "Continuing " + strokeInProgress.strokeDescription() + " from: " + strokeInProgress.x() + " " + strokeInProgress.y() + " to " + toX + " " + toY);
+                StrokeDescription s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 1, true);
                 inProgress.put(association, new StrokeInProgress(s, toX, toY));
                 GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
                 accessibilityService.dispatchGesture(g, gestureResultCallback, null);
@@ -201,6 +205,7 @@ public class EventExecutor implements ActionListener {
                 Path path = new Path();
                 StrokeInProgress strokeInProgress = inProgress.get(association);
                 path.moveTo(strokeInProgress.x(), strokeInProgress.y());
+                Log.d("EventExecutor", "Ending " + strokeInProgress.strokeDescription() + " at: " + strokeInProgress.x() + " " + strokeInProgress.y());
                 StrokeDescription s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 1, false);
                 inProgress.remove(association);
                 GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
@@ -393,7 +398,6 @@ public class EventExecutor implements ActionListener {
     @Override
     public void on2dMovement(Action action, float x, float y) {
         if (paused) return;
-        Log.d("EventExecutor", "2d movement: " + action.getName() + " x: " + x + " y: " + y);
         for (Association a : associations.getValue()) {
             if (a.action.equals(action) && a.event == Event.JOYSTICK)
                 execute2d(a, x, y);
