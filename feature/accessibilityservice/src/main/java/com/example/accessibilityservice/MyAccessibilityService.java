@@ -46,6 +46,8 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
     private MainModel mainModel = MainModel.getInstance();
     private OverlayManager overlayManager;
     private EventExecutor executor;
+    @ExperimentalGetImage
+    private FacialExpressionActionsRecognizer facialExpressionActionsRecognizer;
 
     @OptIn(markerClass = androidx.camera.core.ExperimentalGetImage.class)
     @Override
@@ -67,10 +69,10 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
 
         executor = new EventExecutor(this, overlayManager.getTouchIndicatorView());
 
-        if (mainModel.getNeutralFacialExpressionAction() != null)
-            FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(executor)).init(
-                    this, cameraLifecycle
-            );
+        if (mainModel.getNeutralFacialExpressionAction() != null) {
+            facialExpressionActionsRecognizer = FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(executor));
+            facialExpressionActionsRecognizer.init(this, cameraLifecycle);
+        }
 
         // Mostra la notifica
         showNotification();
@@ -191,18 +193,23 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
     @OptIn(markerClass = ExperimentalGetImage.class)
     @Override
     public void onActionsChanged(Action removedAction) {
-        try {
-            FacialExpressionActionsRecognizer.Companion.getInstance().updateActions(mainModel.getActions());
+        if (facialExpressionActionsRecognizer != null) {
+            facialExpressionActionsRecognizer.updateActions(mainModel.getActions());
             if (removedAction != null)
                 broadcastManager.removeAction(removedAction);
-        } catch (IllegalStateException e) {
+        } else {
             if (mainModel.getNeutralFacialExpressionAction() != null) {
-                FacialExpressionActionsRecognizer.Companion.getInstance(mainModel.getActions(), List.of(executor)).init(
-                        this, cameraLifecycle
-                );
+                facialExpressionActionsRecognizer = FacialExpressionActionsRecognizer.Companion.getInstance(mainModel.getActions(), List.of(executor));
+                facialExpressionActionsRecognizer.init(this, cameraLifecycle);
                 onActionsChanged(removedAction);
             }
         }
+    }
+
+    @OptIn(markerClass = ExperimentalGetImage.class)
+    @Override
+    public void onPrecisionChanged(float precision) {
+        facialExpressionActionsRecognizer.setPrecision(precision);
     }
 
     public void setCameraNeeded(boolean cameraNeeded) {

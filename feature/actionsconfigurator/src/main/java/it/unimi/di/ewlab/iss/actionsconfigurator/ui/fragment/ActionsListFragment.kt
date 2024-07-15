@@ -1,10 +1,13 @@
 package it.unimi.di.ewlab.iss.actionsconfigurator.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.OptIn
+import androidx.camera.core.ExperimentalGetImage
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,6 +15,7 @@ import androidx.navigation.Navigation
 import dagger.hilt.android.AndroidEntryPoint
 import it.unimi.di.ewlab.iss.actionsconfigurator.R
 import it.unimi.di.ewlab.iss.actionsconfigurator.databinding.FragmentActionsListBinding
+import it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity.TryFacialExpressionsActivity
 import it.unimi.di.ewlab.iss.actionsconfigurator.ui.adapter.ActionItemAdapter
 import it.unimi.di.ewlab.iss.actionsconfigurator.ui.adapter.itemaction.ActionItem
 import it.unimi.di.ewlab.iss.actionsconfigurator.viewmodel.ActionManagerEvent
@@ -41,6 +45,7 @@ class ActionsListFragment : Fragment() {
         return binding.root
     }
 
+    @OptIn(ExperimentalGetImage::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "onViewCreated")
@@ -55,12 +60,19 @@ class ActionsListFragment : Fragment() {
         Log.d(TAG, "Action type: $actionType")
 
         val actions = when (actionType) {
-            Action.ActionType.SCREEN_GESTURE -> MainModel.getInstance().screenGestureActions
             Action.ActionType.BUTTON -> MainModel.getInstance().buttonActions
             Action.ActionType.FACIAL_EXPRESSION -> MainModel.getInstance().facialExpressionActions
             else -> {
                 Log.e(TAG, "Action type not defined: $actionType")
                 listOf()
+            }
+        }
+
+        if (actionType == Action.ActionType.FACIAL_EXPRESSION) {
+            binding.testAction.visibility = View.VISIBLE
+            binding.testAction.setOnClickListener {
+                val intent = Intent(context, TryFacialExpressionsActivity::class.java)
+                startActivity(intent)
             }
         }
 
@@ -87,18 +99,10 @@ class ActionsListFragment : Fragment() {
 
     private fun navigateToInfoFragment(actionItem: ActionItem) {
         when (actionItem.actionType) {
-            Action.ActionType.SCREEN_GESTURE -> navigateToInfoScreenGestureFragment(actionItem.id)
             Action.ActionType.BUTTON -> navigateToInfoButtonActionFragment(actionItem.id)
             Action.ActionType.FACIAL_EXPRESSION -> navigateToInfoFacialExpressionActionFragment(actionItem.id)
             else -> {}
         }
-    }
-
-    private fun navigateToInfoScreenGestureFragment(actionId: Int) {
-        navigateToInfoFragmentFromAction(
-            R.id.action_listaGestureSchermoFragment_to_infoScreenGestureFragment,
-            actionId
-        )
     }
 
     private fun navigateToInfoFacialExpressionActionFragment(actionId: Int) {

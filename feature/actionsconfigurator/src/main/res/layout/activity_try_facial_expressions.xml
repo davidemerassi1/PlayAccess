@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.TryFacialExpressionsActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@color/red"
+        android:paddingTop="10dip"
+        android:paddingBottom="10dip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/back_btn"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/image_icon_medium_height"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:backgroundTint="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/back_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/title_game"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/metropolis"
+            android:text="@string/tryFacialExpressions_title"
+            android:textColor="@color/white"
+            android:textSize="@dimen/H3_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/info_btn"
+            android:layout_width="@dimen/image_rounded_icon"
+            android:layout_height="@dimen/image_rounded_icon"
+            android:layout_marginEnd="@dimen/default_margin_small"
+            android:src="@drawable/info_white"
+            android:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/titleBarDivider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/shadow_height"
+        android:background="@drawable/shadow_border_bottom"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/loadingCameraProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/red"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout" />
+
+    <include
+        android:id="@+id/acquiredExpression"
+        layout="@layout/message_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout"
+        app:maxLines="@{1}"
+        app:text='@{""}' />
+
+    <ImageView
+        android:id="@+id/cameraCapture"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scaleType="fitCenter"
+        android:layout_marginBottom="@dimen/default_margin_small"
+        app:layout_constraintBottom_toTopOf="@+id/precisionSliderText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/acquiredExpression"
+        app:layout_constraintVertical_bias="0"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/precisionSliderText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tryFacialExpressions_precision"
+        android:textSize="@dimen/P7_text_size"
+        android:textColor="@color/black"
+        android:fontFamily="@font/metropolis"
+        android:layout_marginHorizontal="@dimen/default_margin_medium"
+        app:layout_constraintBottom_toTopOf="@id/precisionSlider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/precisionSlider"
+        style="@style/sliderRed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin_small_plus"
+        android:stepSize="0.1"
+        android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+        android:value="1.0"
+        android:valueFrom="0.5"
+        android:valueTo="2.5"
+        app:layout_constraintBottom_toTopOf="@id/buttonsBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/buttonsBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin_small_plus"
+        android:layout_marginBottom="@dimen/default_margin_large"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <include
+            android:id="@+id/cancelPrecision"
+            layout="@layout/action_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_margin_small"
+            android:layout_weight="1"
+            app:border="@{@drawable/red_button_border}"
+            app:text="@{@string/cancel}" />
+
+        <include
+            android:id="@+id/confirmPrecision"
+            layout="@layout/action_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin_small"
+            android:layout_weight="1"
+            app:border="@{@drawable/red_button_border}"
+            app:text="@{@string/confirm}" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <include
+        android:id="@+id/missingFaceErrorBox"
+        layout="@layout/message_box"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/cameraCapture"
+        app:layout_constraintEnd_toEndOf="@+id/cameraCapture"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@id/cameraCapture"
+        app:layout_constraintTop_toTopOf="@id/cameraCapture"
+        app:layout_constraintVertical_bias="0.5"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.85"
+        app:maxLines="@{2}"
+        app:text='@{"Volto non trovato"}' />
+
+    <include
+        android:id="@+id/missingLandmarkErrorBox"
+        layout="@layout/message_box"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/cameraCapture"
+        app:layout_constraintEnd_toEndOf="@+id/cameraCapture"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@id/cameraCapture"
+        app:layout_constraintTop_toTopOf="@id/cameraCapture"
+        app:layout_constraintVertical_bias="0.5"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.85"
+        app:maxLines="@{3}"
+        app:text='@{"Volto non completamente inquadrato"}' />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

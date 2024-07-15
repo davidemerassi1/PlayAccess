@@ -38,6 +38,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity.TryFacialExpressionsActivity"
+            android:exported="true"
+            android:label="TryFacialExpressionsActivity"
+            android:taskAffinity="">
+        </activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

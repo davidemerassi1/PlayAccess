@@ -61,4 +61,9 @@
     <string name="feraction_record_info_title">Record an expression</string>
     <string name="feraction_record_info_msg">Assume the expression you want to record, click on the "Record" button and stay still during the capture.</string>
     <string name="feraction_no_camera_permission">Camera permission not granted</string>
+    <string name="tryFacialExpressions_title">Prova espressioni</string>
+    <string name="tryFacialExpressions_camera_initialization_error">Errore inizializzazione camera</string>
+    <string name="tryFacialExpressions_unrecognized_expression">Nessuna corrispondenza</string>
+    <string name="tryFacialExpressions_no_permission">Non è stato concesso il permesso</string>
+    <string name="tryFacialExpressions_precision">Imposta precisione</string>
 </resources>

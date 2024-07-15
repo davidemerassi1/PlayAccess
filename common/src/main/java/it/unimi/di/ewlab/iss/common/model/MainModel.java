@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 
 import it.unimi.di.ewlab.common.R;
 import it.unimi.di.ewlab.iss.common.database.AssociationsDb;
+import it.unimi.di.ewlab.iss.common.model.actions.facialexpressionactions.classification.Prototypical;
 import it.unimi.di.ewlab.iss.common.storage.JsonManager;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 import it.unimi.di.ewlab.iss.common.model.actions.ButtonAction;
@@ -35,12 +36,14 @@ import it.unimi.di.ewlab.iss.common.model.actions.ScreenGestureAction;
 import it.unimi.di.ewlab.iss.common.model.actions.ScreenGestureAction.GestureId;
 import it.unimi.di.ewlab.iss.common.model.actions.VocalAction;
 import it.unimi.di.ewlab.iss.common.photosdatabase.PhotosDatabase;
+import it.unimi.di.ewlab.iss.common.storage.PersistenceManager;
 import kotlin.Pair;
 
 public class MainModel {
 
     private static final String TAG = MainModel.class.getName();
     public static final int NEUTRAL_FACIAL_EXPRESSION_ACTION_ID = 1;
+    private PersistenceManager persistenceManager;
 
     private static MainModel instance = null;
     private final JsonManager jsonManager;
@@ -75,6 +78,8 @@ public class MainModel {
         associationsDb = Room.databaseBuilder(context, AssociationsDb.class, "associations")
                 .fallbackToDestructiveMigration()
                 .build();
+
+        persistenceManager = new PersistenceManager(context);
     }
 
     //METODO PER OTTENERE UN'ISTANZA DEL MainModel
@@ -511,8 +516,15 @@ public class MainModel {
         return activePackage;
     }
 
-    public void setActivePackage(String activePackage) {
-        this.activePackage.setValue(activePackage);
+    public void setPrecision(float precision) {
+        persistenceManager.setValue("precision", precision);
+        for (ActionsChangedObserver observer : observers) {
+            observer.onPrecisionChanged(precision);
+        }
+    }
+
+    public float getPrecision() {
+        return (float) persistenceManager.getValue("precision", Prototypical.DEFAULT_RADIUS);
     }
 }
 

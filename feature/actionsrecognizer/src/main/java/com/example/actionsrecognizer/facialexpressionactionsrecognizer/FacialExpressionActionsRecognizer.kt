@@ -92,7 +92,11 @@ class FacialExpressionActionsRecognizer private constructor(
 
         frameHandler.trainClassifier(feModel.actions)
 
-        frameHandler.setClassifierPrecision(0.80F)
+        frameHandler.setClassifierPrecision(MainModel.getInstance().precision)
+    }
+
+    fun setPrecision(precision: Float) {
+        frameHandler.setClassifierPrecision(precision)
     }
 
     fun updateActions(actions: List<Action>?){
