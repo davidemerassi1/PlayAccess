@@ -9,6 +9,7 @@ import android.graphics.Path;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -173,6 +174,12 @@ public class EventExecutor implements ActionListener {
     public void execute2d(Association association, float x, float y) {
         Log.d("EventExecutor", "2d movement: x: " + x + " y: " + y);
         boolean activeMovement = Math.abs(x) > 0.3 || Math.abs(y) > 0.3;
+        float xMax = (float) (x * Math.sqrt(1 - y * y / 2));
+        float yMax = (float) (y * Math.sqrt(1 - x * x / 2));
+        if (Math.abs(x) > Math.abs(xMax))
+            x = xMax;
+        if (Math.abs(y) > Math.abs(yMax))
+            y = yMax;
         if (!inProgress.containsKey(association)) {
             if (activeMovement) {
                 Path path = new Path();
