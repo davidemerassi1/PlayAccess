@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.sandboxtest"
+    namespace = "it.unimi.di.ewlab.iss.playaccess3"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.sandboxtest"
+        applicationId = "it.unimi.di.ewlab.iss"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

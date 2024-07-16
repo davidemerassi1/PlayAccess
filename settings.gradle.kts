@@ -16,7 +16,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SandBoxTest"
+rootProject.name = "PlayAccess3"
 include(":app")
 include (":feature:actionsconfigurator")
 include (":common")

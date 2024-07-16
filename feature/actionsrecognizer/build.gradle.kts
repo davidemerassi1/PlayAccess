@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.actionsrecognizer"
+    namespace = "it.unimi.di.ewlab.iss.actionsrecognizer"
     compileSdk = 34
 
     defaultConfig {

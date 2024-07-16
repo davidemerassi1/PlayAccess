@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.example.gamesconfigurator.dialogs.SlidingEventDialog xmlns:android="http://schemas.android.com/apk/res/android"
+<it.unimi.di.ewlab.iss.gamesconfigurator.dialogs.SlidingEventDialog xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
@@ -171,4 +171,4 @@
             android:textColor="#FF0000"
             android:visibility="gone" />
     </LinearLayout>
-</com.example.gamesconfigurator.dialogs.SlidingEventDialog>
+</it.unimi.di.ewlab.iss.gamesconfigurator.dialogs.SlidingEventDialog>

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/introWelcomeFragment"
-        android:name="com.example.sandboxtest.ui.intro.fragments.IntroWelcomeFragment"
+        android:name="it.unimi.di.ewlab.iss.playaccess3.intro.fragments.IntroWelcomeFragment"
         android:label="fragment_intro_welcome"
         tools:layout="@layout/fragment_intro_welcome">
         <action
@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/introActionConfiguratorFragment"
-        android:name="com.example.sandboxtest.ui.intro.fragments.IntroActionsConfiguratorFragment"
+        android:name="it.unimi.di.ewlab.iss.playaccess3.intro.fragments.IntroActionsConfiguratorFragment"
         android:label="fragment_intro_action_configurator"
         tools:layout="@layout/fragment_intro_actions_configurator">
         <action
@@ -49,7 +49,7 @@
 
     <fragment
         android:id="@+id/introGamesConfiguratorFragment"
-        android:name="com.example.sandboxtest.ui.intro.fragments.IntroGamesConfiguratorFragment"
+        android:name="it.unimi.di.ewlab.iss.playaccess3.intro.fragments.IntroGamesConfiguratorFragment"
         android:label="fragment_intro_games_configurator"
         tools:layout="@layout/fragment_intro_games_configurator">
         <action
@@ -63,7 +63,7 @@
 
     <fragment
         android:id="@+id/introUsageStatsPermissionFragment"
-        android:name="com.example.sandboxtest.ui.intro.fragments.IntroUsageStatsPermissionFragment"
+        android:name="it.unimi.di.ewlab.iss.playaccess3.intro.fragments.IntroUsageStatsPermissionFragment"
         android:label="fragment_intro_usage_stats_permission"
         tools:layout="@layout/fragment_intro_usage_stats_permission">
         <action
@@ -73,7 +73,7 @@
 
     <fragment
         android:id="@+id/introOverlayPermissionFragment"
-        android:name="com.example.sandboxtest.ui.intro.fragments.IntroOverlayPermissionFragment"
+        android:name="it.unimi.di.ewlab.iss.playaccess3.intro.fragments.IntroOverlayPermissionFragment"
         android:label="fragment_intro_overlay_permission"
         tools:layout="@layout/fragment_intro_overlay_permission">
         <action
@@ -83,7 +83,7 @@
 
     <fragment
         android:id="@+id/introPermissionsFragment"
-        android:name="com.example.sandboxtest.ui.intro.fragments.IntroPermissionsFragment"
+        android:name="it.unimi.di.ewlab.iss.playaccess3.intro.fragments.IntroPermissionsFragment"
         android:label="fragment_intro_permissions"
         tools:layout="@layout/fragment_intro_permissions" >
         <action
@@ -93,7 +93,7 @@
 
     <fragment
         android:id="@+id/introAccessibilityServiceFragment"
-        android:name="com.example.sandboxtest.ui.intro.fragments.IntroAccessibilityServiceFragment"
+        android:name="it.unimi.di.ewlab.iss.playaccess3.intro.fragments.IntroAccessibilityServiceFragment"
         android:label="fragment_intro_usage_stats_permission"
         tools:layout="@layout/fragment_intro_accessibility_service" >
     </fragment>

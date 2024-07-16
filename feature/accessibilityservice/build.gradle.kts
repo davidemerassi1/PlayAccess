@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.accessibilityservice"
+    namespace = "it.unimi.di.ewlab.iss.accessibilityservice"
     compileSdk = 34
 
     defaultConfig {
