@@ -33,7 +33,7 @@ class PlayAccessIntroActivity : AppCompatActivity() {
     private val viewModel: IntroViewModel by viewModels()
 
     private lateinit var navController: NavController
-    private var skipAction = R.id.action_introWelcomeFragment_to_introOverlayPermissionFragment
+    private var skipAction = R.id.action_introWelcomeFragment_to_introUsageStatsPermissionFragment
     private var nextAction = R.id.action_introWelcomeFragment_to_introActionConfiguratorFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,23 +83,24 @@ class PlayAccessIntroActivity : AppCompatActivity() {
                 R.id.introWelcomeFragment -> {
                     nextAction = R.id.action_introWelcomeFragment_to_introActionConfiguratorFragment
                     skipAction =
-                        R.id.action_introWelcomeFragment_to_introOverlayPermissionFragment
+                        R.id.action_introWelcomeFragment_to_introUsageStatsPermissionFragment
                 }
                 R.id.introActionConfiguratorFragment -> {
                     nextAction =
                         R.id.action_introActionConfiguratorFragment_to_introGamesConfiguratorFragment
                     skipAction =
-                        R.id.action_introActionConfiguratorFragment_to_introOverlayPermissionFragment
+                        R.id.action_introActionConfiguratorFragment_to_introUsageStatsPermissionFragment
                 }
                 R.id.introGamesConfiguratorFragment -> {
                     nextAction =
-                        R.id.action_introGamesConfiguratorFragment_to_introOverlayPermissionFragment
+                        R.id.action_introGamesConfiguratorFragment_to_introUsageStatsPermissionFragment
                     skipAction =
-                        R.id.action_introGamesConfiguratorFragment_to_introOverlayPermissionFragment
+                        R.id.action_introGamesConfiguratorFragment_to_introUsageStatsPermissionFragment
                 }
                 R.id.introOverlayPermissionFragment,
                 R.id.introPermissionsFragment,
-                R.id.introAccessibilityServiceFragment
+                R.id.introAccessibilityServiceFragment,
+                R.id.introUsageStatsPermissionFragment
                 -> {
                     nextAction = -1
                     skipAction = -1

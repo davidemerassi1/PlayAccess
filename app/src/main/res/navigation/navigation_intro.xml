@@ -18,8 +18,8 @@
             app:popEnterAnim="@anim/slide_in_left_animation"
             app:popExitAnim="@anim/slide_out_right_animation" />
         <action
-            android:id="@+id/action_introWelcomeFragment_to_introOverlayPermissionFragment"
-            app:destination="@id/introOverlayPermissionFragment"
+            android:id="@+id/action_introWelcomeFragment_to_introUsageStatsPermissionFragment"
+            app:destination="@id/introUsageStatsPermissionFragment"
             app:enterAnim="@anim/slide_in_right_animation"
             app:exitAnim="@anim/slide_out_left_animation"
             app:popEnterAnim="@anim/slide_in_left_animation"
@@ -39,8 +39,8 @@
             app:popEnterAnim="@anim/slide_in_left_animation"
             app:popExitAnim="@anim/slide_out_right_animation" />
         <action
-            android:id="@+id/action_introActionConfiguratorFragment_to_introOverlayPermissionFragment"
-            app:destination="@id/introOverlayPermissionFragment"
+            android:id="@+id/action_introActionConfiguratorFragment_to_introUsageStatsPermissionFragment"
+            app:destination="@id/introUsageStatsPermissionFragment"
             app:enterAnim="@anim/slide_in_right_animation"
             app:exitAnim="@anim/slide_out_left_animation"
             app:popEnterAnim="@anim/slide_in_left_animation"
@@ -53,12 +53,22 @@
         android:label="fragment_intro_games_configurator"
         tools:layout="@layout/fragment_intro_games_configurator">
         <action
-            android:id="@+id/action_introGamesConfiguratorFragment_to_introOverlayPermissionFragment"
-            app:destination="@id/introOverlayPermissionFragment"
+            android:id="@+id/action_introGamesConfiguratorFragment_to_introUsageStatsPermissionFragment"
+            app:destination="@id/introUsageStatsPermissionFragment"
             app:enterAnim="@anim/slide_in_right_animation"
             app:exitAnim="@anim/slide_out_left_animation"
             app:popEnterAnim="@anim/slide_in_left_animation"
             app:popExitAnim="@anim/slide_out_right_animation" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/introUsageStatsPermissionFragment"
+        android:name="com.example.sandboxtest.ui.intro.fragments.IntroUsageStatsPermissionFragment"
+        android:label="fragment_intro_usage_stats_permission"
+        tools:layout="@layout/fragment_intro_usage_stats_permission">
+        <action
+            android:id="@+id/action_introUsageStatsPermissionFragment_to_introOverlayPermissionFragment"
+            app:destination="@id/introOverlayPermissionFragment" />
     </fragment>
 
     <fragment

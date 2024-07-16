@@ -8,8 +8,13 @@ import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
@@ -30,6 +35,8 @@ import com.example.actionsrecognizer.facialexpressionactionsrecognizer.FacialExp
 import com.example.eventsexecutor.OverlayManager;
 
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import it.unimi.di.ewlab.iss.common.model.ActionsChangedObserver;
 import it.unimi.di.ewlab.iss.common.model.MainModel;
@@ -48,6 +55,9 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
     private EventExecutor executor;
     @ExperimentalGetImage
     private FacialExpressionActionsRecognizer facialExpressionActionsRecognizer;
+    private int orientation = Configuration.ORIENTATION_UNDEFINED;
+    private Handler handler;
+    private String launcher;
 
     @OptIn(markerClass = androidx.camera.core.ExperimentalGetImage.class)
     @Override
@@ -77,8 +87,9 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
         // Mostra la notifica
         showNotification();
 
+        launcher = getDefaultLauncherPackageName();
 
-        Handler handler = new Handler(getMainLooper());
+        handler = new Handler(getMainLooper());
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -97,15 +108,31 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
     public void onAccessibilityEvent(AccessibilityEvent event) {
         switch (event.getEventType()) {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                if (event.getPackageName() != null && !event.getPackageName().toString().equals("com.example.sandboxtest") && !event.getPackageName().toString().equals("com.android.systemui")) {
-                    activePackage = event.getPackageName().toString();
-                    Log.d(TAG, "Package changed: " + activePackage);
+                Configuration newConfig = getResources().getConfiguration();
+                if (orientation != newConfig.orientation) {
+                    orientation = newConfig.orientation;
+                    changeOrientation();
+                }
+                if (event.getPackageName() != null) {
+                    if (event.getPackageName().toString().equals(launcher)) {
+                        overlayManager.hideOverlay();
+                        executor.pause();
+                        return;
+                    }
+                    activePackage = getForegroundApp();
+                    if (activePackage.equals("com.example.sandboxtest")) {
+                        overlayManager.hideOverlay();
+                        executor.pause();
+                        return;
+                    }
+                    Log.d(TAG, "Package changed: " + event.getPackageName() + " " + activePackage);
                     Intent intent = new Intent("com.example.accessibilityservice.PACKAGE_CHANGED");
                     intent.putExtra("packageName", activePackage);
                     sendBroadcast(intent);
                     overlayManager.changeGame(activePackage);
-                    executor.changeGame(activePackage);
                     overlayManager.showOverlay();
+                    executor.changeGame(activePackage);
+                    executor.resume();
                 }
                 break;
             case AccessibilityEvent.TYPE_ANNOUNCEMENT:
@@ -114,6 +141,17 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
                     case "[CONFIGURATION_OPENED]" -> executor.pause();
                 }
         }
+    }
+
+    @OptIn(markerClass = ExperimentalGetImage.class)
+    private void changeOrientation() {
+        Log.d(TAG, "Orientation changed: " + orientation);
+        if (facialExpressionActionsRecognizer == null)
+            return;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT)
+            facialExpressionActionsRecognizer.setPrecision(mainModel.getPrecision());
+        else if (orientation == Configuration.ORIENTATION_LANDSCAPE)
+            facialExpressionActionsRecognizer.setPrecision(mainModel.getPrecision() * 2f);
     }
 
     @Override
@@ -217,5 +255,47 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
             cameraLifecycle.resume();
         else
             cameraLifecycle.pause();
+    }
+
+    public String getForegroundApp() {
+        UsageStatsManager usageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
+        if (usageStatsManager == null) {
+            return null;
+        }
+
+        long endTime = System.currentTimeMillis();
+        long startTime = endTime - 1000 * 60;
+
+        List<UsageStats> usageStatsList = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startTime, endTime);
+
+        if (usageStatsList == null || usageStatsList.isEmpty()) {
+            Log.d(TAG, "No usage stats available");
+            return null;
+        }
+
+        SortedMap<Long, UsageStats> sortedMap = new TreeMap<>();
+        for (UsageStats usageStats : usageStatsList) {
+            sortedMap.put(usageStats.getLastTimeUsed(), usageStats);
+        }
+
+        if (!sortedMap.isEmpty()) {
+            UsageStats recentUsageStats = sortedMap.get(sortedMap.lastKey());
+            return recentUsageStats.getPackageName();
+        }
+
+        return null;
+    }
+
+    public String getDefaultLauncherPackageName() {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        PackageManager pm = getPackageManager();
+        ResolveInfo resolveInfo = pm.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+
+        if (resolveInfo != null && resolveInfo.activityInfo != null) {
+            return resolveInfo.activityInfo.packageName;
+        }
+
+        return null;
     }
 }

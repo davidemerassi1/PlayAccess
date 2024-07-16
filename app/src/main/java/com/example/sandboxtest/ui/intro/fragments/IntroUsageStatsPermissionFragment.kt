@@ -1,4 +1,4 @@
-package com.example.sandboxtest.ui.intro.fragments
+package com.example.sandboxtest.ui.intro.fragments;
 
 import android.content.Intent
 import android.net.Uri
@@ -15,7 +15,7 @@ import com.example.sandboxtest.databinding.AlertDialogPermissionsNeededBinding
 import com.example.sandboxtest.databinding.FragmentIntroOverlayPermissionBinding
 import it.unimi.di.ewlab.iss.common.utils.PermissionsHandler
 
-class IntroOverlayPermissionFragment : Fragment() {
+class IntroUsageStatsPermissionFragment : Fragment() {
     private val binding: FragmentIntroOverlayPermissionBinding by lazy {
         FragmentIntroOverlayPermissionBinding.inflate(layoutInflater)
     }
@@ -45,27 +45,27 @@ class IntroOverlayPermissionFragment : Fragment() {
 
     private fun setUi() {
         binding.optionsButton.setOnClickListener {
-            openOverlaySettings()
+            openUsageStatsSettings()
             settingsOpened = true
         }
 
-        binding.text.text = "Per continuare, concedi a PlayAccess il permesso di sovrapporsi ad altre app"
+        binding.text.text =
+            "Per continuare, concedi a PlayAccess il permesso di accedere ai dati di utilizzo"
     }
 
-    private fun openOverlaySettings() {
-        val settingsIntent = Intent(
-            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+    private fun openUsageStatsSettings() {
+        val intent = Intent(
+            Settings.ACTION_USAGE_ACCESS_SETTINGS,
             Uri.parse("package:" + requireActivity().packageName)
         )
-        settingsIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(settingsIntent)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
     }
-
-
 
     override fun onResume() {
         super.onResume()
-        if (PermissionsHandler.checkOverlayPermission(requireContext())) {
+
+        if (PermissionsHandler.checkUsageStatsPermission(requireContext())) {
             navigateToNext()
         } else if (settingsOpened) {
             openDenyDialog()
@@ -92,7 +92,7 @@ class IntroOverlayPermissionFragment : Fragment() {
     private fun navigateToNext() {
         Navigation.findNavController(requireView())
             .navigate(
-                R.id.introPermissionsFragment
+                R.id.introOverlayPermissionFragment
             )
     }
 }

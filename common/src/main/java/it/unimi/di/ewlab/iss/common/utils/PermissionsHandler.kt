@@ -2,6 +2,7 @@ package it.unimi.di.ewlab.iss.common.utils
 
 import android.Manifest
 import android.app.Activity
+import android.app.AppOpsManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
@@ -265,5 +266,19 @@ object PermissionsHandler {
         }
 
         return false
+    }
+
+    fun checkOverlayPermission(context: Context): Boolean {
+        return Settings.canDrawOverlays(context)
+    }
+
+    fun checkUsageStatsPermission(context: Context): Boolean {
+        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        val mode = appOps.checkOpNoThrow(
+            AppOpsManager.OPSTR_GET_USAGE_STATS,
+            android.os.Process.myUid(),
+            context.packageName
+        )
+        return mode == AppOpsManager.MODE_ALLOWED
     }
 }
