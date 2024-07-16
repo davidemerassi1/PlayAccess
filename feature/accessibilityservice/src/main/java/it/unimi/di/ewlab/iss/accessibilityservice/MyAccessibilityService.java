@@ -79,8 +79,10 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
         executor = new EventExecutor(this, overlayManager.getTouchIndicatorView());
 
         if (mainModel.getNeutralFacialExpressionAction() != null) {
-            facialExpressionActionsRecognizer = FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(executor));
-            facialExpressionActionsRecognizer.init(this, cameraLifecycle);
+            new Thread (() -> {
+                facialExpressionActionsRecognizer = FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(executor));
+                facialExpressionActionsRecognizer.init(this, cameraLifecycle);
+            }).start();
         }
 
         // Mostra la notifica
@@ -118,19 +120,22 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
                         executor.pause();
                         return;
                     }
-                    activePackage = getForegroundApp();
-                    if (activePackage.equals(getPackageName())) {
+                    String foregroundApp = getForegroundApp();
+                    if (foregroundApp.equals(getPackageName()) || foregroundApp.equals(launcher)) {
                         overlayManager.hideOverlay();
                         executor.pause();
                         return;
                     }
-                    Log.d(TAG, "Package changed: " + event.getPackageName() + " " + activePackage);
-                    Intent intent = new Intent("it.unimi.di.ewlab.iss.accessibilityservice.PACKAGE_CHANGED");
-                    intent.putExtra("packageName", activePackage);
-                    sendBroadcast(intent);
-                    overlayManager.changeGame(activePackage);
+                    if (!foregroundApp.equals(activePackage)) {
+                        activePackage = foregroundApp;
+                        Log.d(TAG, "Package changed: " + event.getPackageName() + " " + activePackage);
+                        Intent intent = new Intent("it.unimi.di.ewlab.iss.accessibilityservice.PACKAGE_CHANGED");
+                        intent.putExtra("packageName", activePackage);
+                        sendBroadcast(intent);
+                        overlayManager.changeGame(activePackage);
+                        executor.changeGame(activePackage);
+                    }
                     overlayManager.showOverlay();
-                    executor.changeGame(activePackage);
                     executor.resume();
                 }
                 break;

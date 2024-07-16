@@ -36,6 +36,7 @@ public class EventExecutor implements ActionListener {
     private boolean moving1d = false;
     private boolean paused = false;
     private TouchIndicatorView touchIndicatorView;
+    private boolean needCamera;
     private AccessibilityService.GestureResultCallback gestureResultCallback = new AccessibilityService.GestureResultCallback() {
         @Override
         public void onCompleted(GestureDescription gestureDescription) {
@@ -65,7 +66,7 @@ public class EventExecutor implements ActionListener {
                 Log.d("EventExecutor", "Associations changed");
                 //releaseAll();
 
-                boolean needCamera = false;
+                needCamera = false;
                 for (Association association : associations) {
                     if (association.action.getActionType() == Action.ActionType.FACIAL_EXPRESSION)
                         needCamera = true;
@@ -423,10 +424,12 @@ public class EventExecutor implements ActionListener {
 
     public void pause() {
         paused = true;
+        accessibilityService.setCameraNeeded(false);
     }
 
     public void resume() {
         paused = false;
+        handler.post(() -> accessibilityService.setCameraNeeded(needCamera));
     }
 
     public enum Action1D {
