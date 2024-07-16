@@ -21,6 +21,6 @@ include(":app")
 include (":feature:actionsconfigurator")
 include (":common")
 
-include(":feature:eventsexecutor+gamesconfigurator")
+include(":feature:gamesconfigurator")
 include(":feature:actionsrecognizer")
 include(":feature:accessibilityservice")

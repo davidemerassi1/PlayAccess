@@ -1,0 +1,240 @@
+package com.example.gamesconfigurator;
+
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
+public class OverlayView extends RelativeLayout {
+    private ConfigurationView configurationView;
+    private WindowManager.LayoutParams params;
+    private WindowManager windowManager;
+    private View collapsedView;
+    private View expandedView;
+
+    public OverlayView(Context context) {
+        super(context);
+    }
+
+    public OverlayView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public void init(WindowManager windowManager) {
+        this.windowManager = windowManager;
+        params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                        WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
+                PixelFormat.TRANSLUCENT);
+        params.gravity = Gravity.TOP | Gravity.START;
+        params.x = 10;
+        params.y = 10;
+        windowManager.addView(this, params);
+        collapsedView = this.findViewById(R.id.layoutCollapsed);
+        expandedView = this.findViewById(R.id.configurationView);
+
+        configurationView = findViewById(R.id.configurationView);
+        configurationView.setup();
+
+        expandedView.findViewById(R.id.closeConfigurationBtn).setOnClickListener(v -> {
+            closeConfiguration();
+            new Thread(() -> configurationView.save()).start();
+        });
+
+        collapsedView.setOnTouchListener(new View.OnTouchListener() {
+            private int initialX;
+            private int initialY;
+            private float initialTouchX;
+            private float initialTouchY;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        initialX = params.x;
+                        initialY = params.y;
+                        initialTouchX = event.getRawX();
+                        initialTouchY = event.getRawY();
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        if (Math.abs(params.x - initialX) < 5 && Math.abs(params.y - initialY) < 5) {
+                            collapsedView.setVisibility(View.GONE);
+                            expandedView.setVisibility(View.VISIBLE);
+                            params.width = WindowManager.LayoutParams.MATCH_PARENT;
+                            params.height = WindowManager.LayoutParams.MATCH_PARENT;
+                            windowManager.updateViewLayout(OverlayView.this, params);
+                            announceForAccessibility("CONFIGURATION_OPENED");
+                            configurationView.open();
+                        }
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE:
+                        params.x = initialX + (int) (event.getRawX() - initialTouchX);
+                        params.y = initialY + (int) (event.getRawY() - initialTouchY);
+                        windowManager.updateViewLayout(OverlayView.this, params);
+                        return true;
+                }
+                return false;
+            }
+        });
+
+        /*new Thread(() -> {
+            CameraFaceDetector cameraFaceDetector = new CameraFaceDetector(getContext(), this, this);
+            cameraFaceDetector.startDetection();
+        }).start();*/
+
+        /*if (!MainModel.getInstance().getFacialExpressionActions().isEmpty()) {
+            FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(this)).init(
+                    getContext(), this
+            );
+        }*/
+
+        /*associations.observeForever(associations -> {
+            Log.d("OverlayView", "init: " + associations.length);
+            map.clear();
+            needCamera = false;
+            for (Association association : associations) {
+                if (association.action.getActionType() == Action.ActionType.FACIAL_EXPRESSION) {
+                    Log.d("OverlayView", "init: need camera");
+                    needCamera = true;
+                }
+                map.put(association.action, association);
+                if (association.event == Event.MONODIMENSIONAL_SLIDING) {
+                    map.put(association.additionalAction1, association);
+                    map.put(association.additionalAction2, association);
+                }
+            }
+            configurationView.changeGame(applicationPackage, associations);
+        });*/
+    }
+
+    public void changeGame(String applicationPackage) {
+        configurationView.changeGame(applicationPackage);
+
+        Drawable appIcon = getAppIconFromPackageName(getContext(), applicationPackage);
+        if (appIcon != null)
+            ((ImageView) findViewById(R.id.gameIcon)).setImageDrawable(appIcon);
+    }
+
+    private Drawable getAppIconFromPackageName(Context context, String packageName) {
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
+            return applicationInfo.loadIcon(packageManager);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d("OverlayView", "package not found: " + packageName);
+        }
+        return null;
+    }
+
+    public void start() {
+        setVisibility(VISIBLE);
+        /*if (needCamera)
+            getContext().sendBroadcast(new Intent("com.example.accessibilityservice.NEED_CAMERA"));*/
+    }
+
+    public void stop() {
+        setVisibility(GONE);
+        //getContext().sendBroadcast(new Intent("com.example.accessibilityservice.NO_CAMERA"));
+    }
+
+    public void closeConfiguration() {
+        //new Thread(() -> executor.releaseAll()).start();
+        collapsedView.setVisibility(View.VISIBLE);
+        expandedView.setVisibility(View.GONE);
+        params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        windowManager.updateViewLayout(this, params);
+    }
+
+    /*
+    private void execute1d(Association association, Action action) {
+        if (!configurationOpened && getVisibility()==VISIBLE) {
+            if (association.action.equals(action))
+                executor.execute1d(association, EventExecutor.Action1D.MOVE_LEFT);
+            else if (association.additionalAction1.equals(action))
+                executor.execute1d(association, EventExecutor.Action1D.MOVE_RIGHT);
+            else
+                executor.execute1d(association, EventExecutor.Action1D.RESET);
+        }
+    }
+     */
+
+    /*
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        Log.d("OverlayView", "onGenericMotionEvent: " + event.getSource() + " " + event.getAction() + " " + event.getAxisValue(MotionEvent.AXIS_X) + " " + event.getAxisValue(MotionEvent.AXIS_Y));
+        // Verifica se l'evento proviene da un joystick
+        if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK &&
+                event.getAction() == MotionEvent.ACTION_MOVE) {
+            if (!configurationOpened) {
+                //TODO: da verificare il codice: 19 corrisponde a KEYCODE_DPAD_UP
+                ButtonAction ba = buttonActionsModel.getButtonActionByIds(String.valueOf(event.getSource()), String.valueOf(19));
+                if (ba != null && map.containsKey(ba)) {
+                    Association association = map.get(ba);
+                    float x = -event.getAxisValue(MotionEvent.AXIS_X);
+                    float y = -event.getAxisValue(MotionEvent.AXIS_Y);
+                    Log.d("OverlayView", "onGenericMotionEvent: " + x + " " + y);
+                    executor.execute2d(association, x, y);
+                }
+            } else {
+                configurationView.onGenericMotionEvent(event);
+            }
+            return true;
+        }
+        return false;
+    }
+    */
+
+    /*
+    @Override
+    public void onActionStarts(@NonNull Action action) {
+        Log.d("OverlayView", "onActionStarts: " + action.getName());
+        if (!configurationOpened && getVisibility()==VISIBLE) {
+            if (map.containsKey(action)) {
+                Association association = map.get(action);
+                Toast.makeText(getContext(), action.getName(), Toast.LENGTH_SHORT).show();
+                if (association.event != Event.MONODIMENSIONAL_SLIDING)
+                    executor.execute(association);
+                else {
+                    execute1d(association, action);
+                }
+            } else
+                Log.d("OverlayView", "ho rilevato " + action.getName() + " ma non ho nessuna associazione");
+        }
+    }
+
+    @Override
+    public void onActionEnds(@NonNull Action action) {
+        Log.d("OverlayView", "onActionEnds: " + action.getName());
+        if (!configurationOpened && getVisibility()==VISIBLE) {
+            if (map.containsKey(action)) {
+                Association association = map.get(action);
+                executor.stopExecuting(association);
+            } else
+                Log.d("OverlayView", "ho rilevato " + action.getName() + " ma non ho nessuna associazione");
+        }
+    }
+
+    @Override
+    public void on2dMovement(Action action, float x, float y) {
+        if (!configurationOpened && getVisibility()==VISIBLE && map.containsKey(action))
+            executor.execute2d(map.get(action), x, y);
+    }
+    */
+}

@@ -29,10 +29,9 @@ import androidx.camera.core.ExperimentalGetImage;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.lifecycle.MutableLiveData;
 
 import com.example.actionsrecognizer.facialexpressionactionsrecognizer.FacialExpressionActionsRecognizer;
-import com.example.eventsexecutor.OverlayManager;
+import com.example.gamesconfigurator.OverlayManager;
 
 import java.util.List;
 import java.util.SortedMap;

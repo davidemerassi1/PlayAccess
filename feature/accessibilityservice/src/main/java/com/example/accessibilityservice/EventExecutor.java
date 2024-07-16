@@ -9,12 +9,11 @@ import android.graphics.Path;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.util.Pair;
 
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.actionsrecognizer.facialexpressionactionsrecognizer.ActionListener;
-import com.example.eventsexecutor.TouchIndicatorView;
+import com.example.gamesconfigurator.TouchIndicatorView;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -24,7 +23,6 @@ import it.unimi.di.ewlab.iss.common.database.Event;
 import it.unimi.di.ewlab.iss.common.model.MainModel;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 

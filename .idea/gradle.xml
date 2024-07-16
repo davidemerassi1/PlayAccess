@@ -16,7 +16,7 @@
             <option value="$PROJECT_DIR$/feature/accessibilityservice" />
             <option value="$PROJECT_DIR$/feature/actionsconfigurator" />
             <option value="$PROJECT_DIR$/feature/actionsrecognizer" />
-            <option value="$PROJECT_DIR$/feature/eventsexecutor+gamesconfigurator" />
+            <option value="$PROJECT_DIR$/feature/gamesconfigurator" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

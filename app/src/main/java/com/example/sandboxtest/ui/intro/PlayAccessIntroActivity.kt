@@ -49,7 +49,7 @@ class PlayAccessIntroActivity : AppCompatActivity() {
         setUi()
 
         val persistenceManager = PersistenceManager(this)
-        if (!(persistenceManager.getValue(INTRO_REQUIRED, true) as Boolean)) {
+        if (!(persistenceManager.getValue(INTRO_REQUIRED, true) as Boolean) && skipAction > 0) {
             navController.navigate(skipAction)
         }
     }
