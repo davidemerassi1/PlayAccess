@@ -30,6 +30,7 @@
     <string name="externalbutton_button_name">Nome del pulsante</string>
     <string name="externalbutton_bluetooth_permission">Concedi accesso al bluetooth</string>
     <string name="externalbutton_no_bluetooth_permission">Accesso al bluetooth non concesso</string>
+    <string name="externalbutton_alert_joystick_android14">La registrazione di un joystick è possibile solo a partire da Android 14</string>
 
     <string name="feraction_title">Espressione</string>
     <string name="feraction_record_facial_expression_title">Registrazione</string>
@@ -60,4 +61,10 @@
     <string name="feraction_record_info_msg">Assumi l\'espressione che vuoi registrare, clicca sul pulsante "Registra" e resta fermo durante l\'acquisizione.</string>
     <string name="feraction_no_camera_permission">Accesso alla camera non consentito</string>
     <string name="actionmanager_empty_name">Inserisci il nome dell\'azione</string>
+    <string name="tryFacialExpressions_title">Prova espressioni</string>
+    <string name="tryFacialExpressions_camera_initialization_error">Errore inizializzazione camera</string>
+    <string name="tryFacialExpressions_unrecognized_expression">Nessuna corrispondenza</string>
+    <string name="message_config_first_action">Configura la tua prima azione cliccando sul + in basso a destra</string>
+    <string name="tryFacialExpressions_no_permission">Non è stato concesso il permesso</string>
+    <string name="tryFacialExpressions_precision">Imposta precisione</string>
 </resources>

@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:text="Configuration mode"
+            android:text="@string/configuration_mode"
             android:textColor="@color/white" />
 
         <ImageButton
@@ -80,7 +80,7 @@
                         android:layout_height="50dp"
                         android:layout_marginEnd="10dp"
                         android:gravity="center_vertical"
-                        android:text="Tap"
+                        android:text="@string/tap"
                         android:textColor="@color/white" />
 
                     <ImageButton
@@ -104,7 +104,7 @@
                         android:layout_height="50dp"
                         android:layout_marginEnd="10dp"
                         android:gravity="center_vertical"
-                        android:text="Joystick"
+                        android:text="@string/joystick"
                         android:textColor="@color/white" />
 
                     <ImageButton
@@ -128,7 +128,7 @@
                         android:layout_height="50dp"
                         android:layout_marginEnd="10dp"
                         android:gravity="center_vertical"
-                        android:text="Swipe"
+                        android:text="@string/swipe"
                         android:textColor="@color/white" />
 
                     <ImageButton
@@ -152,7 +152,7 @@
                         android:layout_height="50dp"
                         android:layout_marginEnd="10dp"
                         android:gravity="center_vertical"
-                        android:text="Long tap"
+                        android:text="@string/long_tap"
                         android:textColor="@color/white" />
 
                     <ImageButton
@@ -176,7 +176,7 @@
                         android:layout_height="50dp"
                         android:layout_marginEnd="10dp"
                         android:gravity="center_vertical"
-                        android:text="Monodimensional sliding"
+                        android:text="@string/monodimensional_sliding"
                         android:textColor="@color/white" />
 
                     <ImageButton
@@ -200,7 +200,7 @@
                         android:layout_height="50dp"
                         android:layout_marginEnd="10dp"
                         android:gravity="center_vertical"
-                        android:text="Tap on/off"
+                        android:text="@string/tap_on_off"
                         android:textColor="@color/white" />
 
                     <ImageButton

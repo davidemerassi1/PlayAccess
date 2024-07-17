@@ -13,7 +13,7 @@
         android:layout_marginBottom="@dimen/default_margin"
         android:elevation="10dp"
         android:gravity="center"
-        android:text="Concedi l'accesso ai dati di utilizzo"
+        android:text="@string/intro_usage_stats"
         android:textAlignment="center"
         android:textSize="@dimen/H4_text_size"
         app:layout_constraintBottom_toTopOf="@+id/playAccessLogo"
@@ -58,5 +58,20 @@
             android:textSize="@dimen/P4_text_size" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/text2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/intro_usage_stats_explanation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/playAccessLogo"
+        android:layout_marginHorizontal="@dimen/default_margin_medium"
+        android:layout_marginTop="@dimen/default_margin"
+        android:elevation="10dp"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textSize="@dimen/H4_text_size"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,6 +5,7 @@
     <string name="external_button">External Button</string>
     <string name="screen_gesture">Screen Gesture</string>
     <string name="facial_expression">Facial Expression</string>
+    <string name="message_config_first_action">Configure your first action by clicking on the + at the bottom right</string>
 
     <!-- _______________________ STRINGHE Actions list ___________________ -->
     <string name="actionmanager_gestures_directory">Gestures</string>
@@ -32,6 +33,7 @@
     <string name="externalbutton_button_name">Button name</string>
     <string name="externalbutton_bluetooth_permission">Grant bluetooth permissions</string>
     <string name="externalbutton_no_bluetooth_permission">Bluetooth permissions not granted</string>
+    <string name="externalbutton_alert_joystick_android14">Registering a joystick is only possible starting from Android 14</string>
 
     <!-- _______________________ STRINGHE Facial expression action definition ___________________ -->
     <string name="feraction_title">Expression</string>
@@ -61,9 +63,9 @@
     <string name="feraction_record_info_title">Record an expression</string>
     <string name="feraction_record_info_msg">Assume the expression you want to record, click on the "Record" button and stay still during the capture.</string>
     <string name="feraction_no_camera_permission">Camera permission not granted</string>
-    <string name="tryFacialExpressions_title">Prova espressioni</string>
-    <string name="tryFacialExpressions_camera_initialization_error">Errore inizializzazione camera</string>
-    <string name="tryFacialExpressions_unrecognized_expression">Nessuna corrispondenza</string>
-    <string name="tryFacialExpressions_no_permission">Non è stato concesso il permesso</string>
-    <string name="tryFacialExpressions_precision">Imposta precisione</string>
+    <string name="tryFacialExpressions_title">Try expressions</string>
+    <string name="tryFacialExpressions_camera_initialization_error">Camera initialization error</string>
+    <string name="tryFacialExpressions_unrecognized_expression">No matches</string>
+    <string name="tryFacialExpressions_precision">Set precision</string>
+    <string name="tryFacialExpressions_no_permission">Permission was not granted</string>
 </resources>

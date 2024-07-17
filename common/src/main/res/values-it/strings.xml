@@ -1009,8 +1009,11 @@
     <string name="intro_action_configurator">Usa il Configuratore Azioni per registrare i gesti che sei in grado di eseguire</string>
     <string name="intro_games_configurator">Associa le azioni ai giochi nel Configuratore Giochi</string>
     <string name="intro_welcome_message">Benvenuto su PlayAccess,\nl\'app che rende i tuoi giochi preferiti più accessibili!</string>
-    <string name="intro_enable_accessibility_service">Per continuare abilita il servizio di accessibilità PlayAccess dalle impostazioni</string>
+    <string name="intro_usage_stats">Per continuare è necessario fornire l\'autorizzazione a conoscere i dati di utilizzo</string>
     <string name="intro_go_to_settings">Vai alle impostazioni</string>
     <string name="intro_grant_permissions">Concedi permessi</string>
     <string name="intro_deny">Rifiuta</string>
+    <string name="intro_overlay_permission">Bene, ora concedi a PlayAccess l\'autorizzazione a sovrapporsi ad altre app</string>
+    <string name="intro_accessibility_service">Ci siamo quasi! Per ultima cosa attiva PlayAccess come accessibility service</string>
+    <string name="intro_usage_stats_explanation">Questi dati servono a PlayAccess per conoscere l\'app in esecuzione e caricare automaticamente la configurazione corretta</string>
 </resources>

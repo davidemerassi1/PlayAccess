@@ -43,6 +43,7 @@ public class MainModel {
 
     private static final String TAG = MainModel.class.getName();
     public static final int NEUTRAL_FACIAL_EXPRESSION_ACTION_ID = 1;
+    public static final int FACE_MOVEMENT_ACTION_ID = 0;
     private PersistenceManager persistenceManager;
 
     private static MainModel instance = null;
@@ -146,10 +147,11 @@ public class MainModel {
     //METODO CHE SETTA I GIOCHI NEL MAINMODEL PRENDENDOLI DAL FILE JSON
     public void initActions() {
         actions = new HashMap<>();
-        actions.put(0, FACE_MOVEMENT_ACTION);
         for (Action a : jsonManager.getActionsFromJson()) {
             actions.put(a.getActionId(), a);
         }
+        if (getNeutralFacialExpressionAction() != null)
+            actions.put(FACE_MOVEMENT_ACTION_ID, FACE_MOVEMENT_ACTION);
     }
 
     public List<ButtonAction> getButtonActions() {
@@ -239,6 +241,7 @@ public class MainModel {
         if (!Objects.equals(action.getName(), neutralFacialExpressionName))
             throw new IllegalStateException("Action name is not " + neutralFacialExpressionName);
         actions.put(NEUTRAL_FACIAL_EXPRESSION_ACTION_ID, action);
+        actions.put(FACE_MOVEMENT_ACTION_ID, FACE_MOVEMENT_ACTION);
     }
 
 

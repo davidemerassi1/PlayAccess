@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">eventsexecutor</string>
+    <string name="pulsante_esterno">PULSANTE ESTERNO</string>
+    <string name="option_face">ESPRESSIONE FACCIALE</string>
+    <string name="no_actions">Nessuna azione disponibile. Registrane una nuova dal configuratore azioni!</string>
+    <string name="swipe_direction">Direzione swipe:</string>
+    <string name="delete">Elimina</string>
+    <string name="cancel">Annulla</string>
+    <string name="select_an_event_to_continue">Seleziona un evento per continuare</string>
+    <string name="configuration_mode">Modalità configurazione</string>
+    <string name="monodimensional_sliding">Sliding monodimensionale</string>
+    <string name="move_left">Spost. sinistra:</string>
+    <string name="select_an_action">Seleziona un\'azione...</string>
+    <string name="move_right">Spost. destra:</string>
+    <string name="reset_pointer">Reset puntatore:</string>
+    <string name="reset_to_initial_position">Reset alla posizione iniziale</string>
+    <string name="select_all_actions">Seleziona tutte le azioni necessarie</string>
+    <string name="error_same_action">Selezionare tre azioni diverse</string>
+</resources>

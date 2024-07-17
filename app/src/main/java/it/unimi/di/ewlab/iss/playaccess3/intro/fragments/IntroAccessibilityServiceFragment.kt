@@ -14,6 +14,7 @@ import it.unimi.di.ewlab.iss.actionsconfigurator.ui.activity.MainActivityConfAzi
 import it.unimi.di.ewlab.iss.common.storage.INTRO_REQUIRED
 import it.unimi.di.ewlab.iss.common.storage.PersistenceManager
 import it.unimi.di.ewlab.iss.common.utils.PermissionsHandler
+import it.unimi.di.ewlab.iss.playaccess3.R
 
 class IntroAccessibilityServiceFragment : Fragment() {
     private val binding: FragmentIntroAccessibilityServiceBinding by lazy {
@@ -55,8 +56,6 @@ class IntroAccessibilityServiceFragment : Fragment() {
             openAccessibilitySettings()
             settingsOpened = true
         }
-
-        binding.text.text = "Per funzionare c'è bisogno del permesso di accessibilità"
     }
 
     private fun openAccessibilitySettings() {
@@ -88,7 +87,7 @@ class IntroAccessibilityServiceFragment : Fragment() {
 
         dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
 
-        dialogBinding.msg.text = "Questa app non può funzionare senza il permesso richiesto"
+        dialogBinding.msg.text = getString(R.string.alert_permission_required)
 
         dialogBinding.okButton.setOnClickListener {
             dialog.dismiss()

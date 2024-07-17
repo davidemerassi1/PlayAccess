@@ -48,8 +48,6 @@ class IntroOverlayPermissionFragment : Fragment() {
             openOverlaySettings()
             settingsOpened = true
         }
-
-        binding.text.text = "Per continuare, concedi a PlayAccess il permesso di sovrapporsi ad altre app"
     }
 
     private fun openOverlaySettings() {
@@ -81,7 +79,7 @@ class IntroOverlayPermissionFragment : Fragment() {
 
         dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
 
-        dialogBinding.msg.text = "Questa app non può funzionare senza il permesso richiesto."
+        dialogBinding.msg.text = getString(R.string.alert_permission_required)
 
         dialogBinding.okButton.setOnClickListener {
             dialog.dismiss()

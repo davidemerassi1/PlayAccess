@@ -13,7 +13,7 @@
         android:layout_marginBottom="@dimen/default_margin"
         android:elevation="10dp"
         android:gravity="center"
-        android:text="Per continuare, concedi a ... il permesso di sovrapporsi ad altre app"
+        android:text="@string/message_overlay_permission"
         android:textAlignment="center"
         android:textSize="@dimen/H4_text_size"
         app:layout_constraintBottom_toTopOf="@+id/playAccessLogo"

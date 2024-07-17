@@ -13,7 +13,7 @@
         android:layout_marginBottom="@dimen/default_margin"
         android:elevation="10dp"
         android:gravity="center"
-        android:text="Ci siamo quasi! Per ultimo concedi a ... il permesso di conoscere quale processo è in esecuzione"
+        android:text="@string/intro_accessibility_service"
         android:textAlignment="center"
         android:textSize="@dimen/H4_text_size"
         app:layout_constraintBottom_toTopOf="@+id/playAccessLogo"

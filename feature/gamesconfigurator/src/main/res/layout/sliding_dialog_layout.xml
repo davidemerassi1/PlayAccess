@@ -15,18 +15,6 @@
         android:orientation="vertical"
         android:padding="26dp">
 
-        <TextView
-            android:id="@+id/errorRetrievingActions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:gravity="center"
-            android:text="Impossibile ottenere le azioni. Verifica che il servizio di accessibilità sia attivo"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="16sp"
-            android:visibility="gone" />
-
         <LinearLayout
             android:id="@+id/additional_actions_layout"
             android:layout_width="match_parent"
@@ -44,7 +32,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Move left:"
+                    android:text="@string/move_left"
                     android:textSize="18sp" />
 
                 <TextView
@@ -52,7 +40,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Select an action..."
+                    android:text="@string/select_an_action"
                     android:textAlignment="textEnd"
                     android:textColor="@color/primaryColor"
                     android:textSize="18sp" />
@@ -67,7 +55,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Move right:"
+                    android:text="@string/move_right"
                     android:textSize="18sp" />
 
                 <TextView
@@ -75,7 +63,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Select an action..."
+                    android:text="@string/select_an_action"
                     android:textAlignment="textEnd"
                     android:textColor="@color/primaryColor"
                     android:textSize="18sp" />
@@ -90,7 +78,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Reset pointer:"
+                    android:text="@string/reset_pointer"
                     android:textSize="18sp" />
 
                 <TextView
@@ -98,7 +86,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Select an action..."
+                    android:text="@string/select_an_action"
                     android:textAlignment="textEnd"
                     android:textColor="@color/primaryColor"
                     android:textSize="18sp" />
@@ -110,7 +98,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:textSize="18sp"
-                android:text="Reset alla posizione iniziale" />
+                android:text="@string/reset_to_initial_position" />
         </LinearLayout>
 
         <LinearLayout
@@ -132,7 +120,7 @@
                     android:layout_height="wrap_content"
                     android:background="#00000000"
                     android:padding="0dp"
-                    android:text="Elimina"
+                    android:text="@string/delete"
                     android:textColor="@android:color/holo_red_light" />
             </FrameLayout>
 
@@ -142,7 +130,7 @@
                 android:layout_height="wrap_content"
                 android:background="#00000000"
                 android:padding="0dp"
-                android:text="Annulla"
+                android:text="@string/cancel"
                 android:textColor="@color/primaryColor" />
 
             <Button
@@ -151,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:background="#00000000"
                 android:padding="0dp"
-                android:text="OK"
+                android:text="@string/ok"
                 android:textColor="@color/primaryColor" />
         </LinearLayout>
 
@@ -159,7 +147,7 @@
             android:id="@+id/errorMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Seleziona tutte le azioni necessarie"
+            android:text="@string/select_all_actions"
             android:textColor="#FF0000"
             android:visibility="gone" />
 
@@ -167,7 +155,7 @@
             android:id="@+id/sameActionErrorMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Devi usare tre azioni differenti"
+            android:text="@string/error_same_action"
             android:textColor="#FF0000"
             android:visibility="gone" />
     </LinearLayout>

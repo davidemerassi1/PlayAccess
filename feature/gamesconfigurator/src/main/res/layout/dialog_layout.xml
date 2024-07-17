@@ -39,7 +39,7 @@
                     android:focusable="true"
                     android:gravity="center"
                     android:tag="BUTTON"
-                    android:text="PULSANTE ESTERNO"
+                    android:text="@string/pulsante_esterno"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="16dp" />
 
@@ -53,7 +53,7 @@
                     android:focusable="true"
                     android:gravity="center"
                     android:tag="FACIAL_EXPRESSION"
-                    android:text="VOLTO"
+                    android:text="@string/option_face"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="16dp" />
             </LinearLayout>
@@ -67,7 +67,7 @@
                     android:id="@+id/noEventsTextview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Nessuna azione disponibile"
+                    android:text="@string/no_actions"
                     android:textAlignment="center"
                     android:visibility="gone" />
 
@@ -96,7 +96,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
-                        android:text="Direzione swipe:" />
+                        android:text="@string/swipe_direction" />
 
                     <Spinner
                         android:id="@+id/spinner"
@@ -129,7 +129,7 @@
                     android:layout_height="wrap_content"
                     android:background="#00000000"
                     android:padding="0dp"
-                    android:text="Elimina"
+                    android:text="@string/delete"
                     android:textColor="@android:color/holo_red_light" />
             </FrameLayout>
 
@@ -139,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:background="#00000000"
                 android:padding="0dp"
-                android:text="Annulla"
+                android:text="@string/cancel"
                 android:textColor="@color/primaryColor" />
 
             <Button
@@ -148,7 +148,7 @@
                 android:layout_height="wrap_content"
                 android:background="#00000000"
                 android:padding="0dp"
-                android:text="OK"
+                android:text="@string/ok"
                 android:textColor="@color/primaryColor" />
         </LinearLayout>
 
@@ -156,7 +156,7 @@
             android:id="@+id/errorMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Select an event to continue"
+            android:text="@string/select_an_event_to_continue"
             android:textColor="#FF0000"
             android:visibility="gone" />
     </RelativeLayout>

@@ -1007,10 +1007,11 @@
     <string name="intro_action_configurator">Use the Action Configurator to record the movements you can perform</string>
     <string name="intro_games_configurator">Link your actions to your games with the Game Configurator</string>
     <string name="intro_welcome_message">Welcome to PlayAccess,\nthe application that makes yout favorite games more accessible</string>
-    <string name="intro_enable_accessibility_service">To continue, enable the PlayAccess accessibility service from the options</string>
     <string name="intro_go_to_settings">Go to settings</string>
     <string name="intro_grant_permissions">Grant permissions</string>
     <string name="intro_deny">Deny</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="intro_overlay_permission">Well, now give PlayAccess permission to overlay other apps</string>
+    <string name="intro_accessibility_service">We are almost there! Finally, activate PlayAccess as an accessibility service</string>
+    <string name="intro_usage_stats">To continue you must provide permission to know the usage data</string>
+    <string name="intro_usage_stats_explanation">These data are used by PlayAccess to know the running app and automatically load the correct configuration</string>
 </resources>

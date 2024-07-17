@@ -425,6 +425,7 @@ public class EventExecutor implements ActionListener {
     public void pause() {
         paused = true;
         accessibilityService.setCameraNeeded(false);
+        touchIndicatorView.clear();
     }
 
     public void resume() {

@@ -51,6 +51,7 @@ public class EventDialog extends FrameLayout {
         radioGroup = findViewById(R.id.radioGroup);
         event = eventButton.getEvent();
         availableActions = MainModel.getInstance().getActions();
+        availableActions.remove(MainModel.getInstance().getNeutralFacialExpressionAction());
 
         if (event == Event.SWIPE_UP || event == Event.SWIPE_DOWN || event == Event.SWIPE_LEFT || event == Event.SWIPE_RIGHT) {
             findViewById(R.id.selectSwipeDirectionLayout).setVisibility(VISIBLE);

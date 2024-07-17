@@ -88,7 +88,7 @@ class IntroPermissionsFragment : Fragment() {
 
         dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
 
-        dialogBinding.msg.text = "Questa app non può funzionare senza i permessi richiesti"
+        dialogBinding.msg.text = getString(R.string.alert_permission_required)
 
         dialogBinding.okButton.setOnClickListener {
             dialog.dismiss()

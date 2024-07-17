@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">eventsexecutor</string>
+    <string name="pulsante_esterno">EXTERNAL BUTTON</string>
+    <string name="option_face">FACIAL EXPRESSION</string>
+    <string name="no_actions">No actions available. Register a new one using the action configurator!</string>
+    <string name="swipe_direction">Swipe direction:</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok" translatable="false">OK</string>
+    <string name="select_an_event_to_continue">Select an event to continue</string>
+    <string name="configuration_mode">Configuration mode</string>
+    <string name="tap" translatable="false">Tap</string>
+    <string name="joystick" translatable="false">Joystick</string>
+    <string name="swipe" translatable="false">Swipe</string>
+    <string name="long_tap" translatable="false">Long tap</string>
+    <string name="monodimensional_sliding">Monodimensional sliding</string>
+    <string name="tap_on_off" translatable="false">Tap on/off</string>
+    <string name="move_left">Move left:</string>
+    <string name="select_an_action">Select an action...</string>
+    <string name="move_right">Move right:</string>
+    <string name="reset_pointer">Reset pointer:</string>
+    <string name="error_same_action">Select three different actions</string>
+    <string name="reset_to_initial_position">Reset to initial position</string>
+    <string name="select_all_actions">Select all required actions</string>
 </resources>

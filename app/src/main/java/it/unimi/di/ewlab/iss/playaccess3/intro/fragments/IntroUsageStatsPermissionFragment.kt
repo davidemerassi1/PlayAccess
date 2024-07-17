@@ -12,12 +12,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import it.unimi.di.ewlab.iss.playaccess3.R
 import it.unimi.di.ewlab.iss.playaccess3.databinding.AlertDialogPermissionsNeededBinding
-import it.unimi.di.ewlab.iss.playaccess3.databinding.FragmentIntroOverlayPermissionBinding
 import it.unimi.di.ewlab.iss.common.utils.PermissionsHandler
+import it.unimi.di.ewlab.iss.playaccess3.databinding.FragmentIntroUsageStatsPermissionBinding
 
 class IntroUsageStatsPermissionFragment : Fragment() {
-    private val binding: FragmentIntroOverlayPermissionBinding by lazy {
-        FragmentIntroOverlayPermissionBinding.inflate(layoutInflater)
+    private val binding: FragmentIntroUsageStatsPermissionBinding by lazy {
+        FragmentIntroUsageStatsPermissionBinding.inflate(layoutInflater)
     }
     private var settingsOpened = false
 
@@ -48,9 +48,6 @@ class IntroUsageStatsPermissionFragment : Fragment() {
             openUsageStatsSettings()
             settingsOpened = true
         }
-
-        binding.text.text =
-            "Per continuare, concedi a PlayAccess il permesso di accedere ai dati di utilizzo"
     }
 
     private fun openUsageStatsSettings() {
@@ -81,7 +78,7 @@ class IntroUsageStatsPermissionFragment : Fragment() {
 
         dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
 
-        dialogBinding.msg.text = "Questa app non può funzionare senza il permesso richiesto."
+        dialogBinding.msg.text = getString(R.string.alert_permission_required)
 
         dialogBinding.okButton.setOnClickListener {
             dialog.dismiss()

@@ -121,7 +121,7 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
                         return;
                     }
                     String foregroundApp = getForegroundApp();
-                    if (foregroundApp.equals(getPackageName()) || foregroundApp.equals(launcher)) {
+                    if (foregroundApp == null || foregroundApp.equals(getPackageName()) || foregroundApp.equals(launcher)) {
                         overlayManager.hideOverlay();
                         executor.pause();
                         return;
