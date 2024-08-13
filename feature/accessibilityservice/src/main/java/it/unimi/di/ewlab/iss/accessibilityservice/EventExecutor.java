@@ -9,6 +9,7 @@ import android.graphics.Path;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -24,7 +25,9 @@ import it.unimi.di.ewlab.iss.common.model.MainModel;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class EventExecutor implements ActionListener {
     private int statusBarHeight;
@@ -107,6 +110,10 @@ public class EventExecutor implements ActionListener {
                 handler.postDelayed(() -> touchIndicatorView.clear(), 100);
                 break;
             case SWIPE_UP:
+                if (!inProgress.isEmpty()) {
+                    Toast.makeText(accessibilityService, accessibilityService.getText(R.string.alert_two_events), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 path.lineTo(association.x, association.y - 500);
@@ -116,6 +123,10 @@ public class EventExecutor implements ActionListener {
                 touchIndicatorView.drawSwipe(association.x, association.y, 500, TouchIndicatorView.SwipeDirection.UP, 300, true);
                 break;
             case SWIPE_DOWN:
+                if (!inProgress.isEmpty()) {
+                    Toast.makeText(accessibilityService, accessibilityService.getText(R.string.alert_two_events), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 path.lineTo(association.x, association.y + 500);
@@ -125,6 +136,10 @@ public class EventExecutor implements ActionListener {
                 touchIndicatorView.drawSwipe(association.x, association.y, 500, TouchIndicatorView.SwipeDirection.DOWN, 300, true);
                 break;
             case SWIPE_LEFT:
+                if (!inProgress.isEmpty()) {
+                    Toast.makeText(accessibilityService, accessibilityService.getText(R.string.alert_two_events), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 path.lineTo(association.x - 500, association.y);
@@ -134,6 +149,10 @@ public class EventExecutor implements ActionListener {
                 touchIndicatorView.drawSwipe(association.x, association.y, 500, TouchIndicatorView.SwipeDirection.LEFT, 300, true);
                 break;
             case SWIPE_RIGHT:
+                if (!inProgress.isEmpty()) {
+                    Toast.makeText(accessibilityService, accessibilityService.getText(R.string.alert_two_events), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 path.lineTo(association.x + 500, association.y);
@@ -143,6 +162,10 @@ public class EventExecutor implements ActionListener {
                 touchIndicatorView.drawSwipe(association.x, association.y, 500, TouchIndicatorView.SwipeDirection.RIGHT, 300, true);
                 break;
             case LONG_TAP:
+                if (!inProgress.isEmpty()) {
+                    Toast.makeText(accessibilityService, accessibilityService.getText(R.string.alert_two_events), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 s = new StrokeDescription(path, 0, 1500);
@@ -152,6 +175,10 @@ public class EventExecutor implements ActionListener {
                 handler.postDelayed(() -> touchIndicatorView.clear(), 1500);
                 break;
             case TAP_ON_OFF:
+                if (!inProgress.isEmpty()) {
+                    Toast.makeText(accessibilityService, accessibilityService.getText(R.string.alert_two_events), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 s = new StrokeDescription(path, 0, 1, true);
@@ -171,6 +198,12 @@ public class EventExecutor implements ActionListener {
      * @param y           coordinata y in [-1, 1]
      */
     public void execute2d(Association association, float x, float y) {
+        Set<Association> keySet = new HashSet<>(inProgress.keySet());
+        keySet.remove(association);
+        if (!keySet.isEmpty()) {
+            Toast.makeText(accessibilityService, accessibilityService.getText(R.string.alert_two_events), Toast.LENGTH_SHORT).show();
+            return;
+        }
         Log.d("EventExecutor", "2d movement: x: " + x + " y: " + y);
         boolean activeMovement = Math.abs(x) > 0.3 || Math.abs(y) > 0.3;
         float xMax = (float) (x * Math.sqrt(1 - y * y / 2));
@@ -222,6 +255,12 @@ public class EventExecutor implements ActionListener {
     }
 
     public void execute1d(Association association, Action1D action1d) {
+        Set<Association> keySet = new HashSet<>(inProgress.keySet());
+        keySet.remove(association);
+        if (!keySet.isEmpty()) {
+            Toast.makeText(accessibilityService, accessibilityService.getText(R.string.alert_two_events), Toast.LENGTH_SHORT).show();
+            return;
+        }
         Path path = new Path();
         StrokeDescription s;
         GestureDescription g;
@@ -339,7 +378,7 @@ public class EventExecutor implements ActionListener {
         }
     }
 
-    public void stopExecuting(Association association, Action1D action1d) {
+    public void stopExecuting(Association association) {
         switch (association.event) {
             case TAP_ON_OFF -> {
                 Path path = new Path();
@@ -390,14 +429,10 @@ public class EventExecutor implements ActionListener {
         if (paused) return;
         for (Association a : associations.getValue()) {
             if (a.event == Event.MONODIMENSIONAL_SLIDING) {
-                if (a.action.equals(action))
-                    stopExecuting(a, Action1D.MOVE_LEFT);
-                else if (a.additionalAction1.equals(action))
-                    stopExecuting(a, Action1D.MOVE_RIGHT);
-                else if (a.additionalAction2.equals(action))
-                    stopExecuting(a, Action1D.RESET);
+                if (a.action.equals(action) || a.additionalAction1.equals(action) || a.additionalAction2.equals(action))
+                    stopExecuting(a);
             } else if (a.action.equals(action))
-                stopExecuting(a, null);
+                stopExecuting(a);
         }
     }
 

@@ -213,7 +213,8 @@ public class ConfigurationView extends RelativeLayout {
                                 removeView(slidingEventDialog);
                                 slidingEventDialog = null;
                             },
-                    availableActions.getValue()
+                    availableActions.getValue(),
+                    this
             );
         } else {
             eventDialog = (EventDialog) inflater.inflate(R.layout.dialog_layout, this, false);
@@ -225,6 +226,11 @@ public class ConfigurationView extends RelativeLayout {
                         Action selectedAction = eventDialog.getSelectedAction();
                         if (selectedAction == null) {
                             eventDialog.showErrorMessage();
+                            return;
+                        }
+                        //per ora non si può assegnare la stessa azione a più eventi
+                        if (giaAssegnata(selectedAction, eventButton)) {
+                            eventDialog.showSameActionErrorMessage();
                             return;
                         }
                         eventButton.setAction(selectedAction);
@@ -319,5 +325,22 @@ public class ConfigurationView extends RelativeLayout {
 
     public void open() {
         configurationChanged = true;
+    }
+
+    public boolean giaAssegnata (Action action, EventButton button) {
+        for (int i = 0; i < events.getChildCount(); i++) {
+            EventButton e = (EventButton) events.getChildAt(i);
+            if (e != button) {
+                if (e.getAction().equals(action)) {
+                    return true;
+                }
+                if (e instanceof ResizableSlidingDraggableButton r) {
+                    if (r.getAction2().equals(action) || r.getAction3().equals(action)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

@@ -145,8 +145,13 @@ public class EventDialog extends FrameLayout {
         findViewById(R.id.errorMessage).setVisibility(VISIBLE);
     }
 
+    public void showSameActionErrorMessage() {
+        findViewById(R.id.sameActionErrorMessage).setVisibility(VISIBLE);
+    }
+
     public void hideErrorMessage() {
         findViewById(R.id.errorMessage).setVisibility(GONE);
+        findViewById(R.id.sameActionErrorMessage).setVisibility(GONE);
     }
 
     public Event getEvent() {

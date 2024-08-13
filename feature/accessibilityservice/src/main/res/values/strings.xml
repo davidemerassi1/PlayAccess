@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">accessibilityservice</string>
+    <string name="alert_two_events">At the moment it is not possible to perform two sustained actions at the same time</string>
 </resources>

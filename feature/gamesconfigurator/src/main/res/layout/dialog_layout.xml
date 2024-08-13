@@ -158,6 +158,16 @@
             android:layout_height="wrap_content"
             android:text="@string/select_an_event_to_continue"
             android:textColor="#FF0000"
+            android:layout_above="@id/confirmButtonsLayout"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/sameActionErrorMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/error_same_action"
+            android:textColor="#FF0000"
+            android:layout_above="@id/confirmButtonsLayout"
             android:visibility="gone" />
     </RelativeLayout>
 

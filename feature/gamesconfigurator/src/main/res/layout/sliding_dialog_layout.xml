@@ -155,7 +155,7 @@
             android:id="@+id/sameActionErrorMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/error_same_action"
+            android:text="@string/error_same_action_sliding"
             android:textColor="#FF0000"
             android:visibility="gone" />
     </LinearLayout>

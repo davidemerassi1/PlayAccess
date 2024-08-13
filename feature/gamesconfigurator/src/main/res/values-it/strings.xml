@@ -16,5 +16,6 @@
     <string name="reset_pointer">Reset puntatore:</string>
     <string name="reset_to_initial_position">Reset alla posizione iniziale</string>
     <string name="select_all_actions">Seleziona tutte le azioni necessarie</string>
-    <string name="error_same_action">Selezionare tre azioni diverse</string>
+    <string name="error_same_action_sliding">Selezionare tre azioni diverse</string>
+    <string name="error_same_action">Per il momento non è possibile assegnare due eventi alla stessa azione</string>
 </resources>

@@ -19,7 +19,8 @@
     <string name="select_an_action">Select an action...</string>
     <string name="move_right">Move right:</string>
     <string name="reset_pointer">Reset pointer:</string>
-    <string name="error_same_action">Select three different actions</string>
+    <string name="error_same_action_sliding">Select three different actions</string>
+    <string name="error_same_action">At the moment it is not possible to assign two events to the same action</string>
     <string name="reset_to_initial_position">Reset to initial position</string>
     <string name="select_all_actions">Select all required actions</string>
 </resources>

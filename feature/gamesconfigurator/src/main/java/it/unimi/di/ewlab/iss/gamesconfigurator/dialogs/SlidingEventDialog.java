@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import it.unimi.di.ewlab.iss.gamesconfigurator.ConfigurationView;
 import it.unimi.di.ewlab.iss.gamesconfigurator.R;
 import it.unimi.di.ewlab.iss.gamesconfigurator.buttons.EventButton;
 import it.unimi.di.ewlab.iss.gamesconfigurator.buttons.ResizableSlidingDraggableButton;
@@ -60,6 +61,8 @@ public class SlidingEventDialog extends FrameLayout {
         public void hideAlert() {
         }
     };
+    private ConfigurationView configurationView;
+    private EventButton thisEventButton;
 
     public SlidingEventDialog(Context context) {
         super(context);
@@ -73,7 +76,8 @@ public class SlidingEventDialog extends FrameLayout {
         super(context, attrs, defStyleAttr);
     }
 
-    public void init(ResizableSlidingDraggableButton eventButton, OnClickListener okListener, OnClickListener cancelListener, OnClickListener deleteListener, List<Action> availableActions) {
+    public void init(ResizableSlidingDraggableButton eventButton, OnClickListener okListener, OnClickListener cancelListener, OnClickListener deleteListener, List<Action> availableActions, ConfigurationView configurationView) {
+        this.thisEventButton = eventButton;
         setElevation(30);
         findViewById(R.id.additional_actions_layout).setVisibility(VISIBLE);
         TextView actionLeftTextView = findViewById(R.id.actionLeftTextView);
@@ -109,6 +113,8 @@ public class SlidingEventDialog extends FrameLayout {
         actionRightTextView.setOnClickListener(v -> openSecondaryDialog(R.id.actionRightTextView));
 
         actionResetTextView.setOnClickListener(v -> openSecondaryDialog(R.id.actionResetTextView));
+
+        this.configurationView = configurationView;
     }
 
     private void openSecondaryDialog(int selectedTextView) {
@@ -123,6 +129,10 @@ public class SlidingEventDialog extends FrameLayout {
                     Action a = secondaryEventDialog.getSelectedAction();
                     if (a == null) {
                         secondaryEventDialog.showErrorMessage();
+                        return;
+                    }
+                    if (configurationView.giaAssegnata(a, thisEventButton)) {
+                        secondaryEventDialog.showSameActionErrorMessage();
                         return;
                     }
                     if (selectedTextView == R.id.actionLeftTextView)

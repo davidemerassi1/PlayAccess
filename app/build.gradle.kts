@@ -9,7 +9,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "it.unimi.di.ewlab.iss"
+        applicationId = "it.unimi.di.ewlab.iss.playaccess3"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -47,7 +47,6 @@ android {
 }
 
 dependencies {
-
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
