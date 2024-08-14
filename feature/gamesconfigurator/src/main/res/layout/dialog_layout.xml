@@ -56,6 +56,20 @@
                     android:text="@string/option_face"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/otherModulesTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:tag="OTHER_MODULES"
+                    android:text="@string/other_modules"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="16dp" />
             </LinearLayout>
 
             <RelativeLayout
@@ -63,11 +77,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
 
+                <ProgressBar
+                    android:id="@+id/otherModulesProgressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone"/>
+
                 <TextView
                     android:id="@+id/noEventsTextview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/no_actions"
+                    android:textAlignment="center"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/noOtherModulesEventsTextview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_other_modules_actions"
                     android:textAlignment="center"
                     android:visibility="gone" />
 

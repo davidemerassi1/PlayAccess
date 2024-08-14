@@ -1,9 +1,13 @@
 package it.unimi.di.ewlab.iss.gamesconfigurator.dialogs;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.MutableLiveData;
 
 import it.unimi.di.ewlab.iss.gamesconfigurator.R;
 
@@ -32,7 +37,10 @@ public class EventDialog extends FrameLayout {
     private RadioGroup radioGroup;
     private TextView faceOptionText;
     private TextView controllerOptionText;
+    private TextView otherModulesOptionText;
     private List<Action> availableActions;
+    private boolean loaded = false;
+    private Action previousAction;
 
     public EventDialog(Context context) {
         super(context);
@@ -50,8 +58,11 @@ public class EventDialog extends FrameLayout {
         setElevation(30);
         radioGroup = findViewById(R.id.radioGroup);
         event = eventButton.getEvent();
+        previousAction = eventButton.getAction();
         availableActions = MainModel.getInstance().getActions();
         availableActions.remove(MainModel.getInstance().getNeutralFacialExpressionAction());
+
+        requestBroadcastActions();
 
         if (event == Event.SWIPE_UP || event == Event.SWIPE_DOWN || event == Event.SWIPE_LEFT || event == Event.SWIPE_RIGHT) {
             findViewById(R.id.selectSwipeDirectionLayout).setVisibility(VISIBLE);
@@ -94,8 +105,10 @@ public class EventDialog extends FrameLayout {
 
         faceOptionText = findViewById(R.id.faceOptionTextView);
         controllerOptionText = findViewById(R.id.externalButtonOptionTextView);
+        otherModulesOptionText = findViewById(R.id.otherModulesTextView);
         faceOptionText.setOnClickListener(selectListener);
         controllerOptionText.setOnClickListener(selectListener);
+        otherModulesOptionText.setOnClickListener(selectListener);
 
         findViewById(R.id.okButton).setOnClickListener(okListener);
         findViewById(R.id.cancelButton).setOnClickListener(cancelListener);
@@ -106,39 +119,45 @@ public class EventDialog extends FrameLayout {
         }
 
         if (deleteListener != null && availableActions.contains(eventButton.getAction()))
-            selectedAction = eventButton.getAction();
+            selectedAction = previousAction;
 
         controllerOptionText.performClick();
     }
 
     private OnClickListener selectListener = v -> {
+        findViewById(R.id.otherModulesProgressBar).setVisibility(GONE);
+        findViewById(R.id.noOtherModulesEventsTextview).setVisibility(GONE);
         faceOptionText.setTextColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
         faceOptionText.setTypeface(Typeface.DEFAULT);
         controllerOptionText.setTextColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
         controllerOptionText.setTypeface(Typeface.DEFAULT);
+        otherModulesOptionText.setTextColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
+        otherModulesOptionText.setTypeface(Typeface.DEFAULT);
         ((TextView) v).setTextColor(ContextCompat.getColor(getContext(), R.color.primaryColor));
         ((TextView) v).setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-
         while (radioGroup.getChildCount() > 0)
             radioGroup.removeView(radioGroup.getChildAt(0));
-
-        Action.ActionType actionType = Action.ActionType.valueOf((String) v.getTag());
-        findViewById(R.id.noEventsTextview).setVisibility(GONE);
-        for (Action option : availableActions) {
-            if ((event == Event.JOYSTICK) != option.is2d())
-                continue;
-            if (option.getActionType() != actionType)
-                continue;
-            RadioButton radioButton = new RadioButton(getContext());
-            radioButton.setTag(option);
-            radioButton.setText(option.getName());
-            radioButton.setTextColor(Color.BLACK);
-            radioGroup.addView(radioButton);
-            if (selectedAction != null && selectedAction.equals(option))
-                radioGroup.check(radioButton.getId());
+        if (v.getId() != R.id.otherModulesTextView) {
+            Action.ActionType actionType = Action.ActionType.valueOf((String) v.getTag());
+            findViewById(R.id.noEventsTextview).setVisibility(GONE);
+            for (Action option : availableActions) {
+                if ((event == Event.JOYSTICK) != option.is2d())
+                    continue;
+                if (option.getActionType() != actionType)
+                    continue;
+                RadioButton radioButton = new RadioButton(getContext());
+                radioButton.setTag(option);
+                radioButton.setText(option.getName());
+                radioButton.setTextColor(Color.BLACK);
+                radioGroup.addView(radioButton);
+                if (selectedAction != null && selectedAction.equals(option))
+                    radioGroup.check(radioButton.getId());
+            }
+            if (radioGroup.getChildCount() == 0)
+                findViewById(R.id.noEventsTextview).setVisibility(VISIBLE);
+        } else {
+            loadOtherModulesActions();
         }
-        if (radioGroup.getChildCount() == 0)
-            findViewById(R.id.noEventsTextview).setVisibility(VISIBLE);
     };
 
     public void showErrorMessage() {
@@ -160,5 +179,45 @@ public class EventDialog extends FrameLayout {
 
     public Action getSelectedAction() {
         return selectedAction;
+    }
+
+    public void requestBroadcastActions() {
+        MainModel.getInstance().resetOtherModulesActions();
+        Intent intent = new Intent("it.unimi.di.ewlab.iss.ACTION_REQUEST");
+        getContext().sendBroadcast(intent);
+
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(() -> {
+            loaded = true;
+            if (!otherModulesOptionText.getTypeface().equals(Typeface.DEFAULT)) {
+                loadOtherModulesActions();
+            }
+        }, 5000);
+    }
+
+    private void loadOtherModulesActions() {
+        findViewById(R.id.noEventsTextview).setVisibility(GONE);
+        if (loaded) {
+            findViewById(R.id.otherModulesProgressBar).setVisibility(GONE);
+            if (MainModel.getInstance().getOtherModulesActions() == null)
+                findViewById(R.id.noOtherModulesEventsTextview).setVisibility(VISIBLE);
+            else {
+                for (Action option : MainModel.getInstance().getOtherModulesActions()) {
+                    if ((event == Event.JOYSTICK) != option.is2d())
+                        continue;
+                    RadioButton radioButton = new RadioButton(getContext());
+                    radioButton.setTag(option);
+                    radioButton.setText(option.getName());
+                    radioButton.setTextColor(Color.BLACK);
+                    radioGroup.addView(radioButton);
+                    Log.d("EventDialog", "loadOtherModulesActions: selectedAction=" + selectedAction + ", option=" + option.getName());
+                    if (previousAction != null && previousAction.equals(option)) {
+                        radioGroup.check(radioButton.getId());
+                        selectedAction = previousAction;
+                    }
+                }
+            }
+        } else
+            findViewById(R.id.otherModulesProgressBar).setVisibility(VISIBLE);
     }
 }

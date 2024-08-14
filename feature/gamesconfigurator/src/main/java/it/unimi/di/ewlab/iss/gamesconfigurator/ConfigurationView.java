@@ -152,6 +152,7 @@ public class ConfigurationView extends RelativeLayout {
                     button.setY(positionStart(association.y, toPx(30)));
                 }
             }
+            refreshAlerts(availableActions.getValue());
         });
 
         availableActions.observeForever(this::refreshAlerts);
@@ -312,7 +313,7 @@ public class ConfigurationView extends RelativeLayout {
             EventButton eventButton = (EventButton) events.getChildAt(i);
             Log.d("ConfigurationView", "refreshAlerts: " + eventButton.getAction().getName() + " " + availableActions.contains(eventButton.getAction()));
             eventButton.hideAlert();
-            if (!availableActions.contains(eventButton.getAction())) {
+            if (!eventButton.getAction().getActionType().equals(Action.ActionType.OTHER_MODULE) && !availableActions.contains(eventButton.getAction())) {
                 eventButton.showAlert();
             }
             if (eventButton instanceof ResizableSlidingDraggableButton slidingEventButton) {

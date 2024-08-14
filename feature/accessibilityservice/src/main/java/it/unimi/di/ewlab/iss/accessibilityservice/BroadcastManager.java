@@ -5,7 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+
+import androidx.lifecycle.MutableLiveData;
 
 import it.unimi.di.ewlab.iss.actionsrecognizer.ActionListener;
 
@@ -16,18 +20,18 @@ import java.util.List;
 
 import it.unimi.di.ewlab.iss.common.model.MainModel;
 import it.unimi.di.ewlab.iss.common.model.actions.Action;
+import it.unimi.di.ewlab.iss.common.model.actions.OtherModuleAction;
 
-public class BroadcastManager extends BroadcastReceiver implements ActionListener {
-    private Context context;
-    private CameraLifecycle cameraLifecycle;
+public class BroadcastManager extends BroadcastReceiver {
+    private EventExecutor executor;
 
-    public BroadcastManager(Context context, CameraLifecycle cameraLifecycle) {
-        this.context = context;
-        this.cameraLifecycle = cameraLifecycle;
+    public BroadcastManager(Context context, EventExecutor executor) {
+        this.executor = executor;
         IntentFilter filter = new IntentFilter();
-        filter.addAction("it.unimi.di.ewlab.iss.accessibilityservice.ACTION_REQUEST");
-        filter.addAction("it.unimi.di.ewlab.iss.accessibilityservice.NEED_CAMERA");
-        filter.addAction("it.unimi.di.ewlab.iss.accessibilityservice.NO_CAMERA");
+        filter.addAction("it.unimi.di.ewlab.iss.ACTION_START");
+        filter.addAction("it.unimi.di.ewlab.iss.ACTION_END");
+        filter.addAction("it.unimi.di.ewlab.iss.ACTION_2D_MOVEMENT");
+        filter.addAction("it.unimi.di.ewlab.iss.ACTION_REPLY");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.registerReceiver(this, filter, Context.RECEIVER_EXPORTED);
         } else
@@ -35,56 +39,37 @@ public class BroadcastManager extends BroadcastReceiver implements ActionListene
     }
 
     @Override
-    public void onActionStarts(@NonNull Action action) {
-        Intent intent = new Intent("it.unimi.di.ewlab.iss.accessibilityservice.ACTION_START");
-        intent.putExtra("action", action.lighten());
-        context.sendBroadcast(intent);
-    }
-
-    @Override
-    public void onActionEnds(@NonNull Action action) {
-        Intent intent = new Intent("it.unimi.di.ewlab.iss.accessibilityservice.ACTION_END");
-        intent.putExtra("action", action.lighten());
-        context.sendBroadcast(intent);
-    }
-
-    @Override
-    public void on2dMovement(Action action, float x, float y) {
-        Intent intent = new Intent("it.unimi.di.ewlab.iss.accessibilityservice.ACTION_2D_MOVEMENT");
-        intent.putExtra("action", action.lighten());
-        intent.putExtra("x", x);
-        intent.putExtra("y", y);
-        context.sendBroadcast(intent);
-    }
-
-    @Override
     public void onReceive(Context context, Intent intent) {
         switch (intent.getAction()) {
-            case "it.unimi.di.ewlab.iss.accessibilityservice.ACTION_REQUEST":
-                List<Action> actions = MainModel.getInstance().getActions();
-                List<Action> lightenedActions = new ArrayList<>();
-                for (Action action : actions) {
-                    if (!action.getName().equals("Espressione neutrale"))
-                        lightenedActions.add(action.lighten());
+            case "it.unimi.di.ewlab.iss.ACTION_START":
+                String actionName = intent.getStringExtra("action");
+                Action action = new OtherModuleAction(actionName, false);
+                executor.onActionStarts(action);
+                break;
+            case "it.unimi.di.ewlab.iss.ACTION_END":
+                actionName = intent.getStringExtra("action");
+                action = new OtherModuleAction(actionName, false);
+                executor.onActionEnds(action);
+                break;
+            case "it.unimi.di.ewlab.iss.ACTION_REPLY":
+                //ogni azione nella forma "nome;is2d", es. "bocca aperta;false"
+                String[] actionsArray = intent.getStringArrayExtra("actions");
+                List<Action> actionList = new ArrayList<>();
+                for (String s : actionsArray) {
+                    String[] actionData = s.split(";");
+                    action = new OtherModuleAction(actionData[0], Boolean.parseBoolean(actionData[1]));
+                    actionList.add(action);
                 }
-                Intent intent1 = new Intent("it.unimi.di.ewlab.iss.accessibilityservice.ACTION_REPLY");
-                intent1.putExtra("actions", lightenedActions.toArray());
-                context.sendBroadcast(intent1);
+                MainModel.getInstance().setOtherModulesActions(actionList);
                 break;
-            case "it.unimi.di.ewlab.iss.accessibilityservice.NEED_CAMERA":
-                Log.d("BroadcastManager", "NEED_CAMERA");
-                cameraLifecycle.resume();
-                break;
-            case "it.unimi.di.ewlab.iss.accessibilityservice.NO_CAMERA":
-                Log.d("BroadcastManager", "NO_CAMERA");
-                cameraLifecycle.pause();
+            case "it.unimi.di.ewlab.iss.ACTION_2D_MOVEMENT":
+                actionName = intent.getStringExtra("action");
+                action = new OtherModuleAction(actionName, true);
+                float x = intent.getFloatExtra("x", 0);
+                float y = intent.getFloatExtra("y", 0);
+                executor.on2dMovement(action, x, y);
+                Log.d("ActionsBroadcastReceiver", "2D Movement: x=" + x + ", y=" + y);
                 break;
         }
-    }
-
-    public void removeAction(Action removedAction) {
-        Intent intent = new Intent("it.unimi.di.ewlab.iss.accessibilityservice.ACTION_REMOVED");
-        intent.putExtra("action", removedAction.lighten());
-        context.sendBroadcast(intent);
     }
 }

@@ -62,7 +62,6 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
     @Override
     public void onServiceConnected() {
         Log.d(TAG, "onServiceConnected");
-        broadcastManager = new BroadcastManager(this, cameraLifecycle);
 
         AccessibilityServiceInfo info = getServiceInfo();
         if (info != null && Build.VERSION.SDK_INT >= 34) {
@@ -75,8 +74,8 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
         MainModel.observeActions(this);
 
         overlayManager = new OverlayManager(this);
-
         executor = new EventExecutor(this, overlayManager.getTouchIndicatorView());
+        broadcastManager = new BroadcastManager(this, executor);
 
         if (mainModel.getNeutralFacialExpressionAction() != null) {
             new Thread (() -> {
@@ -95,7 +94,6 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
             @Override
             public void run() {
                 if (motionX != null && motionY != null) {
-                    broadcastManager.on2dMovement(mainModel.getButtonActionByKeyCode(19), motionX, motionY);
                     executor.on2dMovement(mainModel.getButtonActionByKeyCode(19), motionX, motionY);
                     motionX = null;
                     motionY = null;
@@ -129,9 +127,6 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
                     if (!foregroundApp.equals(activePackage)) {
                         activePackage = foregroundApp;
                         Log.d(TAG, "Package changed: " + event.getPackageName() + " " + activePackage);
-                        Intent intent = new Intent("it.unimi.di.ewlab.iss.accessibilityservice.PACKAGE_CHANGED");
-                        intent.putExtra("packageName", activePackage);
-                        sendBroadcast(intent);
                         overlayManager.changeGame(activePackage);
                         executor.changeGame(activePackage);
                     }
@@ -171,14 +166,12 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
             Log.d(TAG, "Key down: " + event.getKeyCode());
             ButtonAction buttonAction = mainModel.getButtonActionByKeyCode(event.getKeyCode());
             if (buttonAction != null) {
-                broadcastManager.onActionStarts(buttonAction);
                 executor.onActionStarts(buttonAction);
             }
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
             Log.d(TAG, "Key up: " + event.getKeyCode());
             ButtonAction buttonAction = mainModel.getButtonActionByKeyCode(event.getKeyCode());
             if (buttonAction != null) {
-                broadcastManager.onActionEnds(buttonAction);
                 executor.onActionEnds(buttonAction);
             }
             if (mainModel.getTempButtonAction().getValue() == null)
@@ -237,8 +230,6 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
     public void onActionsChanged(Action removedAction) {
         if (facialExpressionActionsRecognizer != null) {
             facialExpressionActionsRecognizer.updateActions(mainModel.getActions());
-            if (removedAction != null)
-                broadcastManager.removeAction(removedAction);
         } else {
             if (mainModel.getNeutralFacialExpressionAction() != null) {
                 facialExpressionActionsRecognizer = FacialExpressionActionsRecognizer.Companion.getInstance(mainModel.getActions(), List.of(executor));

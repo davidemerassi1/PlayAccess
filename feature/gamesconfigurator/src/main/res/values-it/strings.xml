@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">eventsexecutor</string>
     <string name="pulsante_esterno">PULSANTE ESTERNO</string>
-    <string name="option_face">ESPRESSIONE FACCIALE</string>
+    <string name="option_face">ESPR. FACCIALE</string>
     <string name="no_actions">Nessuna azione disponibile. Registrane una nuova dal configuratore azioni!</string>
     <string name="swipe_direction">Direzione swipe:</string>
     <string name="delete">Elimina</string>
@@ -18,4 +18,6 @@
     <string name="select_all_actions">Seleziona tutte le azioni necessarie</string>
     <string name="error_same_action_sliding">Selezionare tre azioni diverse</string>
     <string name="error_same_action">Per il momento non è possibile assegnare due eventi alla stessa azione</string>
+    <string name="no_other_modules_actions">Non sono state trovate azioni. Verifica che sul dispositivo siano installati altri moduli compatibili con PlayAccess</string>
+    <string name="other_modules">ALTRI MODULI</string>
 </resources>

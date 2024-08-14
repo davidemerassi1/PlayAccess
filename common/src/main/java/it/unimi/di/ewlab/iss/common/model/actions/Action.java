@@ -12,7 +12,8 @@ public class Action implements Serializable {
         BUTTON (ButtonAction.class),
         VOCAL (VocalAction.class),
         SCREEN_GESTURE (ScreenGestureAction.class),
-        FACIAL_EXPRESSION (FacialExpressionAction.class);
+        FACIAL_EXPRESSION (FacialExpressionAction.class),
+        OTHER_MODULE (OtherModuleAction.class);
 
         public final Class<? extends Action> actionClass;
 
@@ -77,11 +78,10 @@ public class Action implements Serializable {
     }
 
     public boolean equals(Object other) {
-        if(!(other instanceof Action))
+        if(!(other instanceof Action otherAction))
             return false;
 
-        Action otherAction = (Action) other;
-        return this.getName().equals(otherAction.getName());
+        return this.actionType.equals(otherAction.actionType) && this.name.equals(otherAction.name);
     }
 
     @Override

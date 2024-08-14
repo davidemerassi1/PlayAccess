@@ -56,6 +56,7 @@ public class MainModel {
     private List<Frame> tempFacialExpressionActionFrames;
     private final MutableLiveData<ButtonAction> tempButtonAction = new MutableLiveData<>(null);
     private AssociationsDb associationsDb;
+    private List<Action> otherModulesActions;
 
     private MutableLiveData<String> activePackage = new MutableLiveData<>("");
     private static List<ActionsChangedObserver> observers = new ArrayList<>();
@@ -528,6 +529,21 @@ public class MainModel {
 
     public float getPrecision() {
         return (float) persistenceManager.getValue("precision", Prototypical.DEFAULT_RADIUS);
+    }
+
+    public List<Action> getOtherModulesActions() {
+        return otherModulesActions;
+    }
+
+    public void resetOtherModulesActions() {
+        otherModulesActions = null;
+    }
+
+    public void setOtherModulesActions(List<Action> actions) {
+        if (otherModulesActions == null)
+            otherModulesActions = new ArrayList<>(actions);
+        else
+            otherModulesActions.addAll(actions);
     }
 }
 

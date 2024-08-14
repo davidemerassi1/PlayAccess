@@ -190,6 +190,7 @@ open class BaseDialog : Dialog {
             Action.ActionType.VOCAL -> {
                 setColors(Color.GREEN)
             }
+            Action.ActionType.OTHER_MODULE -> { }
         }
 
         errorDialog = false

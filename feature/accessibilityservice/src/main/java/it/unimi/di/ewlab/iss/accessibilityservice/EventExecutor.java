@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
 import android.accessibilityservice.GestureDescription.StrokeDescription;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Path;
 import android.os.Handler;
@@ -459,12 +460,16 @@ public class EventExecutor implements ActionListener {
 
     public void pause() {
         paused = true;
+        Intent intent = new Intent("it.unimi.di.ewlab.iss.STOP_RECOGNITION");
+        accessibilityService.sendBroadcast(intent);
         accessibilityService.setCameraNeeded(false);
         touchIndicatorView.clear();
     }
 
     public void resume() {
         paused = false;
+        Intent intent = new Intent("it.unimi.di.ewlab.iss.START_RECOGNITION");
+        accessibilityService.sendBroadcast(intent);
         handler.post(() -> accessibilityService.setCameraNeeded(needCamera));
     }
 
