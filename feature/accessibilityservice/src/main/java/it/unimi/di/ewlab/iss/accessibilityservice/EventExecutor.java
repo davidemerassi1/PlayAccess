@@ -104,7 +104,7 @@ public class EventExecutor implements ActionListener {
             case TAP:
                 path = new Path();
                 path.moveTo(association.x, association.y);
-                s = new StrokeDescription(path, 0, 100);
+                s = new StrokeDescription(path, 0, 100, false);
                 g = new GestureDescription.Builder().addStroke(s).build();
                 accessibilityService.dispatchGesture(g, gestureResultCallback, null);
                 touchIndicatorView.onTouch(association.x, association.y);
@@ -118,7 +118,7 @@ public class EventExecutor implements ActionListener {
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 path.lineTo(association.x, association.y - 500);
-                s = new StrokeDescription(path, 0, 300);
+                s = new StrokeDescription(path, 0, 300, false);
                 g = new GestureDescription.Builder().addStroke(s).build();
                 accessibilityService.dispatchGesture(g, gestureResultCallback, null);
                 touchIndicatorView.drawSwipe(association.x, association.y, 500, TouchIndicatorView.SwipeDirection.UP, 300, true);
@@ -183,7 +183,7 @@ public class EventExecutor implements ActionListener {
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 s = new StrokeDescription(path, 0, 1, true);
-                inProgress.put(association, new StrokeInProgress(s, association.x, association.y));
+                inProgress.put(association, new StrokeInProgress(s, association.x, association.y, false));
                 g = new GestureDescription.Builder().addStroke(s).build();
                 accessibilityService.dispatchGesture(g, gestureResultCallback, null);
                 touchIndicatorView.onTouch(association.x, association.y);
@@ -221,7 +221,7 @@ public class EventExecutor implements ActionListener {
                 int toY = (int) (y * association.radius) + association.y;
                 path.lineTo(toX, toY);
                 StrokeDescription s = new StrokeDescription(path, 0, 1, true);
-                inProgress.put(association, new StrokeInProgress(s, toX, toY));
+                inProgress.put(association, new StrokeInProgress(s, toX, toY, true));
                 Log.d("EventExecutor", "Starting " + s +" from " + association.x + " " + association.y + " to " + toX + " " + toY);
                 GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
                 accessibilityService.dispatchGesture(g, gestureResultCallback, null);
@@ -237,7 +237,7 @@ public class EventExecutor implements ActionListener {
                 path.lineTo(toX, toY);
                 Log.d("EventExecutor", "Continuing " + strokeInProgress.strokeDescription() + " from: " + strokeInProgress.x() + " " + strokeInProgress.y() + " to " + toX + " " + toY);
                 StrokeDescription s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 1, true);
-                inProgress.put(association, new StrokeInProgress(s, toX, toY));
+                inProgress.put(association, new StrokeInProgress(s, toX, toY, true));
                 GestureDescription g = new GestureDescription.Builder().addStroke(s).build();
                 accessibilityService.dispatchGesture(g, gestureResultCallback, null);
                 touchIndicatorView.onTouch(toX, toY);
@@ -272,15 +272,21 @@ public class EventExecutor implements ActionListener {
                     int toX = Math.max(association.x - 100, association.x - association.radius);
                     path.lineTo(toX, association.y);
                     s = new StrokeDescription(path, 0, 100, true);
-                    inProgress.put(association, new StrokeInProgress(s, toX, association.y));
+                    inProgress.put(association, new StrokeInProgress(s, toX, association.y, true));
                     touchIndicatorView.drawSwipe(association.x, association.y, Math.abs(toX-association.x), TouchIndicatorView.SwipeDirection.LEFT, 100, false);
                 } else {
                     StrokeInProgress strokeInProgress = inProgress.get(association);
                     path.moveTo(strokeInProgress.x(), strokeInProgress.y());
                     int toX = Math.max(strokeInProgress.x() - 100, association.x - association.radius);
-                    path.lineTo(toX, strokeInProgress.y());
-                    s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 100, true);
-                    inProgress.put(association, new StrokeInProgress(s, toX, strokeInProgress.y()));
+                    if (strokeInProgress.x() != toX)
+                        path.lineTo(toX, strokeInProgress.y());
+                    else if (strokeInProgress.pointerDown())
+                        return;
+                    if (strokeInProgress.pointerDown())
+                        s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 100, true);
+                    else
+                        s = new StrokeDescription(path, 0, 100, true);
+                    inProgress.put(association, new StrokeInProgress(s, toX, strokeInProgress.y(), true));
                     touchIndicatorView.drawSwipe(strokeInProgress.x(), association.y, Math.abs(toX-strokeInProgress.x()), TouchIndicatorView.SwipeDirection.LEFT, 100, false);
                 }
                 g = new GestureDescription.Builder().addStroke(s).build();
@@ -290,7 +296,7 @@ public class EventExecutor implements ActionListener {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (!moving1d) {
+                        if (!moving1d || inProgress.get(association).x() == association.x - association.radius) {
                             handler.removeCallbacks(this);
                             return;
                         }
@@ -300,7 +306,7 @@ public class EventExecutor implements ActionListener {
                         int toX = Math.max(strokeInProgress.x() - 20, association.x - association.radius);
                         path1.lineTo(toX, strokeInProgress.y());
                         StrokeDescription s1 = inProgress.get(association).strokeDescription().continueStroke(path1, 0, 20, true);
-                        inProgress.put(association, new StrokeInProgress(s1, toX, strokeInProgress.y()));
+                        inProgress.put(association, new StrokeInProgress(s1, toX, strokeInProgress.y(), true));
                         GestureDescription g1 = new GestureDescription.Builder().addStroke(s1).build();
                         accessibilityService.dispatchGesture(g1, gestureResultCallback, null);
                         touchIndicatorView.onTouch(toX, strokeInProgress.y());
@@ -315,15 +321,21 @@ public class EventExecutor implements ActionListener {
                     int toX = Math.min(association.x + 100, association.x + association.radius);
                     path.lineTo(toX, association.y);
                     s = new StrokeDescription(path, 0, 100, true);
-                    inProgress.put(association, new StrokeInProgress(s, toX, association.y));
+                    inProgress.put(association, new StrokeInProgress(s, toX, association.y, true));
                     touchIndicatorView.drawSwipe(association.x, association.y, Math.abs(toX-association.x), TouchIndicatorView.SwipeDirection.RIGHT, 100, false);
                 } else {
                     StrokeInProgress strokeInProgress = inProgress.get(association);
                     path.moveTo(strokeInProgress.x(), strokeInProgress.y());
                     int toX = Math.min(strokeInProgress.x() + 100, association.x + association.radius);
-                    path.lineTo(toX, strokeInProgress.y());
-                    s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 100, true);
-                    inProgress.put(association, new StrokeInProgress(s, toX, strokeInProgress.y()));
+                    if (strokeInProgress.x() != toX)
+                        path.lineTo(toX, strokeInProgress.y());
+                    else if (strokeInProgress.pointerDown())
+                        return;
+                    if (strokeInProgress.pointerDown())
+                        s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 100, true);
+                    else
+                        s = new StrokeDescription(path, 0, 100, true);
+                    inProgress.put(association, new StrokeInProgress(s, toX, strokeInProgress.y(), true));
                     touchIndicatorView.drawSwipe(strokeInProgress.x(), association.y, Math.abs(toX-strokeInProgress.x()), TouchIndicatorView.SwipeDirection.RIGHT, 100, false);
                 }
                 g = new GestureDescription.Builder().addStroke(s).build();
@@ -333,7 +345,7 @@ public class EventExecutor implements ActionListener {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (!moving1d) {
+                        if (!moving1d || inProgress.get(association).x() == association.x + association.radius) {
                             handler.removeCallbacks(this);
                             return;
                         }
@@ -343,7 +355,7 @@ public class EventExecutor implements ActionListener {
                         int toX = Math.min(strokeInProgress.x() + 20, association.x + association.radius);
                         path1.lineTo(toX, strokeInProgress.y());
                         StrokeDescription s1 = inProgress.get(association).strokeDescription().continueStroke(path1, 0, 20, true);
-                        inProgress.put(association, new StrokeInProgress(s1, toX, strokeInProgress.y()));
+                        inProgress.put(association, new StrokeInProgress(s1, toX, strokeInProgress.y(), true));
                         GestureDescription g1 = new GestureDescription.Builder().addStroke(s1).build();
                         accessibilityService.dispatchGesture(g1, gestureResultCallback, null);
                         touchIndicatorView.onTouch(toX, strokeInProgress.y());
@@ -354,7 +366,6 @@ public class EventExecutor implements ActionListener {
                 break;
             case RESET:
                 if (inProgress.containsKey(association)) {
-                    Log.d("ActionExecutor", "Reset to start: " + association.resetToStart);
                     if (association.resetToStart) {
                         StrokeInProgress strokeInProgress = inProgress.get(association);
                         path.moveTo(strokeInProgress.x(), strokeInProgress.y());
@@ -365,15 +376,22 @@ public class EventExecutor implements ActionListener {
                         } else {
                             touchIndicatorView.drawSwipe(strokeInProgress.x(), association.y, Math.abs(association.x-strokeInProgress.x()), TouchIndicatorView.SwipeDirection.LEFT, 300, true);
                         }
+                        g = new GestureDescription.Builder().addStroke(s).build();
+                        accessibilityService.dispatchGesture(g, gestureResultCallback, null);
+                        inProgress.remove(association);
                     } else {
                         StrokeInProgress strokeInProgress = inProgress.get(association);
-                        path.moveTo(strokeInProgress.x(), strokeInProgress.y());
-                        s = strokeInProgress.strokeDescription().continueStroke(path, 0, 1, false);
-                        touchIndicatorView.clear();
+                        if (strokeInProgress.pointerDown()) {
+                            path.moveTo(strokeInProgress.x(), strokeInProgress.y());
+                            s = strokeInProgress.strokeDescription().continueStroke(path, 0, 1, false);
+                            g = new GestureDescription.Builder().addStroke(s).build();
+                            accessibilityService.dispatchGesture(g, gestureResultCallback, null);
+                            inProgress.put(association, new StrokeInProgress(s, strokeInProgress.x(), strokeInProgress.y(), false));
+                            touchIndicatorView.clear();
+                        } else {
+                            inProgress.remove(association);
+                        }
                     }
-                    g = new GestureDescription.Builder().addStroke(s).build();
-                    accessibilityService.dispatchGesture(g, gestureResultCallback, null);
-                    inProgress.remove(association);
                 }
                 break;
         }

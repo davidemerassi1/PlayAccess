@@ -35,7 +35,7 @@ public class Association {
     public Association(String applicationPackage, Action action, Event event, int x, int y, Integer radius, Action additionalAction1, Action additionalAction2, Boolean resetToStart) {
         this.applicationPackage = applicationPackage;
         this.event = event;
-        this.action = action;
+        this.action = action.lighten();
         this.x = x;
         this.y = y;
         this.radius = radius;
