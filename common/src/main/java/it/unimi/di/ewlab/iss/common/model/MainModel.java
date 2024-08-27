@@ -127,9 +127,9 @@ public class MainModel {
 
     public int getNextActionId() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return actions.keySet().stream().max(Comparator.naturalOrder()).orElse(0) + 1;
+            return actions.keySet().stream().max(Comparator.naturalOrder()).orElse(1) + 1;
         } else {
-            int max = 0;
+            int max = 1;
             for (int key : actions.keySet())
                 if (key > max)
                     max = key;

@@ -68,8 +68,7 @@ public class EventExecutor implements ActionListener {
         associations.observeForever(associations -> {
             if (associations != null) {
                 Log.d("EventExecutor", "Associations changed");
-                //releaseAll();
-
+                inProgress.clear();
                 needCamera = false;
                 for (Association association : associations) {
                     if (association.action.getActionType() == Action.ActionType.FACIAL_EXPRESSION)
@@ -102,6 +101,8 @@ public class EventExecutor implements ActionListener {
         GestureDescription g;
         switch (association.event) {
             case TAP:
+                if (anotherGestureInProgress())
+                    return;
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 s = new StrokeDescription(path, 0, 100, false);
@@ -111,10 +112,8 @@ public class EventExecutor implements ActionListener {
                 handler.postDelayed(() -> touchIndicatorView.clear(), 100);
                 break;
             case SWIPE_UP:
-                if (!inProgress.isEmpty()) {
-                    Toast.makeText(accessibilityService, accessibilityService.getText(R.string.alert_two_events), Toast.LENGTH_SHORT).show();
+                if (anotherGestureInProgress())
                     return;
-                }
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 path.lineTo(association.x, association.y - 500);
@@ -124,10 +123,8 @@ public class EventExecutor implements ActionListener {
                 touchIndicatorView.drawSwipe(association.x, association.y, 500, TouchIndicatorView.SwipeDirection.UP, 300, true);
                 break;
             case SWIPE_DOWN:
-                if (!inProgress.isEmpty()) {
-                    Toast.makeText(accessibilityService, accessibilityService.getText(R.string.alert_two_events), Toast.LENGTH_SHORT).show();
+                if (anotherGestureInProgress())
                     return;
-                }
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 path.lineTo(association.x, association.y + 500);
@@ -137,10 +134,8 @@ public class EventExecutor implements ActionListener {
                 touchIndicatorView.drawSwipe(association.x, association.y, 500, TouchIndicatorView.SwipeDirection.DOWN, 300, true);
                 break;
             case SWIPE_LEFT:
-                if (!inProgress.isEmpty()) {
-                    Toast.makeText(accessibilityService, accessibilityService.getText(R.string.alert_two_events), Toast.LENGTH_SHORT).show();
+                if (anotherGestureInProgress())
                     return;
-                }
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 path.lineTo(association.x - 500, association.y);
@@ -150,10 +145,8 @@ public class EventExecutor implements ActionListener {
                 touchIndicatorView.drawSwipe(association.x, association.y, 500, TouchIndicatorView.SwipeDirection.LEFT, 300, true);
                 break;
             case SWIPE_RIGHT:
-                if (!inProgress.isEmpty()) {
-                    Toast.makeText(accessibilityService, accessibilityService.getText(R.string.alert_two_events), Toast.LENGTH_SHORT).show();
+                if (anotherGestureInProgress())
                     return;
-                }
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 path.lineTo(association.x + 500, association.y);
@@ -163,10 +156,8 @@ public class EventExecutor implements ActionListener {
                 touchIndicatorView.drawSwipe(association.x, association.y, 500, TouchIndicatorView.SwipeDirection.RIGHT, 300, true);
                 break;
             case LONG_TAP:
-                if (!inProgress.isEmpty()) {
-                    Toast.makeText(accessibilityService, accessibilityService.getText(R.string.alert_two_events), Toast.LENGTH_SHORT).show();
+                if (anotherGestureInProgress())
                     return;
-                }
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 s = new StrokeDescription(path, 0, 1500);
@@ -176,10 +167,8 @@ public class EventExecutor implements ActionListener {
                 handler.postDelayed(() -> touchIndicatorView.clear(), 1500);
                 break;
             case TAP_ON_OFF:
-                if (!inProgress.isEmpty()) {
-                    Toast.makeText(accessibilityService, accessibilityService.getText(R.string.alert_two_events), Toast.LENGTH_SHORT).show();
+                if (anotherGestureInProgress())
                     return;
-                }
                 path = new Path();
                 path.moveTo(association.x, association.y);
                 s = new StrokeDescription(path, 0, 1, true);
@@ -371,11 +360,10 @@ public class EventExecutor implements ActionListener {
                         path.moveTo(strokeInProgress.x(), strokeInProgress.y());
                         path.lineTo(association.x, association.y);
                         s = strokeInProgress.strokeDescription().continueStroke(path, 0, 300, false);
-                        if (strokeInProgress.x() < association.x) {
+                        if (strokeInProgress.x() < association.x)
                             touchIndicatorView.drawSwipe(strokeInProgress.x(), association.y, Math.abs(association.x-strokeInProgress.x()), TouchIndicatorView.SwipeDirection.RIGHT, 300, true);
-                        } else {
+                        else
                             touchIndicatorView.drawSwipe(strokeInProgress.x(), association.y, Math.abs(association.x-strokeInProgress.x()), TouchIndicatorView.SwipeDirection.LEFT, 300, true);
-                        }
                         g = new GestureDescription.Builder().addStroke(s).build();
                         accessibilityService.dispatchGesture(g, gestureResultCallback, null);
                         inProgress.remove(association);
@@ -388,9 +376,8 @@ public class EventExecutor implements ActionListener {
                             accessibilityService.dispatchGesture(g, gestureResultCallback, null);
                             inProgress.put(association, new StrokeInProgress(s, strokeInProgress.x(), strokeInProgress.y(), false));
                             touchIndicatorView.clear();
-                        } else {
+                        } else
                             inProgress.remove(association);
-                        }
                     }
                 }
                 break;
@@ -408,24 +395,9 @@ public class EventExecutor implements ActionListener {
                 accessibilityService.dispatchGesture(g, gestureResultCallback, null);
                 touchIndicatorView.clear();
             }
-            case MONODIMENSIONAL_SLIDING -> {
-                moving1d = false;
-            }
+            case MONODIMENSIONAL_SLIDING -> moving1d = false;
         }
     }
-
-    /*
-
-    public void releaseAll() {
-        while (actions.size() > 0) {
-            if (actions.get(0).resetToStart != null && actions.get(0).resetToStart)
-                x2d.remove(actions.get(0));
-            Log.d("ActionExecutor", "Releasing event");
-            release(actions.get(0));
-        }
-        x2d.clear();
-    }
-    */
 
     @Override
     public void onActionStarts(@NonNull Action action) {
@@ -494,5 +466,14 @@ public class EventExecutor implements ActionListener {
     public enum Action1D {
         MOVE_LEFT, MOVE_RIGHT, RESET
     }
-}
 
+    public boolean anotherGestureInProgress() {
+        if (!inProgress.isEmpty()) {
+            if (inProgress.values().stream().findFirst().get().pointerDown()) {
+                Toast.makeText(accessibilityService, accessibilityService.getText(R.string.alert_two_events), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        }
+        return false;
+    }
+}

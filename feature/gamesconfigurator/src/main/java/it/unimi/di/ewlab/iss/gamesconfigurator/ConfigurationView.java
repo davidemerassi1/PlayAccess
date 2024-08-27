@@ -325,6 +325,7 @@ public class ConfigurationView extends RelativeLayout {
     }
 
     public void open() {
+        announceForAccessibility("CONFIGURATION_OPENED");
         configurationChanged = true;
     }
 

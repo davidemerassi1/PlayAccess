@@ -10,15 +10,8 @@ import it.unimi.di.ewlab.iss.common.model.actions.Action;
 public class Association {
     @PrimaryKey(autoGenerate = true)
     public int id;
-
     @NonNull
     public String applicationPackage;
-
-    /*
-    >0: keycode del tasto premuto (definito da android)
-    0: joystick fisico
-    <0: face action
-    */
     @NonNull
     public Action action;
     @NonNull

@@ -47,7 +47,6 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
     private final String TAG = "MyAccessibilityService";
     private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "my_accessibility_channel";
-    private BroadcastManager broadcastManager;
     private CameraLifecycle cameraLifecycle = new CameraLifecycle();
     private MainModel mainModel = MainModel.getInstance();
     private OverlayManager overlayManager;
@@ -75,7 +74,7 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
 
         overlayManager = new OverlayManager(this);
         executor = new EventExecutor(this, overlayManager.getTouchIndicatorView());
-        broadcastManager = new BroadcastManager(this, executor);
+        new BroadcastManager(this, executor);
 
         if (mainModel.getNeutralFacialExpressionAction() != null) {
             new Thread (() -> {
@@ -138,6 +137,7 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
                 switch (event.getText().toString()) {
                     case "[RELOAD_ASSOCIATIONS]" -> executor.changeGame(activePackage);
                     case "[CONFIGURATION_OPENED]" -> executor.pause();
+                    case "[CONFIGURATION_CLOSED]" -> executor.resume();
                 }
         }
     }
@@ -254,9 +254,8 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
 
     public String getForegroundApp() {
         UsageStatsManager usageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
-        if (usageStatsManager == null) {
+        if (usageStatsManager == null)
             return null;
-        }
 
         long endTime = System.currentTimeMillis();
         long startTime = endTime - 1000 * 60;
@@ -269,9 +268,8 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
         }
 
         SortedMap<Long, UsageStats> sortedMap = new TreeMap<>();
-        for (UsageStats usageStats : usageStatsList) {
+        for (UsageStats usageStats : usageStatsList)
             sortedMap.put(usageStats.getLastTimeUsed(), usageStats);
-        }
 
         if (!sortedMap.isEmpty()) {
             UsageStats recentUsageStats = sortedMap.get(sortedMap.lastKey());

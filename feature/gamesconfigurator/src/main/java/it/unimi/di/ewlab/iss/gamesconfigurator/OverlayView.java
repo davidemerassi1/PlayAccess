@@ -70,7 +70,6 @@ public class OverlayView extends RelativeLayout {
                         initialTouchX = event.getRawX();
                         initialTouchY = event.getRawY();
                         return true;
-
                     case MotionEvent.ACTION_UP:
                         if (Math.abs(params.x - initialX) < 5 && Math.abs(params.y - initialY) < 5) {
                             collapsedView.setVisibility(View.GONE);
@@ -78,11 +77,9 @@ public class OverlayView extends RelativeLayout {
                             params.width = WindowManager.LayoutParams.MATCH_PARENT;
                             params.height = WindowManager.LayoutParams.MATCH_PARENT;
                             windowManager.updateViewLayout(OverlayView.this, params);
-                            announceForAccessibility("CONFIGURATION_OPENED");
                             configurationView.open();
                         }
                         return true;
-
                     case MotionEvent.ACTION_MOVE:
                         params.x = initialX + (int) (event.getRawX() - initialTouchX);
                         params.y = initialY + (int) (event.getRawY() - initialTouchY);
@@ -92,35 +89,6 @@ public class OverlayView extends RelativeLayout {
                 return false;
             }
         });
-
-        /*new Thread(() -> {
-            CameraFaceDetector cameraFaceDetector = new CameraFaceDetector(getContext(), this, this);
-            cameraFaceDetector.startDetection();
-        }).start();*/
-
-        /*if (!MainModel.getInstance().getFacialExpressionActions().isEmpty()) {
-            FacialExpressionActionsRecognizer.Companion.getInstance(MainModel.getInstance().getActions(), List.of(this)).init(
-                    getContext(), this
-            );
-        }*/
-
-        /*associations.observeForever(associations -> {
-            Log.d("OverlayView", "init: " + associations.length);
-            map.clear();
-            needCamera = false;
-            for (Association association : associations) {
-                if (association.action.getActionType() == Action.ActionType.FACIAL_EXPRESSION) {
-                    Log.d("OverlayView", "init: need camera");
-                    needCamera = true;
-                }
-                map.put(association.action, association);
-                if (association.event == Event.MONODIMENSIONAL_SLIDING) {
-                    map.put(association.additionalAction1, association);
-                    map.put(association.additionalAction2, association);
-                }
-            }
-            configurationView.changeGame(applicationPackage, associations);
-        });*/
     }
 
     public void changeGame(String applicationPackage) {
@@ -144,17 +112,14 @@ public class OverlayView extends RelativeLayout {
 
     public void start() {
         setVisibility(VISIBLE);
-        /*if (needCamera)
-            getContext().sendBroadcast(new Intent("it.unimi.di.ewlab.iss.accessibilityservice.NEED_CAMERA"));*/
     }
 
     public void stop() {
         setVisibility(GONE);
-        //getContext().sendBroadcast(new Intent("it.unimi.di.ewlab.iss.accessibilityservice.NO_CAMERA"));
     }
 
     public void closeConfiguration() {
-        //new Thread(() -> executor.releaseAll()).start();
+        announceForAccessibility("CONFIGURATION_CLOSED");
         collapsedView.setVisibility(View.VISIBLE);
         expandedView.setVisibility(View.GONE);
         params.width = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -162,79 +127,9 @@ public class OverlayView extends RelativeLayout {
         windowManager.updateViewLayout(this, params);
     }
 
-    /*
-    private void execute1d(Association association, Action action) {
-        if (!configurationOpened && getVisibility()==VISIBLE) {
-            if (association.action.equals(action))
-                executor.execute1d(association, EventExecutor.Action1D.MOVE_LEFT);
-            else if (association.additionalAction1.equals(action))
-                executor.execute1d(association, EventExecutor.Action1D.MOVE_RIGHT);
-            else
-                executor.execute1d(association, EventExecutor.Action1D.RESET);
-        }
-    }
-     */
-
-    /*
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         Log.d("OverlayView", "onGenericMotionEvent: " + event.getSource() + " " + event.getAction() + " " + event.getAxisValue(MotionEvent.AXIS_X) + " " + event.getAxisValue(MotionEvent.AXIS_Y));
-        // Verifica se l'evento proviene da un joystick
-        if ((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK &&
-                event.getAction() == MotionEvent.ACTION_MOVE) {
-            if (!configurationOpened) {
-                //TODO: da verificare il codice: 19 corrisponde a KEYCODE_DPAD_UP
-                ButtonAction ba = buttonActionsModel.getButtonActionByIds(String.valueOf(event.getSource()), String.valueOf(19));
-                if (ba != null && map.containsKey(ba)) {
-                    Association association = map.get(ba);
-                    float x = -event.getAxisValue(MotionEvent.AXIS_X);
-                    float y = -event.getAxisValue(MotionEvent.AXIS_Y);
-                    Log.d("OverlayView", "onGenericMotionEvent: " + x + " " + y);
-                    executor.execute2d(association, x, y);
-                }
-            } else {
-                configurationView.onGenericMotionEvent(event);
-            }
-            return true;
-        }
         return false;
     }
-    */
-
-    /*
-    @Override
-    public void onActionStarts(@NonNull Action action) {
-        Log.d("OverlayView", "onActionStarts: " + action.getName());
-        if (!configurationOpened && getVisibility()==VISIBLE) {
-            if (map.containsKey(action)) {
-                Association association = map.get(action);
-                Toast.makeText(getContext(), action.getName(), Toast.LENGTH_SHORT).show();
-                if (association.event != Event.MONODIMENSIONAL_SLIDING)
-                    executor.execute(association);
-                else {
-                    execute1d(association, action);
-                }
-            } else
-                Log.d("OverlayView", "ho rilevato " + action.getName() + " ma non ho nessuna associazione");
-        }
-    }
-
-    @Override
-    public void onActionEnds(@NonNull Action action) {
-        Log.d("OverlayView", "onActionEnds: " + action.getName());
-        if (!configurationOpened && getVisibility()==VISIBLE) {
-            if (map.containsKey(action)) {
-                Association association = map.get(action);
-                executor.stopExecuting(association);
-            } else
-                Log.d("OverlayView", "ho rilevato " + action.getName() + " ma non ho nessuna associazione");
-        }
-    }
-
-    @Override
-    public void on2dMovement(Action action, float x, float y) {
-        if (!configurationOpened && getVisibility()==VISIBLE && map.containsKey(action))
-            executor.execute2d(map.get(action), x, y);
-    }
-    */
 }
