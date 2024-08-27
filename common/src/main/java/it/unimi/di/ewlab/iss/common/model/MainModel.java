@@ -40,7 +40,6 @@ import it.unimi.di.ewlab.iss.common.storage.PersistenceManager;
 import kotlin.Pair;
 
 public class MainModel {
-
     private static final String TAG = MainModel.class.getName();
     public static final int NEUTRAL_FACIAL_EXPRESSION_ACTION_ID = 1;
     public static final int FACE_MOVEMENT_ACTION_ID = 0;
@@ -529,6 +528,26 @@ public class MainModel {
 
     public float getPrecision() {
         return (float) persistenceManager.getValue("precision", Prototypical.DEFAULT_RADIUS);
+    }
+
+    private MutableLiveData<Integer> tutorialStep = new MutableLiveData<>(1);
+
+    public MutableLiveData<Integer> getTutorialStep() {
+        if (tutorialStep.getValue() == 1 && (boolean) persistenceManager.getValue("tutorialDone", false))
+            return null;
+        else
+            return tutorialStep;
+    }
+
+    public void setNextTutorialStep() {
+        int newStep = tutorialStep.getValue() + 1;
+        tutorialStep.setValue(newStep);
+        if (newStep == 4)
+            setTutorialDone();
+    }
+
+    public void setTutorialDone() {
+        persistenceManager.setValue("tutorialDone", true);
     }
 
     public List<Action> getOtherModulesActions() {

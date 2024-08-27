@@ -67,6 +67,8 @@ public class ConfigurationView extends RelativeLayout {
         Animation rotateAnimation = AnimationUtils.loadAnimation(context, R.anim.rotate);
         fab.startAnimation(rotateAnimation);
         findViewById(R.id.scollView).setVisibility(View.VISIBLE);
+        if (MainModel.getInstance().getTutorialStep() != null && MainModel.getInstance().getTutorialStep().getValue() == 2)
+            MainModel.getInstance().setNextTutorialStep();
     }
 
     private void closeFABMenu() {
@@ -203,6 +205,8 @@ public class ConfigurationView extends RelativeLayout {
                         if (isNew)
                             events.addView((View) eventButton);
                         requestActions();
+                        if (MainModel.getInstance().getTutorialStep() != null && MainModel.getInstance().getTutorialStep().getValue() == 3)
+                            MainModel.getInstance().setNextTutorialStep();
                     },
                     view1 -> {
                         removeView(slidingEventDialog);
@@ -242,6 +246,8 @@ public class ConfigurationView extends RelativeLayout {
                         if (isNew)
                             events.addView((View) eventButton);
                         requestActions();
+                        if (MainModel.getInstance().getTutorialStep() != null && MainModel.getInstance().getTutorialStep().getValue() == 3)
+                            MainModel.getInstance().setNextTutorialStep();
                     },
                     view1 -> {
                         removeView(eventDialog);

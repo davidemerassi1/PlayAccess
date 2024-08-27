@@ -118,7 +118,7 @@ public class MyAccessibilityService extends AccessibilityService implements Acti
                         return;
                     }
                     String foregroundApp = getForegroundApp();
-                    if (foregroundApp == null || foregroundApp.equals(getPackageName()) || foregroundApp.equals(launcher)) {
+                    if (foregroundApp == null || foregroundApp.equals(getPackageName()) || foregroundApp.equals(launcher) || foregroundApp.equals("com.android.settings")) {
                         overlayManager.hideOverlay();
                         executor.pause();
                         return;

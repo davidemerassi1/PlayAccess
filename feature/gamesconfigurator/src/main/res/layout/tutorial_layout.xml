@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<it.unimi.di.ewlab.iss.gamesconfigurator.TutorialView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone">
+
+    <RelativeLayout
+        android:id="@+id/tutorialStep1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#70000000"
+        android:visibility="gone">
+        <ImageView
+            android:id="@+id/arrow"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="70dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/generic_arrow"
+            android:rotation="240"/>
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/arrow"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:padding="20dp"
+            android:text="Benvenuto in PlayAccess!\nTocca qui per entrare in modalità configurazione.\nRicorda che puoi spostare quest'icona in qualunque momento" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/tutorialStep2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/arrow2"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:padding="20dp"
+            android:text="Tocca qui per aggiungere il tuo primo evento" />
+        <ImageView
+            android:id="@+id/arrow2"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="80dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/generic_arrow"
+            android:rotation="75"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/tutorialStep3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+        <ImageView
+            android:id="@+id/arrow3"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="70dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/generic_arrow"
+            android:rotation="240"/>
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/arrow3"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:padding="20dp"
+            android:text="Il tuo evento si trova qui. Spostalo dove desideri o toccalo per modificarlo" />
+    </RelativeLayout>
+</it.unimi.di.ewlab.iss.gamesconfigurator.TutorialView>

@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
+import it.unimi.di.ewlab.iss.common.model.MainModel;
 import it.unimi.di.ewlab.iss.gamesconfigurator.R;
 
 import it.unimi.di.ewlab.iss.common.database.Event;
@@ -118,6 +119,8 @@ public class ResizableDraggableButton extends FrameLayout implements EventButton
                     lastTouchY = touchY;
                     posX = getX();
                     posY = getY();
+                    if (MainModel.getInstance().getTutorialStep() != null && MainModel.getInstance().getTutorialStep().getValue() == 4)
+                        MainModel.getInstance().setNextTutorialStep();
                     break;
                 case MotionEvent.ACTION_MOVE:
                     float dx = touchX - lastTouchX;

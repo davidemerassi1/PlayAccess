@@ -15,6 +15,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import it.unimi.di.ewlab.iss.common.model.MainModel;
+
 public class OverlayView extends RelativeLayout {
     private ConfigurationView configurationView;
     private WindowManager.LayoutParams params;
@@ -35,9 +37,7 @@ public class OverlayView extends RelativeLayout {
         params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
-                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
-                        WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 PixelFormat.TRANSLUCENT);
         params.gravity = Gravity.TOP | Gravity.START;
@@ -78,6 +78,8 @@ public class OverlayView extends RelativeLayout {
                             params.height = WindowManager.LayoutParams.MATCH_PARENT;
                             windowManager.updateViewLayout(OverlayView.this, params);
                             configurationView.open();
+                            if (MainModel.getInstance().getTutorialStep() != null && MainModel.getInstance().getTutorialStep().getValue() == 1)
+                                MainModel.getInstance().setNextTutorialStep();
                         }
                         return true;
                     case MotionEvent.ACTION_MOVE:
