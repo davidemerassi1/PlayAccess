@@ -26,7 +26,7 @@
             android:textColor="@color/white"
             android:textSize="22sp"
             android:padding="20dp"
-            android:text="Benvenuto in PlayAccess!\nTocca qui per entrare in modalità configurazione.\nRicorda che puoi spostare quest'icona in qualunque momento" />
+            android:text="@string/tutorial_step1" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -42,7 +42,7 @@
             android:textColor="@color/white"
             android:textSize="22sp"
             android:padding="20dp"
-            android:text="Tocca qui per aggiungere il tuo primo evento" />
+            android:text="@string/tutorial_step2" />
         <ImageView
             android:id="@+id/arrow2"
             android:layout_alignParentBottom="true"
@@ -75,6 +75,6 @@
             android:textColor="@color/white"
             android:textSize="22sp"
             android:padding="20dp"
-            android:text="Il tuo evento si trova qui. Spostalo dove desideri o toccalo per modificarlo" />
+            android:text="@string/tutorial_step3" />
     </RelativeLayout>
 </it.unimi.di.ewlab.iss.gamesconfigurator.TutorialView>

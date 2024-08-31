@@ -20,4 +20,7 @@
     <string name="error_same_action">Per il momento non è possibile assegnare due eventi alla stessa azione</string>
     <string name="no_other_modules_actions">Non sono state trovate azioni. Verifica che sul dispositivo siano installati altri moduli compatibili con PlayAccess</string>
     <string name="other_modules">ALTRI MODULI</string>
+    <string name="tutorial_step1">Benvenuto in PlayAccess!\nTocca qui per entrare in modalità configurazione.\nRicorda che puoi spostare quest\'icona in qualunque momento</string>
+    <string name="tutorial_step2">Tocca qui per aggiungere il tuo primo evento</string>
+    <string name="tutorial_step3">Il tuo evento si trova qui. Spostalo dove desideri o toccalo per modificarlo</string>
 </resources>

@@ -195,7 +195,7 @@ public class EventExecutor implements ActionListener {
             return;
         }
         Log.d("EventExecutor", "2d movement: x: " + x + " y: " + y);
-        boolean activeMovement = Math.abs(x) > 0.3 || Math.abs(y) > 0.3;
+        boolean activeMovement = Math.sqrt(x*x + y*y) > 0.3;
         float xMax = (float) (x * Math.sqrt(1 - y * y / 2));
         float yMax = (float) (y * Math.sqrt(1 - x * x / 2));
         if (Math.abs(x) > Math.abs(xMax))

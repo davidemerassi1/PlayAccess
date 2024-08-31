@@ -25,4 +25,7 @@
     <string name="reset_to_initial_position">Reset to initial position</string>
     <string name="select_all_actions">Select all required actions</string>
     <string name="no_other_modules_actions">No actions found. Please verify that other PlayAccess compatible modules are installed on your device</string>
+    <string name="tutorial_step1">Welcome to PlayAccess!\Tap here to enter configuration mode.\nRemember that you can move this icon at any time</string>
+    <string name="tutorial_step2">Tap here to add your first event</string>
+    <string name="tutorial_step3">Your event is here. Move it where you want or tap to edit</string>
 </resources>
