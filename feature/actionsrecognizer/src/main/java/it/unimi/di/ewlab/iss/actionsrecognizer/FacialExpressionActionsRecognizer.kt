@@ -164,10 +164,11 @@ class FacialExpressionActionsRecognizer private constructor(
                 }
                 val face = faces[0]
 
-                var x = -face.headEulerAngleY / 30
-                var y = -(face.headEulerAngleX - 10) / 30
+                var x = -face.headEulerAngleY / 25
+                var y = -(face.headEulerAngleX - 7) / 26
                 x = adjustRange(x)
                 y = adjustRange(y)
+                Log.d("execxy", "x: $x, y: $y")
 
                 send2dMovement(MainModel.FACE_MOVEMENT_ACTION, x, y)
             }

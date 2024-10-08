@@ -223,6 +223,8 @@ public class EventExecutor implements ActionListener {
                 path.moveTo(strokeInProgress.x(), strokeInProgress.y());
                 int toX = (int) (x * association.radius) + association.x;
                 int toY = (int) (y * association.radius) + association.y;
+                if (toX == inProgress.get(association).x() && toY == inProgress.get(association).y())
+                    return;
                 path.lineTo(toX, toY);
                 Log.d("EventExecutor", "Continuing " + strokeInProgress.strokeDescription() + " from: " + strokeInProgress.x() + " " + strokeInProgress.y() + " to " + toX + " " + toY);
                 StrokeDescription s = inProgress.get(association).strokeDescription().continueStroke(path, 0, 1, true);
