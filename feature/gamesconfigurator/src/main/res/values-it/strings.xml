@@ -9,6 +9,7 @@
     <string name="cancel">Annulla</string>
     <string name="select_an_event_to_continue">Seleziona un evento per continuare</string>
     <string name="configuration_mode">Modalità configurazione</string>
+    <string name="joystick">Sliding bidimensionale</string>
     <string name="monodimensional_sliding">Sliding monodimensionale</string>
     <string name="move_left">Spost. sinistra:</string>
     <string name="select_an_action">Seleziona un\'azione...</string>

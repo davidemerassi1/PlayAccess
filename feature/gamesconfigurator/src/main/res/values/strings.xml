@@ -11,7 +11,7 @@
     <string name="select_an_event_to_continue">Select an event to continue</string>
     <string name="configuration_mode">Configuration mode</string>
     <string name="tap" translatable="false">Tap</string>
-    <string name="joystick" translatable="false">Joystick</string>
+    <string name="joystick">Bidimensional sliding</string>
     <string name="swipe" translatable="false">Swipe</string>
     <string name="long_tap" translatable="false">Long tap</string>
     <string name="monodimensional_sliding">Monodimensional sliding</string>

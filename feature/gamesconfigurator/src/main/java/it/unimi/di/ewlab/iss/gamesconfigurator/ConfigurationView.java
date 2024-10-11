@@ -102,17 +102,17 @@ public class ConfigurationView extends RelativeLayout {
 
         fabLayouts.get(1).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(new ResizableDraggableButton(context), true);
+            showDialog(new DraggableButton(context, Event.LONG_TAP), true);
         });
 
         fabLayouts.get(2).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(new DraggableButton(context, Event.SWIPE_UP), true);
+            showDialog(new DraggableButton(context, Event.TAP_ON_OFF), true);
         });
 
         fabLayouts.get(3).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(new DraggableButton(context, Event.LONG_TAP), true);
+            showDialog(new DraggableButton(context, Event.SWIPE_UP), true);
         });
 
         fabLayouts.get(4).getChildAt(1).setOnClickListener(view -> {
@@ -122,7 +122,7 @@ public class ConfigurationView extends RelativeLayout {
 
         fabLayouts.get(5).getChildAt(1).setOnClickListener(view -> {
             closeFABMenu();
-            showDialog(new DraggableButton(context, Event.TAP_ON_OFF), true);
+            showDialog(new ResizableDraggableButton(context), true);
         });
 
         associationsDb = MainModel.getInstance().getAssociationsDb().getDao();
